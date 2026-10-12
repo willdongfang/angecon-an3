@@ -1,41 +1,213 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AN3</title>
+  <meta name="theme-color" content="#02060f">
+  <meta name="description" content="AN3 神经网络方向二体验原型">
+  <title>AN3 — 在网络中前行</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="./vendor/three.module.js" as="script" crossorigin>
   <style>
-    :root {
-      color-scheme: dark;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #111318;
-      color: #f3f4f6;
-    }
+    @font-face { font-family: "AN3 Mono"; src: local("Consolas"); }
+    :root { color-scheme: dark; --bg: #02060f; --green: #2de06a; --ink: #e8f0eb; --muted: #8b9c9a; --line: rgba(150, 194, 180, .15); --mono: "AN3 Mono", "SFMono-Regular", Consolas, monospace; font-family: Inter, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif; background: var(--bg); color: var(--ink); font-synthesis: none; }
     * { box-sizing: border-box; }
-    body {
-      min-height: 100vh;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      text-align: center;
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body { margin: 0; min-width: 320px; background: var(--bg); }
+    a { color: inherit; text-decoration: none; }
+    .scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #02060f; }
+    #network { display: block; width: 100%; height: 100%; }
+    .scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2,6,15,.73), rgba(2,6,15,.25) 54%, rgba(2,6,15,.58)), linear-gradient(0deg, #02060f 0%, transparent 35%, rgba(2,6,15,.2)); }
+    .fallback { display: none; position: absolute; inset: 0; padding: 30vh 8vw; z-index: 2; background: radial-gradient(ellipse at 68% 45%, rgba(22,73,54,.34), transparent 50%), #02060f; }
+    .fallback h1 { max-width: 850px; margin: 20px 0; font-size: clamp(42px, 8vw, 104px); line-height: .98; letter-spacing: -.06em; }
+    .fallback p { color: var(--muted); }
+    .topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 27px 5.8vw; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .brand { display: flex; align-items: center; gap: 12px; font-size: 13px; letter-spacing: .16em; font-weight: 650; }
+    .brand-mark { width: 22px; height: 22px; border: 1px solid var(--green); border-radius: 50%; position: relative; }
+    .brand-mark::before,.brand-mark::after { content:""; position:absolute; inset:5px -4px; border:1px solid rgba(45,224,106,.65); border-radius:50%; transform:rotate(58deg); }
+    .brand-mark::after { transform:rotate(-58deg); }
+    .nav { display:flex; gap: 34px; font-size: 11px; color: #c2ceca; letter-spacing: .06em; }
+    .nav a:hover,.nav a:focus-visible { color: var(--green); }
+    .nav-cta { color: var(--green); border: 1px solid rgba(45,224,106,.45); padding: 10px 16px; }
+    main, footer { position: relative; z-index: 1; }
+    .panel { min-height: 100svh; position:relative; display:flex; align-items:center; padding: 130px 10vw 100px; border-bottom:1px solid var(--line); overflow:hidden; }
+    .panel-inner { max-width: 760px; }
+    .eyebrow { display:flex; align-items:center; gap:12px; color:var(--green); text-transform:uppercase; letter-spacing:.17em; font: 11px/1.5 var(--mono); }
+    .eyebrow::before { content:""; width:30px; height:1px; background:var(--green); box-shadow:0 0 12px var(--green); }
+    h1,h2,p { margin-top:0; }
+    h1 { max-width:790px; margin:24px 0 25px; font-size:clamp(48px,8.5vw,112px); letter-spacing:-.075em; line-height:.96; font-weight:520; }
+    h1 em { color:var(--green); font-style:normal; }
+    .lead { max-width:530px; color:#aab9b5; font-size:16px; line-height:1.9; }
+    .actions { display:flex; align-items:center; gap:26px; margin-top:38px; font-size:12px; }
+    .button { display:inline-flex; gap:18px; align-items:center; padding:15px 20px; color:#06120b; background:var(--green); font-weight:650; }
+    .button span { font-size:17px; }
+    .quiet-link { color:#d0d8d4; border-bottom:1px solid rgba(208,216,212,.45); padding:8px 0; }
+    .hero-meta { position:absolute; left:10vw; bottom:42px; display:flex; gap:36px; color:#71817d; font:10px var(--mono); letter-spacing:.07em; }
+    .hero-meta strong { display:block; margin-bottom:7px; color:#c1d0ca; font-weight:400; }
+    .scroll-cue { position:absolute; right:5.8vw; bottom:38px; writing-mode:vertical-rl; color:#91a09a; font:10px var(--mono); letter-spacing:.14em; }
+    .scroll-cue::after { content:""; display:inline-block; width:1px; height:40px; margin-top:12px; background:linear-gradient(var(--green), transparent); }
+    .section-kicker { position:absolute; right:7vw; top:50%; transform:translateY(-50%); color:rgba(45,224,106,.25); font:clamp(90px,19vw,280px)/1 var(--mono); letter-spacing:-.1em; pointer-events:none; }
+    .section-content { position:relative; z-index:1; max-width:740px; }
+    h2 { margin:22px 0 22px; font-size:clamp(38px,6vw,76px); font-weight:480; letter-spacing:-.06em; line-height:1.04; }
+    .section-copy { max-width:560px; color:#a4b2af; font-size:15px; line-height:1.95; }
+    .principles { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:45px; max-width:730px; border:1px solid var(--line); background:var(--line); }
+    .principle { min-height:140px; padding:22px; background:rgba(3,10,17,.78); }
+    .principle b { display:block; color:var(--green); font:12px var(--mono); margin-bottom:18px; }
+    .principle span { font-size:13px; line-height:1.8; color:#c5d0cc; }
+    .quote { max-width:750px; color:#d5dfda; font-size:clamp(24px,4vw,47px); line-height:1.45; letter-spacing:-.035em; }
+    .quote em { color:var(--green); font-style:normal; }
+    .footer { min-height:230px; padding:60px 10vw; display:flex; justify-content:space-between; align-items:flex-start; gap:30px; background:rgba(2,6,15,.87); }
+    .footer-note { color:#82918d; font-size:12px; line-height:1.9; }
+    .footer-mark { color:var(--green); font:12px var(--mono); letter-spacing:.14em; }
+    @media (max-width:700px) {
+      .topbar { padding:18px 6vw; }
+      .nav { gap:0; }
+      .nav a:not(.nav-cta) { display:none; }
+      .nav-cta { padding:9px 11px; }
+      .panel { min-height:92svh; padding:115px 7vw 105px; }
+      .panel:first-child { min-height:100svh; }
+      h1 { font-size:clamp(47px,14vw,76px); }
+      .lead { font-size:14px; }
+      .hero-meta { left:7vw; bottom:24px; gap:16px; font-size:9px; }
+      .scroll-cue { right:5vw; bottom:22px; }
+      .section-kicker { top:auto; bottom:12%; right:4vw; transform:none; font-size:34vw; opacity:.58; }
+      .principles { grid-template-columns:1fr; margin-top:28px; }
+      .principle { min-height:unset; padding:17px 18px; }
+      .principle b { margin-bottom:8px; }
+      .footer { padding:45px 7vw; flex-direction:column; min-height:220px; }
     }
-    main { padding: 2rem; }
-    h1 {
-      margin: 0;
-      font-size: clamp(4rem, 14vw, 8rem);
-      line-height: 1;
-      letter-spacing: -0.08em;
-      font-weight: 750;
-    }
-    p { margin: 1.25rem 0 0; color: #b6bac5; font-size: 1.1rem; }
-    footer { margin-top: 3rem; color: #777d8b; font-size: 0.8rem; }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
   </style>
+  <script src="./vendor/gsap.min.js"></script>
+  <script src="./vendor/ScrollTrigger.min.js"></script>
+  <script type="importmap">
+    {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}
+  </script>
 </head>
 <body>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="eyebrow">AN3 · Research interface</div><h1>让连接<br><em>重新生长</em></h1><p>神经干细胞技术 · 研发管线 · 关于我们</p></div></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="AN3 首页"><span class="brand-mark"></span><span>AN3&nbsp; / &nbsp;安集协康</span></a>
+    <nav class="nav" aria-label="主导航"><a href="#network-section">神经干细胞技术</a><a href="#pipeline">研发管线</a><a href="#about">关于我们</a><a class="nav-cta" href="#contact">联系团队&nbsp; ↗</a></nav>
+  </header>
   <main>
-    <h1>AN3</h1>
-    <p>流程已跑通</p>
-    <footer>GitHub Pages · Codex</footer>
+    <section class="panel" id="top">
+      <div class="panel-inner">
+        <div class="eyebrow">AN3 · A new perspective</div>
+        <h1>让连接<br><em>重新生长</em></h1>
+        <p class="lead">以神经干细胞技术为起点，探索生命科学的更多可能。让基础研究与持续研发，在同一张网络中相遇。</p>
+        <div class="actions"><a class="button" href="#network-section">进入探索 <span>↘</span></a><a class="quiet-link" href="#about">了解 AN3</a></div>
+      </div>
+      <div class="hero-meta"><div><strong>FOCUS</strong>神经干细胞技术</div><div><strong>APPROACH</strong>持续研究 · 开放协作</div><div><strong>AN3</strong>安集协康</div></div>
+      <div class="scroll-cue">SCROLL TO EXPLORE</div>
+    </section>
+    <section class="panel" id="network-section">
+      <div class="section-kicker">01</div><div class="section-content"><div class="eyebrow">A connected field</div><h2>从一个连接，<br>看见更大的网络。</h2><p class="section-copy">研究并非孤立的点。技术、经验与长期投入彼此连接，构成持续生长的研究网络。我们关注神经干细胞技术，也关注每一种让探索得以继续的可能。</p><div class="principles"><div class="principle"><b>01 / 研究</b><span>围绕神经干细胞技术，持续探索基础与应用。</span></div><div class="principle"><b>02 / 协作</b><span>让不同视角在开放交流中建立连接。</span></div><div class="principle"><b>03 / 长期</b><span>保持耐心，让研究沿着自己的节奏生长。</span></div></div></div>
+    </section>
+    <section class="panel" id="pipeline">
+      <div class="section-kicker">02</div><div class="section-content"><div class="eyebrow">Research pipeline</div><h2>沿着问题，<br>不断向前。</h2><p class="section-copy">从科学问题出发，经由研究设计与持续验证，逐步形成清晰的研发路径。每一步都服务于更扎实的理解与下一步探索。</p><div class="principles"><div class="principle"><b>观察</b><span>从真实问题出发，建立研究方向。</span></div><div class="principle"><b>研究</b><span>以持续探索积累更深入的认识。</span></div><div class="principle"><b>前行</b><span>让阶段性工作连接到更长远的目标。</span></div></div></div>
+    </section>
+    <section class="panel" id="about">
+      <div class="section-kicker">03</div><div class="section-content"><div class="eyebrow">About AN3</div><p class="quote">“在复杂的网络中，<br>每一次<em>连接</em>都让前行多一种可能。”</p><p class="section-copy">安集协康关注生命科学研究与技术探索，期待与志同道合的伙伴保持交流，在开放协作中持续前行。</p></div>
+    </section>
+    <section class="panel" id="contact">
+      <div class="section-kicker">04</div><div class="section-content"><div class="eyebrow">Stay connected</div><h2>继续这场<br><em>对话。</em></h2><p class="section-copy">关于神经干细胞技术、研发管线与合作交流，欢迎进一步了解安集协康。</p><div class="actions"><a class="button" href="#top">返回首页 <span>↑</span></a><a class="quiet-link" href="#network-section">重新探索</a></div></div>
+    </section>
   </main>
+  <footer class="footer"><div><div class="brand"><span class="brand-mark"></span><span>AN3&nbsp; / &nbsp;安集协康</span></div><p class="footer-note">神经干细胞技术 · 研究与协作<br>本页面为方向二视觉原型。</p></div><div class="footer-mark">CONNECTED, STILL GROWING.</div></footer>
+  <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    const canvas = document.querySelector('#network');
+    const fallback = document.querySelector('#fallback');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile = matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+    const nodeCount = mobile ? 240 : 800;
+    const linePositions = [];
+    const linePhases = [];
+    const lineSpeeds = [];
+    const rand = (a,b) => a + Math.random() * (b-a);
+    let renderer, composer, bloom, points, flowMaterial, lineGeometry, lineMaterial;
+    let camera, scene;
+    let connected = false;
+    let frameSamples = 0;
+    let fps = 0;
+
+    function fallbackStats() {
+      fallback.style.display = 'block';
+      window.__AN3_STATS__ = { nodes: 0, lines: 0, mobile, bloomOn: false, reducedMotion, fps: 0 };
+    }
+
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, alpha: false, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.25 : 1.7));
+      renderer.setClearColor(0x02060f, 1);
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x02060f, 0.0021);
+      camera = new THREE.PerspectiveCamera(58, innerWidth/innerHeight, .1, 900);
+      camera.position.set(0, 0, 90);
+      const positions = new Float32Array(nodeCount * 3);
+      const seed = [];
+      for (let i=0;i<nodeCount;i++) {
+        const x=rand(-100,150), y=rand(-78,78), z=rand(-190,70);
+        positions.set([x,y,z],i*3); seed.push([x,y,z]);
+      }
+      const candidates=[];
+      for (let i=0;i<nodeCount;i++) {
+        const nearest=[];
+        for (let j=0;j<nodeCount;j++) if (j!==i) {
+          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
+          const d=dx*dx+dy*dy+dz*dz;
+          if(d<3600) nearest.push([d,j]);
+        }
+        nearest.sort((a,b)=>a[0]-b[0]);
+        for(const [d,j] of nearest.slice(0,3)) if(i<j) candidates.push([d,i,j]);
+      }
+      candidates.sort((a,b)=>a[0]-b[0]);
+      const edgeCount=Math.min(2600,candidates.length);
+      for(let k=0;k<edgeCount;k++){
+        const [,a,b]=candidates[k];
+        linePositions.push(...seed[a],...seed[b]);
+        linePhases.push(Math.random()); lineSpeeds.push(rand(.12,.32));
+      }
+      lineGeometry=new THREE.BufferGeometry();
+      lineGeometry.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
+      const phaseAttr=new THREE.Float32BufferAttribute(linePhases,1); phaseAttr.setUsage(THREE.StaticDrawUsage); lineGeometry.setAttribute('phase',phaseAttr);
+      const vertexShader=`attribute float phase; varying float vPhase; varying float vDepth; void main(){ vPhase=phase; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=clamp((-mv.z-30.0)/170.0,0.0,1.0); gl_Position=projectionMatrix*mv; gl_Position/=gl_Position.w; gl_Position.z=0.0; gl_Position.w=1.0; }`;
+      const fragmentShader=`uniform float uTime; uniform float uMotion; varying float vPhase; varying float vDepth; void main(){ float pulse=pow(max(0.0,1.0-abs(fract(gl_FragCoord.x*.003+gl_FragCoord.y*.005+vPhase+uTime*.12)-.5)*2.0),20.0); vec3 base=vec3(.012,.055,.105); vec3 green=vec3(.176,.878,.416); vec3 col=base*(.3+vDepth*.24)+green*pulse*uMotion*1.6; float alpha=.075+vDepth*.09+pulse*.88; gl_FragColor=vec4(col,alpha); }`;
+      lineMaterial=new THREE.ShaderMaterial({ transparent:true, depthWrite:false, uniforms:{uTime:{value:0},uMotion:{value:reducedMotion?0:1}}, vertexShader, fragmentShader });
+      scene.add(new THREE.LineSegments(lineGeometry,lineMaterial));
+      const pointGeo=new THREE.BufferGeometry(); pointGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+      const pointMat=new THREE.PointsMaterial({ color:0x527b9a, size:mobile?1:1.2, transparent:true, opacity:.48, sizeAttenuation:true, depthWrite:false });
+      points=new THREE.Points(pointGeo,pointMat); scene.add(points);
+      const bloomOn=!mobile;
+      if(bloomOn){ composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.48,.55,.72); composer.addPass(bloom); }
+      function resize(){ const w=innerWidth,h=innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); if(composer)composer.setSize(w,h); }
+      addEventListener('resize',resize,{passive:true});
+      const stats={nodes:nodeCount,lines:edgeCount,mobile,bloomOn,reducedMotion,fps:0}; window.__AN3_STATS__=stats;
+      const clock=new THREE.Timer(); clock.connect(document);
+      renderer.setAnimationLoop(()=>{
+        clock.update(); const dt=Math.min(clock.getDelta(),.05); const elapsed=clock.getElapsed();
+        if(!reducedMotion){ lineMaterial.uniforms.uTime.value+=dt; camera.position.z=90-(window.scrollY/Math.max(1,document.body.scrollHeight-innerHeight))*38; camera.position.x=Math.sin(elapsed*.09)*2.2; camera.lookAt(0,0,-45); }
+        if(composer)composer.render(); else renderer.render(scene,camera);
+        frameSamples++;
+        if(frameSamples>=60){ fps=Math.round(60/Math.max(elapsed-(window.__fpsMark||0),.001)); window.__fpsMark=elapsed; stats.fps=fps; frameSamples=0; }
+      });
+      connected=true;
+    } catch(error) {
+      console.error('AN3 WebGL fallback:',error);
+      fallbackStats();
+    }
+
+    if(window.gsap && window.ScrollTrigger && !reducedMotion){
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray('.panel:not(:first-child) .section-content').forEach((el)=>gsap.from(el,{y:34,opacity:0,duration:.85,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 78%',end:'top 42%',scrub:.8}}));
+      gsap.to('.scene',{opacity:.88,scrollTrigger:{trigger:'#network-section',start:'top bottom',end:'bottom top',scrub:1}});
+    }
+    if(!connected) canvas.style.display='none';
+  </script>
 </body>
 </html>
