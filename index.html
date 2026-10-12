@@ -167,9 +167,28 @@
         for(const [d,j] of nearest.slice(0,3)) if(i<j) candidates.push([d,i,j]);
       }
       candidates.sort((a,b)=>a[0]-b[0]);
-      const edgeCount=Math.min(2600,candidates.length);
-      for(let k=0;k<edgeCount;k++){
-        const [,a,b]=candidates[k];
+      const selected = new Set();
+      for(let i=0;i<nodeCount;i++) {
+        const nearest=[];
+        for(let j=0;j<nodeCount;j++) if(j!==i) {
+          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
+          nearest.push([dx*dx+dy*dy+dz*dz,j]);
+        }
+        nearest.sort((a,b)=>a[0]-b[0]);
+        const degree=mobile?4:6;
+        for(const [,j] of nearest.slice(0,degree)) selected.add(i<j?`${i}:${j}`:`${j}:${i}`);
+      }
+      if(mobile) {
+        const denseCandidates=[];
+        for(let i=0;i<nodeCount;i++) for(let j=i+1;j<nodeCount;j++) {
+          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
+          denseCandidates.push([dx*dx+dy*dy+dz*dz,`${i}:${j}`]);
+        }
+        denseCandidates.sort((a,b)=>a[0]-b[0]);
+        for(const [,edge] of denseCandidates) { selected.add(edge); if(selected.size>=2100) break; }
+      }
+      for(const key of selected){
+        const [a,b]=key.split(':').map(Number);
         linePositions.push(...seed[a],...seed[b]);
         linePhases.push(Math.random()); lineSpeeds.push(rand(.12,.32));
       }
@@ -187,7 +206,7 @@
       if(bloomOn){ composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.48,.55,.72); composer.addPass(bloom); }
       function resize(){ const w=innerWidth,h=innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); if(composer)composer.setSize(w,h); }
       addEventListener('resize',resize,{passive:true});
-      const stats={nodes:nodeCount,lines:edgeCount,mobile,bloomOn,reducedMotion,fps:0}; window.__AN3_STATS__=stats;
+      const stats={nodes:nodeCount,lines:selected.size,mobile,bloomOn,reducedMotion,fps:0}; window.__AN3_STATS__=stats;
       const clock=new THREE.Timer(); clock.connect(document);
       renderer.setAnimationLoop(()=>{
         clock.update(); const dt=Math.min(clock.getDelta(),.05); const elapsed=clock.getElapsed();
