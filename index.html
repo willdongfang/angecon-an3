@@ -4,229 +4,104 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#02060f">
-  <meta name="description" content="AN3 神经网络方向二体验原型">
-  <title>AN3 — 在网络中前行</title>
+  <meta name="description" content="安集协康神经干细胞研发与技术平台">
+  <title>AN3 — 安集协康 · 研究网络</title>
   <link rel="icon" href="data:,">
-  <link rel="preload" href="./vendor/three.module.js" as="script" crossorigin>
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
   <style>
-    @font-face { font-family: "AN3 Mono"; src: local("Consolas"); }
-    :root { color-scheme: dark; --bg: #02060f; --green: #2de06a; --ink: #e8f0eb; --muted: #8b9c9a; --line: rgba(150, 194, 180, .15); --mono: "AN3 Mono", "SFMono-Regular", Consolas, monospace; font-family: Inter, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif; background: var(--bg); color: var(--ink); font-synthesis: none; }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; background: var(--bg); }
-    body { margin: 0; min-width: 320px; background: var(--bg); }
-    a { color: inherit; text-decoration: none; }
-    .scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #02060f; }
-    #network { display: block; width: 100%; height: 100%; }
-    .scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2,6,15,.73), rgba(2,6,15,.25) 54%, rgba(2,6,15,.58)), linear-gradient(0deg, #02060f 0%, transparent 35%, rgba(2,6,15,.2)); }
-    .fallback { display: none; position: absolute; inset: 0; padding: 30vh 8vw; z-index: 2; background: radial-gradient(ellipse at 68% 45%, rgba(22,73,54,.34), transparent 50%), #02060f; }
-    .fallback h1 { max-width: 850px; margin: 20px 0; font-size: clamp(42px, 8vw, 104px); line-height: .98; letter-spacing: -.06em; }
-    .fallback p { color: var(--muted); }
-    .topbar { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 27px 5.8vw; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .brand { display: flex; align-items: center; gap: 12px; font-size: 13px; letter-spacing: .16em; font-weight: 650; }
-    .brand-mark { width: 22px; height: 22px; border: 1px solid var(--green); border-radius: 50%; position: relative; }
-    .brand-mark::before,.brand-mark::after { content:""; position:absolute; inset:5px -4px; border:1px solid rgba(45,224,106,.65); border-radius:50%; transform:rotate(58deg); }
-    .brand-mark::after { transform:rotate(-58deg); }
-    .nav { display:flex; gap: 34px; font-size: 11px; color: #c2ceca; letter-spacing: .06em; }
-    .nav a:hover,.nav a:focus-visible { color: var(--green); }
-    .nav-cta { color: var(--green); border: 1px solid rgba(45,224,106,.45); padding: 10px 16px; }
-    main, footer { position: relative; z-index: 1; }
-    .panel { min-height: 100svh; position:relative; display:flex; align-items:center; padding: 130px 10vw 100px; border-bottom:1px solid var(--line); overflow:hidden; }
-    .panel-inner { max-width: 760px; }
-    .eyebrow { display:flex; align-items:center; gap:12px; color:var(--green); text-transform:uppercase; letter-spacing:.17em; font: 11px/1.5 var(--mono); }
-    .eyebrow::before { content:""; width:30px; height:1px; background:var(--green); box-shadow:0 0 12px var(--green); }
-    h1,h2,p { margin-top:0; }
-    h1 { max-width:790px; margin:24px 0 25px; font-size:clamp(48px,8.5vw,112px); letter-spacing:-.075em; line-height:.96; font-weight:520; }
-    h1 em { color:var(--green); font-style:normal; }
-    .lead { max-width:530px; color:#aab9b5; font-size:16px; line-height:1.9; }
-    .actions { display:flex; align-items:center; gap:26px; margin-top:38px; font-size:12px; }
-    .button { display:inline-flex; gap:18px; align-items:center; padding:15px 20px; color:#06120b; background:var(--green); font-weight:650; }
-    .button span { font-size:17px; }
-    .quiet-link { color:#d0d8d4; border-bottom:1px solid rgba(208,216,212,.45); padding:8px 0; }
-    .hero-meta { position:absolute; left:10vw; bottom:42px; display:flex; gap:36px; color:#71817d; font:10px var(--mono); letter-spacing:.07em; }
-    .hero-meta strong { display:block; margin-bottom:7px; color:#c1d0ca; font-weight:400; }
-    .scroll-cue { position:absolute; right:5.8vw; bottom:38px; writing-mode:vertical-rl; color:#91a09a; font:10px var(--mono); letter-spacing:.14em; }
-    .scroll-cue::after { content:""; display:inline-block; width:1px; height:40px; margin-top:12px; background:linear-gradient(var(--green), transparent); }
-    .section-kicker { position:absolute; right:7vw; top:50%; transform:translateY(-50%); color:rgba(45,224,106,.25); font:clamp(90px,19vw,280px)/1 var(--mono); letter-spacing:-.1em; pointer-events:none; }
-    .section-content { position:relative; z-index:1; max-width:740px; }
-    h2 { margin:22px 0 22px; font-size:clamp(38px,6vw,76px); font-weight:480; letter-spacing:-.06em; line-height:1.04; }
-    .section-copy { max-width:560px; color:#a4b2af; font-size:15px; line-height:1.95; }
-    .principles { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:45px; max-width:730px; border:1px solid var(--line); background:var(--line); }
-    .principle { min-height:140px; padding:22px; background:rgba(3,10,17,.78); }
-    .principle b { display:block; color:var(--green); font:12px var(--mono); margin-bottom:18px; }
-    .principle span { font-size:13px; line-height:1.8; color:#c5d0cc; }
-    .quote { max-width:750px; color:#d5dfda; font-size:clamp(24px,4vw,47px); line-height:1.45; letter-spacing:-.035em; }
-    .quote em { color:var(--green); font-style:normal; }
-    .footer { min-height:230px; padding:60px 10vw; display:flex; justify-content:space-between; align-items:flex-start; gap:30px; background:rgba(2,6,15,.87); }
-    .footer-note { color:#82918d; font-size:12px; line-height:1.9; }
-    .footer-mark { color:var(--green); font:12px var(--mono); letter-spacing:.14em; }
-    @media (max-width:700px) {
-      .topbar { padding:18px 6vw; }
-      .nav { gap:0; }
-      .nav a:not(.nav-cta) { display:none; }
-      .nav-cta { padding:9px 11px; }
-      .panel { min-height:92svh; padding:115px 7vw 105px; }
-      .panel:first-child { min-height:100svh; }
-      h1 { font-size:clamp(47px,14vw,76px); }
-      .lead { font-size:14px; }
-      .hero-meta { left:7vw; bottom:24px; gap:16px; font-size:9px; }
-      .scroll-cue { right:5vw; bottom:22px; }
-      .section-kicker { top:auto; bottom:12%; right:4vw; transform:none; font-size:34vw; opacity:.58; }
-      .principles { grid-template-columns:1fr; margin-top:28px; }
-      .principle { min-height:unset; padding:17px 18px; }
-      .principle b { margin-bottom:8px; }
-      .footer { padding:45px 7vw; flex-direction:column; min-height:220px; }
-    }
-    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+    :root{color-scheme:dark;--bg:#02060f;--green:#2de06a;--ink:#e9f1ed;--muted:#aab9b4;--mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-family:Inter,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);font-synthesis:none}*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--bg)}a{color:inherit;text-decoration:none}.scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#02060f}#network{display:block;width:100%;height:100%}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,6,15,.76),rgba(2,6,15,.24) 54%,rgba(2,6,15,.58)),linear-gradient(0deg,#02060f 0%,transparent 38%,rgba(2,6,15,.13));pointer-events:none}.fallback{display:none;position:absolute;inset:0;padding:30vh 8vw;z-index:2;background:radial-gradient(ellipse at 68% 45%,rgba(22,73,54,.34),transparent 50%),#02060f}.fallback h1{max-width:850px;font-size:clamp(42px,8vw,104px)}.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px 5.8vw;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(2,6,15,.42);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.14em;font-weight:650}.brand-mark{width:22px;height:22px;border:1px solid var(--green);border-radius:50%;position:relative}.brand-mark:before,.brand-mark:after{content:"";position:absolute;inset:5px -4px;border:1px solid rgba(45,224,106,.65);border-radius:50%;transform:rotate(58deg)}.brand-mark:after{transform:rotate(-58deg)}.nav{display:flex;gap:27px;font:10px var(--mono);letter-spacing:.035em;color:#c2ceca}.nav a:hover,.nav a:focus-visible{color:var(--green)}.nav-cta{color:var(--green);border:1px solid rgba(45,224,106,.45);padding:10px 14px}.hud{position:fixed;z-index:4;top:50%;left:8vw;width:min(450px,43vw);transform:translateY(-40%);padding:30px 34px 28px;border:1px solid rgba(117,220,159,.35);background:linear-gradient(135deg,rgba(5,18,25,.82),rgba(5,13,23,.67));backdrop-filter:blur(22px);box-shadow:0 0 36px rgba(45,224,106,.08),inset 0 0 28px rgba(62,133,111,.05);isolation:isolate;transition:opacity .35s,transform .45s}.hud:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.18;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(151,218,181,.11) 6px),linear-gradient(90deg,transparent 49.8%,rgba(45,224,106,.14) 50%,transparent 50.2%);pointer-events:none}.hud:after{content:"";position:absolute;top:-1px;left:22px;width:74px;height:1px;background:var(--green);box-shadow:0 0 12px var(--green)}.hud-head{display:flex;justify-content:space-between;align-items:center;color:var(--green);font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase}.live{display:flex;align-items:center;gap:7px;color:#acc5b7}.live i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.hud h1,.hud h2{margin:22px 0 17px;font-weight:500;font-size:clamp(38px,5vw,62px);line-height:1.1;letter-spacing:-.055em}.hud h1{font-size:clamp(46px,6.3vw,82px)}.hud h1 em,.hud h2 em{color:var(--green);font-style:normal}.hud p{margin:0;color:#d0dad5;font-size:15px;line-height:1.9;text-wrap:pretty}.hud-foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:16px;border-top:1px solid rgba(182,218,196,.16);color:#91a49a;font:10px var(--mono);letter-spacing:.06em}.hud-foot strong{color:var(--green);font-weight:400}.hud-link{color:var(--green);font:11px var(--mono)}.readout{position:fixed;z-index:3;right:5.8vw;bottom:34px;display:flex;gap:28px;color:#95a59e;font:9px var(--mono);letter-spacing:.08em}.readout b{display:block;margin-bottom:5px;color:var(--green);font-weight:400}.scroll-cue{position:fixed;right:5.7vw;top:44%;writing-mode:vertical-rl;color:#a3b0aa;font:9px var(--mono);letter-spacing:.16em}.scroll-cue:after{content:"";display:inline-block;width:1px;height:54px;margin-top:12px;background:linear-gradient(var(--green),transparent)}main{position:relative;z-index:1}.cluster-section{height:112svh;min-height:760px;position:relative;scroll-margin-top:0;pointer-events:none}.cluster-section:first-child{height:125svh;min-height:850px}.cluster-section:last-child{height:112svh}.cluster-anchor{position:absolute;top:42%;left:0;width:1px;height:1px}.progress{position:fixed;z-index:4;left:0;top:0;height:2px;width:0;background:var(--green);box-shadow:0 0 10px var(--green)}.fallback-panel{display:none;position:relative;z-index:1;min-height:100svh;padding:120px 8vw 80px;background:radial-gradient(ellipse at 70% 50%,rgba(18,58,45,.42),transparent 58%),#02060f}.fallback-panel .card{max-width:650px;padding:28px;background:rgba(6,18,24,.85);border:1px solid rgba(45,224,106,.38)}.footer{position:relative;z-index:2;min-height:180px;padding:42px 8vw;display:flex;justify-content:space-between;align-items:flex-start;background:rgba(2,6,15,.94);border-top:1px solid rgba(150,194,180,.15)}.footer-note{color:#aab9b4;font-size:12px;line-height:1.9}.footer-mark{color:var(--green);font:10px var(--mono);letter-spacing:.12em}.intro-cover{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#02060f;transition:opacity .5s,visibility .5s}.intro-cover.done{opacity:0;visibility:hidden}.intro-box{text-align:center}.intro-title{color:#e5eee9;font:12px var(--mono);letter-spacing:.2em}.intro-track{width:min(300px,68vw);height:1px;margin-top:20px;background:rgba(45,224,106,.18);overflow:hidden}.intro-track i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--green)}.intro-cover .intro-count{margin-top:12px;color:#7d9287;font:10px var(--mono)}@media(max-width:700px){.topbar{padding:16px 6vw}.nav{gap:0}.nav a:not(.nav-cta){display:none}.nav-cta{padding:9px 11px}.hud{top:auto;bottom:12vh;left:5vw;width:90vw;max-height:62vh;overflow:auto;transform:none;padding:22px 21px 18px}.hud h1{font-size:clamp(42px,12vw,64px);margin:15px 0 12px}.hud h2{font-size:clamp(34px,9vw,48px);margin:15px 0 12px}.hud p{font-size:14px;line-height:1.75}.hud-foot{margin-top:17px;padding-top:12px}.cluster-section{height:105svh;min-height:700px}.cluster-section:first-child{height:118svh;min-height:780px}.readout{left:5vw;right:auto;bottom:18px;gap:17px;font-size:8px}.scroll-cue{right:5vw;top:20%;font-size:8px}.footer{padding:34px 6vw;min-height:170px;flex-direction:column;gap:20px}.fallback-panel{padding:105px 6vw 50px}.fallback-panel .card{padding:22px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
   </style>
-  <script src="./vendor/gsap.min.js"></script>
-  <script src="./vendor/ScrollTrigger.min.js"></script>
-  <script type="importmap">
-    {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}
-  </script>
 </head>
 <body>
-  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="eyebrow">AN3 · Research interface</div><h1>让连接<br><em>重新生长</em></h1><p>神经干细胞技术 · 研发管线 · 关于我们</p></div></div>
-  <header class="topbar">
-    <a class="brand" href="#top" aria-label="AN3 首页"><span class="brand-mark"></span><span>AN3&nbsp; / &nbsp;安集协康</span></a>
-    <nav class="nav" aria-label="主导航"><a href="#network-section">神经干细胞技术</a><a href="#pipeline">研发管线</a><a href="#about">关于我们</a><a class="nav-cta" href="#contact">联系团队&nbsp; ↗</a></nav>
-  </header>
-  <main>
-    <section class="panel" id="top">
-      <div class="panel-inner">
-        <div class="eyebrow">AN3 · A new perspective</div>
-        <h1>让连接<br><em>重新生长</em></h1>
-        <p class="lead">以神经干细胞技术为起点，探索生命科学的更多可能。让基础研究与持续研发，在同一张网络中相遇。</p>
-        <div class="actions"><a class="button" href="#network-section">进入探索 <span>↘</span></a><a class="quiet-link" href="#about">了解 AN3</a></div>
-      </div>
-      <div class="hero-meta"><div><strong>FOCUS</strong>神经干细胞技术</div><div><strong>APPROACH</strong>持续研究 · 开放协作</div><div><strong>AN3</strong>安集协康</div></div>
-      <div class="scroll-cue">SCROLL TO EXPLORE</div>
-    </section>
-    <section class="panel" id="network-section">
-      <div class="section-kicker">01</div><div class="section-content"><div class="eyebrow">A connected field</div><h2>从一个连接，<br>看见更大的网络。</h2><p class="section-copy">研究并非孤立的点。技术、经验与长期投入彼此连接，构成持续生长的研究网络。我们关注神经干细胞技术，也关注每一种让探索得以继续的可能。</p><div class="principles"><div class="principle"><b>01 / 研究</b><span>围绕神经干细胞技术，持续探索基础与应用。</span></div><div class="principle"><b>02 / 协作</b><span>让不同视角在开放交流中建立连接。</span></div><div class="principle"><b>03 / 长期</b><span>保持耐心，让研究沿着自己的节奏生长。</span></div></div></div>
-    </section>
-    <section class="panel" id="pipeline">
-      <div class="section-kicker">02</div><div class="section-content"><div class="eyebrow">Research pipeline</div><h2>沿着问题，<br>不断向前。</h2><p class="section-copy">从科学问题出发，经由研究设计与持续验证，逐步形成清晰的研发路径。每一步都服务于更扎实的理解与下一步探索。</p><div class="principles"><div class="principle"><b>观察</b><span>从真实问题出发，建立研究方向。</span></div><div class="principle"><b>研究</b><span>以持续探索积累更深入的认识。</span></div><div class="principle"><b>前行</b><span>让阶段性工作连接到更长远的目标。</span></div></div></div>
-    </section>
-    <section class="panel" id="about">
-      <div class="section-kicker">03</div><div class="section-content"><div class="eyebrow">About AN3</div><p class="quote">“在复杂的网络中，<br>每一次<em>连接</em>都让前行多一种可能。”</p><p class="section-copy">安集协康关注生命科学研究与技术探索，期待与志同道合的伙伴保持交流，在开放协作中持续前行。</p></div>
-    </section>
-    <section class="panel" id="contact">
-      <div class="section-kicker">04</div><div class="section-content"><div class="eyebrow">Stay connected</div><h2>继续这场<br><em>对话。</em></h2><p class="section-copy">关于神经干细胞技术、研发管线与合作交流，欢迎进一步了解安集协康。</p><div class="actions"><a class="button" href="#top">返回首页 <span>↑</span></a><a class="quiet-link" href="#network-section">重新探索</a></div></div>
-    </section>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">AN3 / 安集协康</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
+  <div class="intro-cover" id="intro"><div class="intro-box"><div class="intro-title">AN3 / NETWORK ASSEMBLY</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">INITIALIZING</div></div></div>
+  <div class="progress" id="progress"></div>
+  <header class="topbar"><a class="brand" href="#top" aria-label="AN3 首页"><span class="brand-mark"></span><span>AN3 / 安集协康</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a class="nav-cta" href="#contact">关注我们 ↗</a></nav></header>
+  <aside class="hud" id="hud" aria-live="polite"><div class="hud-head"><span id="hud-kicker">01 / COMPANY</span><span class="live"><i></i><span id="hud-state">NETWORK ACTIVE</span></span></div><div id="hud-body"><h1>安集协康<br><em>神经干细胞</em></h1><p>从事细胞研发、生产、存储及服务的高新技术企业，专注于人源神经干细胞药物研发与临床转化。</p></div><div class="hud-foot"><span><strong id="cluster-label">CLUSTER 01</strong> / 05</span><a class="hud-link" id="hud-link" href="http://127.0.0.1:8000/about/company/" target="_blank" rel="noreferrer">SOURCE ↗</a></div></aside>
+  <div class="scroll-cue">SCROLL TO TRACE THE NETWORK</div>
+  <div class="readout"><div><b id="readout-nodes">800</b>NODES</div><div><b id="readout-lines">LINKED</b>SYNAPSES</div><div><b id="readout-pulse">SIGNAL</b>ACTIVITY</div></div>
+  <main id="top">
+    <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="technology" data-cluster="1"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="pipeline" data-cluster="2"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="science" data-cluster="3"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="contact" data-cluster="4"><span class="cluster-anchor"></span></section>
   </main>
-  <footer class="footer"><div><div class="brand"><span class="brand-mark"></span><span>AN3&nbsp; / &nbsp;安集协康</span></div><p class="footer-note">神经干细胞技术 · 研究与协作<br>本页面为方向二视觉原型。</p></div><div class="footer-mark">CONNECTED, STILL GROWING.</div></footer>
+  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="hud-head">AN3 / NETWORK INTERFACE</div><h1>安集协康神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><p><a href="http://127.0.0.1:8000/about/company/">查看公司介绍 ↗</a></p></div></div>
+  <footer class="footer"><div><div class="brand"><span class="brand-mark"></span><span>AN3 / 安集协康</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
   <script type="module">
-    import * as THREE from 'three';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import * as THREE from './vendor/three.module.js';
 
-    const canvas = document.querySelector('#network');
-    const fallback = document.querySelector('#fallback');
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const mobile = matchMedia('(max-width: 700px), (pointer: coarse)').matches;
-    const nodeCount = mobile ? 240 : 800;
-    const linePositions = [];
-    const linePhases = [];
-    const lineSpeeds = [];
-    const rand = (a,b) => a + Math.random() * (b-a);
-    let renderer, composer, bloom, points, flowMaterial, lineGeometry, lineMaterial;
-    let camera, scene;
-    let connected = false;
-    let frameSamples = 0;
-    let fps = 0;
-
-    function fallbackStats() {
-      fallback.style.display = 'block';
-      window.__AN3_STATS__ = { nodes: 0, lines: 0, mobile, bloomOn: false, reducedMotion, fps: 0 };
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile=matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+    const N=mobile?240:800, K=5, per=Math.floor(N/K), canvas=document.querySelector('#network');
+    const colors=[new THREE.Color('#2de06a'),new THREE.Color('#56cfa2'),new THREE.Color('#51b6c3'),new THREE.Color('#8ddc90'),new THREE.Color('#2de06a')];
+    const centers=[[-37,10,-8],[32,16,-53],[0,-18,-98],[-40,15,-142],[39,0,-190]];
+    const positions=new Float32Array(N*3), seeds=new Float32Array(N), clusterIds=new Float32Array(N), sizes=new Float32Array(N), phases=new Float32Array(N), nodeColors=new Float32Array(N*3);
+    const rand=(a,b)=>a+Math.random()*(b-a); let renderer,scene,camera,points,composer,bloom,stats;
+    let pulses=[],lastBurst=0,lastFlicker=0,activeCluster=0,introDone=false,fps=0,frameCount=0,fpsAt=0;
+    const edgeSet=new Set(),edgePairs=[];
+    for(let i=0;i<N;i++){
+      const c=Math.min(K-1,Math.floor(i/per)); clusterIds[i]=c;
+      const radius=mobile?10:13,theta=rand(0,Math.PI*2),r=Math.sqrt(Math.random())*radius;
+      positions[i*3]=centers[c][0]+Math.cos(theta)*r; positions[i*3+1]=centers[c][1]+Math.sin(theta)*r*.76; positions[i*3+2]=centers[c][2]+rand(-9,9);
+      seeds[i]=rand(0,1);sizes[i]=rand(1.2,3.5);phases[i]=rand(0,Math.PI*2);
+      const color=colors[c].clone().multiplyScalar(rand(.48,1));nodeColors.set([color.r,color.g,color.b],i*3);
     }
-
-    try {
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, alpha: false, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.25 : 1.7));
-      renderer.setClearColor(0x02060f, 1);
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x02060f, 0.0021);
-      camera = new THREE.PerspectiveCamera(58, innerWidth/innerHeight, .1, 900);
-      camera.position.set(0, 0, 90);
-      const positions = new Float32Array(nodeCount * 3);
-      const seed = [];
-      for (let i=0;i<nodeCount;i++) {
-        const x=rand(-100,150), y=rand(-78,78), z=rand(-190,70);
-        positions.set([x,y,z],i*3); seed.push([x,y,z]);
-      }
-      const candidates=[];
-      for (let i=0;i<nodeCount;i++) {
-        const nearest=[];
-        for (let j=0;j<nodeCount;j++) if (j!==i) {
-          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
-          const d=dx*dx+dy*dy+dz*dz;
-          if(d<3600) nearest.push([d,j]);
-        }
-        nearest.sort((a,b)=>a[0]-b[0]);
-        for(const [d,j] of nearest.slice(0,3)) if(i<j) candidates.push([d,i,j]);
-      }
-      candidates.sort((a,b)=>a[0]-b[0]);
-      const selected = new Set();
-      for(let i=0;i<nodeCount;i++) {
-        const nearest=[];
-        for(let j=0;j<nodeCount;j++) if(j!==i) {
-          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
-          nearest.push([dx*dx+dy*dy+dz*dz,j]);
-        }
-        nearest.sort((a,b)=>a[0]-b[0]);
-        const degree=mobile?4:6;
-        for(const [,j] of nearest.slice(0,degree)) selected.add(i<j?`${i}:${j}`:`${j}:${i}`);
-      }
-      if(mobile) {
-        const denseCandidates=[];
-        for(let i=0;i<nodeCount;i++) for(let j=i+1;j<nodeCount;j++) {
-          const dx=seed[i][0]-seed[j][0],dy=seed[i][1]-seed[j][1],dz=seed[i][2]-seed[j][2];
-          denseCandidates.push([dx*dx+dy*dy+dz*dz,`${i}:${j}`]);
-        }
-        denseCandidates.sort((a,b)=>a[0]-b[0]);
-        for(const [,edge] of denseCandidates) { selected.add(edge); if(selected.size>=2100) break; }
-      }
-      for(const key of selected){
-        const [a,b]=key.split(':').map(Number);
-        linePositions.push(...seed[a],...seed[b]);
-        linePhases.push(Math.random()); lineSpeeds.push(rand(.12,.32));
-      }
-      lineGeometry=new THREE.BufferGeometry();
-      lineGeometry.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
-      const phaseAttr=new THREE.Float32BufferAttribute(linePhases,1); phaseAttr.setUsage(THREE.StaticDrawUsage); lineGeometry.setAttribute('phase',phaseAttr);
-      const vertexShader=`attribute float phase; varying float vPhase; varying float vDepth; void main(){ vPhase=phase; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=clamp((-mv.z-30.0)/170.0,0.0,1.0); gl_Position=projectionMatrix*mv; gl_Position/=gl_Position.w; gl_Position.z=0.0; gl_Position.w=1.0; }`;
-      const fragmentShader=`uniform float uTime; uniform float uMotion; varying float vPhase; varying float vDepth; void main(){ float pulse=pow(max(0.0,1.0-abs(fract(gl_FragCoord.x*.003+gl_FragCoord.y*.005+vPhase+uTime*.12)-.5)*2.0),20.0); vec3 base=vec3(.012,.055,.105); vec3 green=vec3(.176,.878,.416); vec3 col=base*(.3+vDepth*.24)+green*pulse*uMotion*1.6; float alpha=.075+vDepth*.09+pulse*.88; gl_FragColor=vec4(col,alpha); }`;
-      lineMaterial=new THREE.ShaderMaterial({ transparent:true, depthWrite:false, uniforms:{uTime:{value:0},uMotion:{value:reducedMotion?0:1}}, vertexShader, fragmentShader });
-      scene.add(new THREE.LineSegments(lineGeometry,lineMaterial));
-      const pointGeo=new THREE.BufferGeometry(); pointGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
-      const pointMat=new THREE.PointsMaterial({ color:0x527b9a, size:mobile?1:1.2, transparent:true, opacity:.48, sizeAttenuation:true, depthWrite:false });
-      points=new THREE.Points(pointGeo,pointMat); scene.add(points);
-      const bloomOn=!mobile;
-      if(bloomOn){ composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.48,.55,.72); composer.addPass(bloom); }
-      function resize(){ const w=innerWidth,h=innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); if(composer)composer.setSize(w,h); }
-      addEventListener('resize',resize,{passive:true});
-      const stats={nodes:nodeCount,lines:selected.size,mobile,bloomOn,reducedMotion,fps:0}; window.__AN3_STATS__=stats;
-      const clock=new THREE.Timer(); clock.connect(document);
-      renderer.setAnimationLoop(()=>{
-        clock.update(); const dt=Math.min(clock.getDelta(),.05); const elapsed=clock.getElapsed();
-        if(!reducedMotion){ lineMaterial.uniforms.uTime.value+=dt; camera.position.z=90-(window.scrollY/Math.max(1,document.body.scrollHeight-innerHeight))*38; camera.position.x=Math.sin(elapsed*.09)*2.2; camera.lookAt(0,0,-45); }
-        if(composer)composer.render(); else renderer.render(scene,camera);
-        frameSamples++;
-        if(frameSamples>=60){ fps=Math.round(60/Math.max(elapsed-(window.__fpsMark||0),.001)); window.__fpsMark=elapsed; stats.fps=fps; frameSamples=0; }
+    const degree=mobile?4:6;
+    for(let i=0;i<N;i++){
+      const c=clusterIds[i],same=[];
+      for(let j=Math.floor(c*per);j<Math.min(N,(c+1)*per);j++)if(j!==i){const dx=positions[i*3]-positions[j*3],dy=positions[i*3+1]-positions[j*3+1],dz=positions[i*3+2]-positions[j*3+2];same.push([dx*dx+dy*dy+dz*dz,j]);}
+      same.sort((a,b)=>a[0]-b[0]);
+      for(const [,j] of same.slice(0,degree)){const a=Math.min(i,j),b=Math.max(i,j),key=`${a}:${b}`;if(!edgeSet.has(key)){edgeSet.add(key);edgePairs.push([a,b]);}}
+    }
+    for(let c=0;c<K-1;c++){const a=(c+1)*per-1,b=(c+1)*per;edgePairs.push([a,b]);edgeSet.add(`${a}:${b}`)}
+    const L=edgePairs.length,linePositions=new Float32Array(L*6),lineIds=new Float32Array(L*2),linePhases=new Float32Array(L*2),lineColors=new Float32Array(L*6);
+    edgePairs.forEach(([a,b],i)=>{linePositions.set(positions.slice(a*3,a*3+3),i*6);linePositions.set(positions.slice(b*3,b*3+3),i*6+3);lineIds[i*2]=a;lineIds[i*2+1]=b;linePhases[i*2]=rand(0,1);linePhases[i*2+1]=rand(0,1);lineColors.set(nodeColors.slice(a*3,a*3+3),i*6);lineColors.set(nodeColors.slice(b*3,b*3+3),i*6+3)});
+    const copy=`
+      <div class="hud-head"><span>01 / COMPANY</span><span class="live"><i></i>ANJI BIO</span></div>
+      <h1>安集协康<br><em>神经干细胞</em></h1><p>从事细胞研发、生产、存储及服务的高新技术企业，专注于人源神经干细胞药物研发与临床转化。</p><div class="hud-foot"><span>公司介绍 / ABOUT</span><a class="hud-link" href="http://127.0.0.1:8000/about/company/" target="_blank" rel="noreferrer">SOURCE ↗</a></div>`,
+    tech=`<div class="hud-head"><span>02 / PLATFORM</span><span class="live"><i></i>TECHNOLOGY</span></div><h2>神经干细胞<br><em>药品开发平台</em></h2><p>建立了覆盖细胞库构建、CMC 生产、质量控制、非临床评价、全球临床开发的一体化神经干细胞创新药研发平台，聚焦神经系统疾病的细胞药物开发。</p><div class="hud-foot"><span>技术平台 / PLATFORM</span><a class="hud-link" href="http://127.0.0.1:8000/technology/" target="_blank" rel="noreferrer">SOURCE ↗</a></div>`,
+    pipe=`<div class="hud-head"><span>03 / PIPELINE</span><span class="live"><i></i>R&amp;D</span></div><h2>研发管线<br><em>管线进度总览</em></h2><p>研发管线覆盖帕金森病、阿尔茨海默病、早发型帕金森、脊髓损伤、渐冻症、小儿脑瘫及缺血性脑卒中。</p><div class="hud-foot"><span>研发管线 / R&amp;D</span><a class="hud-link" href="http://127.0.0.1:8000/rd/pipeline/" target="_blank" rel="noreferrer">SOURCE ↗</a></div>`,
+    science=`<div class="hud-head"><span>04 / SCIENCE</span><span class="live"><i></i>RESEARCH</span></div><h2>科学数据<br><em>研究平台</em></h2><p>研发平台配套完善的非临床研究体系，可系统开展药理学、药代动力学、安全性评价、免疫原性、免疫毒性及成瘤风险等评估，为细胞药物的临床申报提供科学依据。</p><div class="hud-foot"><span>研究体系 / SCIENCE</span><a class="hud-link" href="http://127.0.0.1:8000/technology/" target="_blank" rel="noreferrer">SOURCE ↗</a></div>`,
+    contact=`<div class="hud-head"><span>05 / CONTACT</span><span class="live"><i></i>CONNECTED</span></div><h2>关注我们</h2><p>扫码关注安集协康微信公众号与安库生医。</p><div class="hud-foot"><span>关注我们 / CONTACT</span><a class="hud-link" href="http://127.0.0.1:8000/contact/" target="_blank" rel="noreferrer">SOURCE ↗</a></div>`;
+    const content=[copy,tech,pipe,science,contact], titles=['01 / COMPANY','02 / PLATFORM','03 / PIPELINE','04 / SCIENCE','05 / CONTACT'];
+    function renderHud(c){const holder=document.createElement('div');holder.innerHTML=content[c];const heads=holder.querySelectorAll('.hud-head');if(heads[0])heads[0].querySelector('span').id='hud-kicker';if(heads[0])heads[0].querySelector('.live').lastChild.textContent='NETWORK ACTIVE';const foot=holder.querySelector('.hud-foot');if(foot){const label=document.createElement('strong');label.id='cluster-label';label.textContent=`CLUSTER 0${c+1}`;const source=foot.querySelector('.hud-link');foot.replaceChildren(label,document.createTextNode(' / 05'),source);source.id='hud-link'}document.querySelector('#hud').replaceChildren(...holder.childNodes);const live=document.querySelector('#hud .live');if(live){const status=document.createElement('span');status.id='hud-state';status.textContent='NETWORK ACTIVE';live.append(status)}}
+    renderHud(0);
+    function setCluster(c){if(c===activeCluster)return;activeCluster=c;renderHud(c);document.querySelector('#readout-pulse').textContent='SIGNAL';if(stats)stats.activeCluster=c;}
+    function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
+    addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
+    function fallback(){document.querySelector('#fallback').style.display='block';document.querySelector('#fallback-content').style.display='block';document.querySelector('#hud').style.display='none';document.querySelector('.readout').style.display='none';stats={nodes:0,lines:0,mobile,bloomOn:false,reducedMotion:reduce,fps:0,introDone:true,activeCluster:0,pulses:0,cam:[0,0,0]};window.__AN3_STATS__=stats;introDone=true;document.querySelector('#intro').classList.add('done');}
+    try{
+      renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x02060f,1);
+      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0012);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(0,0,60);
+      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));pg.setAttribute('aCluster',new THREE.BufferAttribute(clusterIds,1));pg.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));pg.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));pg.setAttribute('aColor',new THREE.BufferAttribute(nodeColors,3));
+      const pmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uGrow:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uActive:{value:0},uPixelRatio:{value:Math.min(devicePixelRatio||1,mobile?1.15:1.5)}},vertexShader:`attribute float aSeed,aCluster,aSize,aPhase;attribute vec3 aColor;uniform float uTime,uGrow,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uActive,uPixelRatio;varying vec3 vColor;varying float vLight;void main(){float grow=smoothstep(aSeed*.82,aSeed*.82+.18,uGrow);vec3 p=position; p.xy*=.08+.92*grow;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float d=abs(aCluster-uPulseNode[i]);pulse=max(pulse,uPulse[i]*exp(-d*1.7));}}float breath=1.+sin(uTime*.72+aPhase)*.09*uMotion;vLight=(.55+max(0.,sin(uTime*.25+aPhase))*.14+ pulse*2.1)*breath;vColor=aColor;gl_PointSize=clamp(aSize*(1.+pulse*3.)*uPixelRatio*(120./max(1.,-mv.z)),1.,14.);}`,
+        fragmentShader:`varying vec3 vColor;varying float vLight;void main(){vec2 q=gl_PointCoord-.5;float d=length(q);if(d>.5)discard;float core=smoothstep(.24,.02,d);float halo=exp(-d*12.);gl_FragColor=vec4(vColor*(.72+core*1.6+halo*.45)*vLight,core*.9+halo*.24);}`});points=new THREE.Points(pg,pmat);scene.add(points);
+      const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.BufferAttribute(linePositions,3));lg.setAttribute('aNode',new THREE.BufferAttribute(lineIds,1));lg.setAttribute('aPhase',new THREE.BufferAttribute(linePhases,1));lg.setAttribute('aColor',new THREE.BufferAttribute(lineColors,3));
+      const lmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uIntro:{value:0}},vertexShader:`attribute float aNode,aPhase;attribute vec3 aColor;uniform float uTime,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uIntro;varying vec3 vColor;varying float vSignal,vDepth;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float hop=abs(aNode-uPulseNode[i]);pulse=max(pulse,uPulse[i]*exp(-hop*.008));}}vSignal=pulse;vDepth=clamp((-mv.z-20.)/170.,0.,1.);vColor=aColor;}`,
+        fragmentShader:`uniform float uTime,uMotion,uIntro;varying vec3 vColor;varying float vSignal,vDepth;void main(){float flicker=.88+.12*sin(uTime*1.9+gl_FragCoord.x*.04)*uMotion;float wave=pow(max(0.,1.-abs(fract(gl_FragCoord.x*.0025+gl_FragCoord.y*.004+aColor.r+uTime*.25)-.5)*2.),18.)*uMotion;float a=(.10+vDepth*.12+vSignal*.68+wave*.2)*flicker*uIntro;gl_FragColor=vec4(vColor*(.48+vSignal*2.+wave*.6),a);}`});const lines=new THREE.LineSegments(lg,lmat);scene.add(lines);
+      const bloomOn=!mobile&&!reduce;
+      if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.52,.55,.74);composer.addPass(bloom);}
+      const state={nodes:N,lines:L,mobile,bloomOn,reducedMotion:reduce,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0]};stats=state;window.__AN3_STATS__=stats;
+      function burst(now){const c=activeCluster,start=Math.floor(c*per),end=Math.min(N,start+per),idx=start+Math.floor(Math.random()*(end-start));pulses.unshift({node:idx,cluster:c,at:now,life:2.4,strength:rand(.8,1.25)});pulses=pulses.slice(0,8);document.querySelector('#readout-pulse').textContent='BURST';}
+      if(!reduce){setTimeout(()=>{const start=performance.now();const grow=()=>{const t=Math.min(1,(performance.now()-start)/2050);pmat.uniforms.uGrow.value=t;lmat.uniforms.uIntro.value=t;document.querySelector('#intro-progress').style.transform=`scaleX(${t})`;document.querySelector('#intro-count').textContent=`${Math.round(N*t)} / ${N} NODES`;if(t<1)requestAnimationFrame(grow);else{introDone=true;stats.introDone=true;document.querySelector('#intro').classList.add('done')}};requestAnimationFrame(grow)},100);}
+      else {pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1;introDone=true;stats.introDone=true;document.querySelector('#intro').classList.add('done');}
+      let last=performance.now(),elapsed=0,frameWindow=last,windowFrames=0;
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;elapsed+=dt;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;
+        const from=centers[c],next=centers[Math.min(K-1,c+1)],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));let approach=ease(local),orbit=ease(Math.max(0,(local-.18)/.55)),dive=ease(Math.max(0,(local-.55)/.45));const target=[from[0]*(1-approach)+next[0]*approach,from[1]*(1-approach)+next[1]*approach,from[2]*(1-approach)+next[2]*approach];const localAngle=(progress*4.2-c*.9)*Math.PI+elapsed*.035*(reduce?0:1),rad=46,stageOffset=[18,2,-20,8,34][c],approachZ=20-approach*24,diveY=dive*17;
+        const pull=c===4?1:0,cam=[target[0]+Math.cos(localAngle)*rad*(.28+orbit*.72),target[1]+Math.sin(localAngle*.7)*13+diveY,target[2]+rad*.45+stageOffset+approachZ-dive*13-pull*22];if(!reduce){camera.position.lerp(new THREE.Vector3(...cam),.045);camera.lookAt(...target);pmat.uniforms.uTime.value=elapsed;lmat.uniforms.uTime.value=elapsed;if(elapsed-lastBurst>1.15){burst(elapsed);lastBurst=elapsed}if(elapsed-lastFlicker>.31){lastFlicker=elapsed;}
+        }else{camera.position.set(0,0,60);camera.lookAt(0,0,-45)}
+        pulses=pulses.filter(p=>elapsed-p.at<p.life);const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);pulses.forEach((p,i)=>{pulseValues[i]=p.strength*Math.max(0,1-(elapsed-p.at)/p.life);pulseNodes[i]=p.cluster*per+p.node%per});for(const mat of [pmat,lmat]){mat.uniforms.uPulse.value=pulseValues;mat.uniforms.uPulseNode.value=pulseNodes;mat.uniforms.uPulseCount.value=pulses.length}
+        stats.pulses=pulses.length;stats.cam=[+camera.position.x.toFixed(2),+camera.position.y.toFixed(2),+camera.position.z.toFixed(2)];document.querySelector('#readout-nodes').textContent=`${N}`;document.querySelector('#readout-lines').textContent=`${L.toLocaleString('en-US')}`;document.querySelector('#hud-state').textContent=pulses.length?'SIGNAL BURST':'NETWORK ACTIVE';
+        if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
       });
-      connected=true;
-    } catch(error) {
-      console.error('AN3 WebGL fallback:',error);
-      fallbackStats();
-    }
-
-    if(window.gsap && window.ScrollTrigger && !reducedMotion){
-      gsap.registerPlugin(ScrollTrigger);
-      gsap.utils.toArray('.panel:not(:first-child) .section-content').forEach((el)=>gsap.from(el,{y:34,opacity:0,duration:.85,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 78%',end:'top 42%',scrub:.8}}));
-      gsap.to('.scene',{opacity:.88,scrollTrigger:{trigger:'#network-section',start:'top bottom',end:'bottom top',scrub:1}});
-    }
-    if(!connected) canvas.style.display='none';
+      function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+      addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
+      const observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting)setCluster(Number(e.target.closest('.cluster-section').dataset.cluster))},{rootMargin:'-42% 0px -42% 0px'});document.querySelectorAll('.cluster-anchor').forEach(x=>observer.observe(x));
+    }catch(e){console.error('AN3 WebGL fallback',e);fallback()}
+    if(!reduce){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
   </script>
 </body>
 </html>
