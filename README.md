@@ -1,6 +1,6 @@
-# angecon-an3
+﻿# angecon-an3
 
-AN3 官网单页原型：方向二「内容即网络」。桌面以五个神经元簇承载五个内容章节，滚动驱动章节切换与镜头接近、环绕、俯冲和拉远。页面使用 WebGL 点云、突触脉冲 shader、玻璃 HUD 和开场网络生长；移动端使用 240 节点并关闭 Bloom，系统减少动态效果时停止生长、脉冲、呼吸与镜头动画。WebGL 不可用时显示可读的静态内容。原生页面滚动，不拦截滚轮或触摸输入。
+AN3 官网单页原型：方向二「内容即网络」。桌面以五个神经元簇承载五个内容章节，滚动驱动章节切换与镜头接近、环绕、俯冲和拉远。页面使用 WebGL 点云、突触脉冲 shader、玻璃 HUD 和开场网络生长；移动端使用 240 节点并关闭 Bloom，系统减少动态效果时默认静谧显示提示条，保留无位移的 7 秒微光呼吸，并可由用户主动开启本会话完整动效。WebGL 不可用时显示可读的静态内容。原生页面滚动，不拦截滚轮或触摸输入。
 
 ## 本地运行
 
@@ -24,8 +24,9 @@ node -e "require('http').createServer((q,s)=>require('fs').createReadStream('.'+
 
 ```js
 window.__AN3_STATS__
-// { nodes, lines, mobile, bloomOn, reducedMotion, fps,
-//   introDone, activeCluster, pulses, cam: [x, y, z] }
+// { nodes, lines, mobile, bloomOn, reducedMotion, motionEnabled,
+//   motionOverride, noticeShown, fps, introDone, activeCluster,
+//   pulses, cam: [x, y, z] }
 ```
 
 `activeCluster` 为 0–4；`pulses` 是活跃脉冲数量；`cam` 为相机位置；`fpsSamples` 保存最近 60 个每秒采样值。
