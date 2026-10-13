@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -9,7 +9,7 @@
   <link rel="icon" href="data:,">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
   <style>
-    :root{color-scheme:dark;--bg:#02060f;--green:#2de06a;--ink:#e9f1ed;--muted:#aab9b4;--mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-family:Inter,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);font-synthesis:none}*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--bg)}a{color:inherit;text-decoration:none}.scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#02060f}#network{display:block;width:100%;height:100%}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,6,15,.76),rgba(2,6,15,.24) 54%,rgba(2,6,15,.58)),linear-gradient(0deg,#02060f 0%,transparent 38%,rgba(2,6,15,.13));pointer-events:none}.fallback{display:none;position:absolute;inset:0;padding:30vh 8vw;z-index:2;background:radial-gradient(ellipse at 68% 45%,rgba(22,73,54,.34),transparent 50%),#02060f}.fallback h1{max-width:850px;font-size:clamp(42px,8vw,104px)}.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px 5.8vw;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(2,6,15,.42);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.14em;font-weight:650}.brand-mark{width:22px;height:22px;border:1px solid var(--green);border-radius:50%;position:relative}.brand-mark:before,.brand-mark:after{content:"";position:absolute;inset:5px -4px;border:1px solid rgba(45,224,106,.65);border-radius:50%;transform:rotate(58deg)}.brand-mark:after{transform:rotate(-58deg)}.nav{display:flex;gap:27px;font:10px var(--mono);letter-spacing:.035em;color:#c2ceca}.nav a:hover,.nav a:focus-visible{color:var(--green)}.nav-cta{color:var(--green);border:1px solid rgba(45,224,106,.45);padding:10px 14px}.hud{position:fixed;z-index:4;top:50%;left:8vw;width:min(450px,43vw);transform:translateY(-40%);padding:30px 34px 28px;border:1px solid rgba(117,220,159,.35);background:linear-gradient(135deg,rgba(5,18,25,.82),rgba(5,13,23,.67));backdrop-filter:blur(22px);box-shadow:0 0 36px rgba(45,224,106,.08),inset 0 0 28px rgba(62,133,111,.05);isolation:isolate;transition:opacity .35s,transform .45s}.hud:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.18;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(151,218,181,.11) 6px),linear-gradient(90deg,transparent 49.8%,rgba(45,224,106,.14) 50%,transparent 50.2%);pointer-events:none}.hud:after{content:"";position:absolute;top:-1px;left:22px;width:74px;height:1px;background:var(--green);box-shadow:0 0 12px var(--green)}.hud-head{display:flex;justify-content:space-between;align-items:center;color:var(--green);font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase}.live{display:flex;align-items:center;gap:7px;color:#acc5b7}.live i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.hud h1,.hud h2{margin:22px 0 17px;font-weight:500;font-size:clamp(38px,5vw,62px);line-height:1.1;letter-spacing:-.055em}.hud h1{font-size:clamp(46px,6.3vw,82px)}.hud h1 em,.hud h2 em{color:var(--green);font-style:normal}.hud p{margin:0;color:#d0dad5;font-size:15px;line-height:1.9;text-wrap:pretty}.hud-foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:16px;border-top:1px solid rgba(182,218,196,.16);color:#91a49a;font:10px var(--mono);letter-spacing:.06em}.hud-foot strong{color:var(--green);font-weight:400}.hud-link{color:var(--green);font:11px var(--mono)}.readout{position:fixed;z-index:3;right:5.8vw;bottom:34px;display:flex;gap:28px;color:#95a59e;font:9px var(--mono);letter-spacing:.08em}.readout b{display:block;margin-bottom:5px;color:var(--green);font-weight:400}.scroll-cue{position:fixed;right:5.7vw;top:44%;writing-mode:vertical-rl;color:#a3b0aa;font:9px var(--mono);letter-spacing:.16em}.scroll-cue:after{content:"";display:inline-block;width:1px;height:54px;margin-top:12px;background:linear-gradient(var(--green),transparent)}main{position:relative;z-index:1}.cluster-section{height:112svh;min-height:760px;position:relative;scroll-margin-top:0;pointer-events:none}.cluster-section:first-child{height:125svh;min-height:850px}.cluster-section:last-child{height:112svh}.cluster-anchor{position:absolute;top:42%;left:0;width:1px;height:1px}.progress{position:fixed;z-index:4;left:0;top:0;height:2px;width:0;background:var(--green);box-shadow:0 0 10px var(--green)}.fallback-panel{display:none;position:relative;z-index:1;min-height:100svh;padding:120px 8vw 80px;background:radial-gradient(ellipse at 70% 50%,rgba(18,58,45,.42),transparent 58%),#02060f}.fallback-panel .card{max-width:650px;padding:28px;background:rgba(6,18,24,.85);border:1px solid rgba(45,224,106,.38)}.footer{position:relative;z-index:2;min-height:180px;padding:42px 8vw;display:flex;justify-content:space-between;align-items:flex-start;background:rgba(2,6,15,.94);border-top:1px solid rgba(150,194,180,.15)}.footer-note{color:#aab9b4;font-size:12px;line-height:1.9}.footer-mark{color:var(--green);font:10px var(--mono);letter-spacing:.12em}.intro-cover{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#02060f;transition:opacity .5s,visibility .5s}.intro-cover.done{opacity:0;visibility:hidden}.intro-box{text-align:center}.intro-title{color:#e5eee9;font:12px var(--mono);letter-spacing:.2em}.intro-track{width:min(300px,68vw);height:1px;margin-top:20px;background:rgba(45,224,106,.18);overflow:hidden}.intro-track i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--green)}.intro-cover .intro-count{margin-top:12px;color:#7d9287;font:10px var(--mono)}@media(max-width:700px){.topbar{padding:16px 6vw}.nav{gap:0}.nav a:not(.nav-cta){display:none}.nav-cta{padding:9px 11px}.hud{top:auto;bottom:12vh;left:5vw;width:90vw;max-height:62vh;overflow:auto;transform:none;padding:22px 21px 18px}.hud h1{font-size:clamp(42px,12vw,64px);margin:15px 0 12px}.hud h2{font-size:clamp(34px,9vw,48px);margin:15px 0 12px}.hud p{font-size:14px;line-height:1.75}.hud-foot{margin-top:17px;padding-top:12px}.cluster-section{height:105svh;min-height:700px}.cluster-section:first-child{height:118svh;min-height:780px}.readout{left:5vw;right:auto;bottom:18px;gap:17px;font-size:8px}.scroll-cue{right:5vw;top:20%;font-size:8px}.footer{padding:34px 6vw;min-height:170px;flex-direction:column;gap:20px}.fallback-panel{padding:105px 6vw 50px}.fallback-panel .card{padding:22px}}
+    :root{color-scheme:dark;--bg:#02060f;--green:#2de06a;--ink:#e9f1ed;--muted:#aab9b4;--mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-family:Inter,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);font-synthesis:none}*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--bg)}a{color:inherit;text-decoration:none}.scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#02060f}#network{display:block;width:100%;height:100%}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,6,15,.76),rgba(2,6,15,.24) 54%,rgba(2,6,15,.58)),linear-gradient(0deg,#02060f 0%,transparent 38%,rgba(2,6,15,.13));pointer-events:none}.fallback{display:none;position:absolute;inset:0;padding:30vh 8vw;z-index:2;background:radial-gradient(ellipse at 68% 45%,rgba(22,73,54,.34),transparent 50%),#02060f}.fallback h1{max-width:850px;font-size:clamp(42px,8vw,104px)}.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px 5.8vw;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(2,6,15,.42);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.14em;font-weight:650}.nav{display:flex;gap:27px;font:10px var(--mono);letter-spacing:.035em;color:#c2ceca}.nav a:hover,.nav a:focus-visible{color:var(--green)}.nav-cta{color:var(--green);border:1px solid rgba(45,224,106,.45);padding:10px 14px}.hud{position:fixed;z-index:4;top:50%;left:8vw;width:min(450px,43vw);transform:translateY(-40%);padding:30px 34px 28px;border:1px solid rgba(117,220,159,.35);background:linear-gradient(135deg,rgba(5,18,25,.82),rgba(5,13,23,.67));backdrop-filter:blur(22px);box-shadow:0 0 36px rgba(45,224,106,.08),inset 0 0 28px rgba(62,133,111,.05);isolation:isolate;transition:opacity .35s,transform .45s}.hud:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.18;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(151,218,181,.11) 6px),linear-gradient(90deg,transparent 49.8%,rgba(45,224,106,.14) 50%,transparent 50.2%);pointer-events:none}.hud:after{content:"";position:absolute;top:-1px;left:22px;width:74px;height:1px;background:var(--green);box-shadow:0 0 12px var(--green)}.hud-head{display:flex;justify-content:space-between;align-items:center;color:var(--green);font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase}.live{display:flex;align-items:center;gap:7px;color:#acc5b7}.live i{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}.hud h1,.hud h2{margin:22px 0 17px;font-weight:500;font-size:clamp(38px,5vw,62px);line-height:1.1;letter-spacing:-.055em}.hud h1{font-size:clamp(46px,6.3vw,82px)}.hud h1 em,.hud h2 em{color:var(--green);font-style:normal}.hud p{margin:0;color:#d0dad5;font-size:15px;line-height:1.9;text-wrap:pretty}.hud-foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:16px;border-top:1px solid rgba(182,218,196,.16);color:#91a49a;font:10px var(--mono);letter-spacing:.06em}.hud-foot strong{color:var(--green);font-weight:400}.hud-link{color:var(--green);font:11px var(--mono)}.readout{position:fixed;z-index:3;right:5.8vw;bottom:34px;display:flex;gap:28px;color:#95a59e;font:9px var(--mono);letter-spacing:.08em}.readout b{display:block;margin-bottom:5px;color:var(--green);font-weight:400}.scroll-cue{position:fixed;right:5.7vw;top:44%;writing-mode:vertical-rl;color:#a3b0aa;font:9px var(--mono);letter-spacing:.16em}.scroll-cue:after{content:"";display:inline-block;width:1px;height:54px;margin-top:12px;background:linear-gradient(var(--green),transparent)}main{position:relative;z-index:1}.cluster-section{height:112svh;min-height:760px;position:relative;scroll-margin-top:0;pointer-events:none}.cluster-section:first-child{height:125svh;min-height:850px}.cluster-section:last-child{height:112svh}.cluster-anchor{position:absolute;top:42%;left:0;width:1px;height:1px}.progress{position:fixed;z-index:4;left:0;top:0;height:2px;width:0;background:var(--green);box-shadow:0 0 10px var(--green)}.fallback-panel{display:none;position:relative;z-index:1;min-height:100svh;padding:120px 8vw 80px;background:radial-gradient(ellipse at 70% 50%,rgba(18,58,45,.42),transparent 58%),#02060f}.fallback-panel .card{max-width:650px;padding:28px;background:rgba(6,18,24,.85);border:1px solid rgba(45,224,106,.38)}.footer{position:relative;z-index:2;min-height:180px;padding:42px 8vw;display:flex;justify-content:space-between;align-items:flex-start;background:rgba(2,6,15,.94);border-top:1px solid rgba(150,194,180,.15)}.footer-note{color:#aab9b4;font-size:12px;line-height:1.9}.footer-mark{color:var(--green);font:10px var(--mono);letter-spacing:.12em}.intro-cover{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#02060f;transition:opacity .5s,visibility .5s}.intro-cover.done{opacity:0;visibility:hidden}.intro-box{text-align:center}.intro-title{color:#e5eee9;font:12px var(--mono);letter-spacing:.2em}.intro-track{width:min(300px,68vw);height:1px;margin-top:20px;background:rgba(45,224,106,.18);overflow:hidden}.intro-track i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--green)}.intro-cover .intro-count{margin-top:12px;color:#7d9287;font:10px var(--mono)}@media(max-width:700px){.topbar{padding:16px 6vw}.nav{gap:0}.nav a:not(.nav-cta){display:none}.nav-cta{padding:9px 11px}.hud{top:auto;bottom:12vh;left:5vw;width:90vw;max-height:62vh;overflow:auto;transform:none;padding:22px 21px 18px}.hud h1{font-size:clamp(42px,12vw,64px);margin:15px 0 12px}.hud h2{font-size:clamp(34px,9vw,48px);margin:15px 0 12px}.hud p{font-size:14px;line-height:1.75}.hud-foot{margin-top:17px;padding-top:12px}.cluster-section{height:105svh;min-height:700px}.cluster-section:first-child{height:118svh;min-height:780px}.readout{left:5vw;right:auto;bottom:18px;gap:17px;font-size:8px}.scroll-cue{right:5vw;top:20%;font-size:8px}.footer{padding:34px 6vw;min-height:170px;flex-direction:column;gap:20px}.fallback-panel{padding:105px 6vw 50px}.fallback-panel .card{padding:22px}}
     .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,3,9,.16) 76%,rgba(0,2,8,.52) 125%)}
     .cursor-glow{position:fixed;z-index:3;left:0;top:0;width:180px;height:180px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(45,224,106,.10),rgba(45,224,106,.025) 32%,transparent 70%);transform:translate(-50%,-50%);transition:opacity .25s}
     .cluster-index{position:fixed;z-index:6;right:5.8vw;top:50%;display:grid;gap:9px;transform:translateY(-50%)}.cluster-index a{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:38px;color:#93a49b;font:10px var(--mono);opacity:.74;transition:color .2s,opacity .2s}.cluster-index a:after{content:"";width:7px;height:7px;border:1px solid #7b9085;border-radius:50%;transition:background .2s,box-shadow .2s}.cluster-index a.active,.cluster-index a:hover{color:var(--green);opacity:1}.cluster-index a.active:after{background:var(--green);border-color:var(--green);box-shadow:0 0 11px var(--green)}
@@ -21,32 +21,402 @@
     .motion-notice{position:fixed;z-index:12;top:14px;left:50%;width:min(680px,calc(100vw - 28px));transform:translateX(-50%);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px 12px 18px;border:1px solid rgba(117,220,159,.34);border-radius:10px;background:linear-gradient(135deg,rgba(7,24,29,.94),rgba(6,16,27,.9));backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 0 20px rgba(62,133,111,.05);color:#d0dad5;font-size:13px;line-height:1.5}.motion-notice[hidden]{display:none}.motion-notice-copy{min-width:0}.motion-notice-actions{display:flex;flex-shrink:0;gap:8px}.motion-notice button{min-height:36px;padding:7px 11px;border:1px solid rgba(117,220,159,.35);border-radius:6px;background:rgba(11,30,31,.78);color:#d9e8df;font:11px var(--mono);cursor:pointer}.motion-notice button:focus-visible{outline:2px solid var(--green);outline-offset:2px}.motion-notice .motion-enable{border-color:rgba(45,224,106,.62);color:var(--green)}.quiet-glow{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0}.quiet-glow:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 52% 47%,rgba(45,224,106,.035),transparent 57%);animation:quietBreath 7s ease-in-out infinite alternate}@keyframes quietBreath{from{opacity:.58}to{opacity:.78}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
     @media(max-width:520px){.motion-notice{top:10px;align-items:flex-start;flex-direction:column;gap:8px;padding:11px 12px}.motion-notice-actions{width:100%}.motion-notice button{flex:1}.motion-notice-copy{font-size:12px}}
+
+    /* M4a：DOM 命中与世界坐标同源；兜底在模块之前可读。 */
+    .static-network main,.static-network .hud,.static-network .readout,.static-network .cluster-index,.static-network .scroll-cue{display:none}
+    .static-network .fallback-panel{display:block}.static-network .scene{visibility:hidden}
+    #fallback-units article{padding:18px 0;border-top:1px solid rgba(45,224,106,.22)}#fallback-units h2{font-size:23px;font-weight:500}#fallback-units p{line-height:1.9;overflow-wrap:anywhere}
+    #unit-layer{position:fixed;inset:0;z-index:7;pointer-events:none;overflow:hidden}
+    .unit-button{position:absolute;width:48px;height:48px;padding:0;transform:translate(-50%,-50%);border:0;background:transparent;pointer-events:auto;cursor:pointer;color:var(--ink)}
+    .unit-button[hidden]{display:none}.unit-button:focus-visible{outline:2px solid var(--green);outline-offset:1px;border-radius:50%}
+    .unit-label{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);max-width:min(240px,calc(100vw - 24px));width:max-content;padding:7px 10px;border:1px solid rgba(45,224,106,.5);border-radius:5px;background:rgba(3,15,20,.95);font-size:12px;line-height:1.5;overflow-wrap:anywhere;visibility:hidden;opacity:0;pointer-events:none}
+    .unit-button.active .unit-label,.unit-button.selected .unit-label{visibility:visible;opacity:1}
+    #unit-leader{position:fixed;inset:0;width:100%;height:100%;z-index:21;pointer-events:none;overflow:hidden;display:none}#unit-leader line{stroke:#2de06a;stroke-width:1;opacity:.8}
+    .info-dialog{transition:none}.info-card{max-height:calc(100svh - 48px);overflow:auto;transition:transform .18s}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
+    .intro-cover{display:none}#intro-skip{position:fixed;top:90px;right:6vw;z-index:11;padding:8px 12px;border:1px solid rgba(45,224,106,.35);background:#02060f;color:var(--green);cursor:pointer}#intro-skip[hidden]{display:none}
+    @media(max-width:700px){.brand{font-size:11px;letter-spacing:.04em}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-height:calc(100svh - 32px)}}
   </style>
 </head>
-<body>
+<body class="static-network">
   <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
   <aside class="motion-notice" id="motion-notice" aria-label="减少动态效果设置提示" hidden><div class="motion-notice-copy">检测到系统&quot;减少动态效果&quot;，已为您简化动画</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">开启完整动效</button><button id="motion-dismiss" type="button">知道了</button></div></aside>
   <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div><div class="cluster-title" id="cluster-title" aria-live="polite"></div>
-  <div class="intro-cover" id="intro"><div class="intro-box"><div class="intro-title">NETWORK ASSEMBLY</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">INITIALIZING</div></div></div>
-  <div class="progress" id="progress"></div>
-  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康首页"><span class="brand-mark"></span><span>安集协康</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a class="nav-cta" href="#contact">关注我们 ↗</a></nav></header>
+  <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">NETWORK ASSEMBLY</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">INITIALIZING</div></div></div>
+  <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="关于我们内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
+  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康首页"><span>安集协康 / ANGECON</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a class="nav-cta" href="#contact">关注我们 ↗</a></nav></header>
   <aside class="hud" id="hud"><div class="hud-head"><span>NEURAL NETWORK / RESEARCH</span><span class="live"><i></i><span id="hud-state">NETWORK ACTIVE</span></span></div><div id="hud-body"><h1>安集协康<br><em>神经干细胞</em></h1><p>从事细胞研发、生产、存储及服务的高新技术企业，专注于人源神经干细胞药物研发与临床转化。</p></div><div class="hud-foot"><span><strong>窥探研究网络</strong> / SCROLL TO EXPLORE</span><span class="hud-link">SELECT A SIGNAL ↗</span></div></aside>
   <div class="scroll-cue">SCROLL TO TRACE THE NETWORK</div>
   <div class="readout"><div><b id="readout-nodes">800</b>NODES</div><div><b id="readout-lines">LINKED</b>SYNAPSES</div><div><b id="readout-pulse">SIGNAL</b>ACTIVITY</div></div>
   <main id="top">
-    <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span><button class="info-point" style="--x:57%;--y:35%" data-label="企业介绍" data-index="0" aria-label="打开企业介绍信息">企业介绍</button><button class="info-point" style="--x:72%;--y:53%" data-label="研发方向" data-index="1" aria-label="打开研发方向信息">研发方向</button><button class="info-point" style="--x:52%;--y:69%" data-label="发展愿景" data-index="2" aria-label="打开发展愿景信息">发展愿景</button></section>
+    <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span></section>
     <section class="cluster-section" id="technology" data-cluster="1"><span class="cluster-anchor"></span><button class="info-point" style="--x:60%;--y:34%" data-label="细胞库构建" data-index="3" aria-label="打开细胞库构建信息">细胞库构建</button><button class="info-point" style="--x:77%;--y:54%" data-label="CMC生产" data-index="4" aria-label="打开CMC生产信息">CMC生产</button><button class="info-point" style="--x:56%;--y:72%" data-label="质量控制" data-index="5" aria-label="打开质量控制信息">质量控制</button><button class="info-point" style="--x:39%;--y:48%" data-label="非临床评价" data-index="6" aria-label="打开非临床评价信息">非临床评价</button></section>
     <section class="cluster-section" id="pipeline" data-cluster="2"><span class="cluster-anchor"></span><button class="info-point" style="--x:61%;--y:31%" data-label="研发管线" data-index="7" aria-label="打开研发管线信息">研发管线</button><button class="info-point" style="--x:76%;--y:52%" data-label="神经系统疾病" data-index="8" aria-label="打开神经系统疾病信息">神经系统疾病</button><button class="info-point" style="--x:55%;--y:71%" data-label="管线布局" data-index="9" aria-label="打开管线布局信息">管线布局</button></section>
     <section class="cluster-section" id="science" data-cluster="3"><span class="cluster-anchor"></span><button class="info-point" style="--x:60%;--y:33%" data-label="药理研究" data-index="10" aria-label="打开药理研究信息">药理研究</button><button class="info-point" style="--x:76%;--y:54%" data-label="安全性评价" data-index="11" aria-label="打开安全性评价信息">安全性评价</button><button class="info-point" style="--x:53%;--y:72%" data-label="研究数据" data-index="12" aria-label="打开研究数据信息">研究数据</button></section>
     <section class="cluster-section" id="contact" data-cluster="4"><span class="cluster-anchor"></span><button class="info-point" style="--x:60%;--y:34%" data-label="关注我们" data-index="13" aria-label="打开关注我们信息">关注我们</button><button class="info-point" style="--x:76%;--y:53%" data-label="安集协康" data-index="14" aria-label="打开安集协康信息">安集协康</button><button class="info-point" style="--x:53%;--y:71%" data-label="研究网络" data-index="15" aria-label="打开研究网络信息">研究网络</button></section>
   </main>
   <nav class="cluster-index" aria-label="分区索引"><a href="#company" data-index="0">关于我们</a><a href="#technology" data-index="1">技术平台</a><a href="#pipeline" data-index="2">研发管线</a><a href="#science" data-index="3">科学数据</a><a href="#contact" data-index="4">关注我们</a></nav>
-  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="hud-head">NETWORK INTERFACE</div><h1>安集协康神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><p><a href="/about/company/">查看公司介绍 ↗</a></p></div></div>
-  <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><h2 id="info-title"></h2><p id="info-body"></p></article></div>
-  <footer class="footer"><div><div class="brand"><span class="brand-mark"></span><span>安集协康</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="hud-head">NETWORK INTERFACE</div><h1>安集协康神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
+  <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><h2 id="info-title"></h2><p id="info-body"></p><p class="info-foot">完整内容见公众号</p></article></div>
+  <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+
+  <script>
+    const CONTENT_UNITS = [
+  {
+    "id": "1-1",
+    "sectionId": "about",
+    "title": "公司概况",
+    "body": "上海安集协康生物技术股份有限公司 2010 年 2 月创立，专注人源神经干细胞（hNSC）药物研发与临床转化；拥有符合 GMP 标准的细胞生产基地、研发中心与细胞检测中心。",
+    "sourceIds": [
+      "AN1:安集介绍"
+    ],
+    "seed": 3101,
+    "anchor": [
+      -44,
+      15,
+      -2
+    ]
+  },
+  {
+    "id": "1-2",
+    "sectionId": "about",
+    "title": "十六年之路",
+    "body": "2010 年创立 → 2016 年获国内首张生物样本库合格证书 → 2022 年脊髓损伤临床研究项目备案 → 2025 年 FDA DMF Ⅱ型备案 · INCI 名称 → 2026 年三适应症获 FDA 临床试验许可（以官方发布为准）。",
+    "sourceIds": [
+      "AN1:发展历程"
+    ],
+    "seed": 3238,
+    "anchor": [
+      -33,
+      21,
+      -6
+    ]
+  },
+  {
+    "id": "1-3",
+    "sectionId": "about",
+    "title": "科学家传承",
+    "body": "三代师承：Sally Temple 博士首次发现神经干细胞（1989）；其学生沈沁发现神经干细胞微环境机制并创立安集；沈沁的学生孙希财深耕迁移调控与临床转化，现任公司 CTO。",
+    "sourceIds": [
+      "AN1:安集介绍"
+    ],
+    "seed": 3375,
+    "anchor": [
+      -25,
+      12,
+      0
+    ]
+  },
+  {
+    "id": "1-4",
+    "sectionId": "about",
+    "title": "资质与荣誉",
+    "body": "高新技术企业（2024）· 上海市专精特新中小企业（2023）· 科技型中小企业（2025）· 全国生物样本标准化技术委员会 TC559 委员单位（2015）· 上海市浦东新区博士后创新实践基地（2023）。",
+    "sourceIds": [
+      "AN1:资质荣誉",
+      "资料库:第7栏"
+    ],
+    "seed": 3512,
+    "anchor": [
+      -30,
+      3,
+      -4
+    ]
+  },
+  {
+    "id": "1-5",
+    "sectionId": "about",
+    "title": "安库生医",
+    "body": "上海安库生医生物科技有限公司成立于 2017 年 10 月，为安集协康全资子公司；聚焦细胞及其小细胞外囊泡技术的研发与应用，依托母公司平台资源开展技术服务。",
+    "sourceIds": [
+      "AN1:安库生医"
+    ],
+    "seed": 3649,
+    "anchor": [
+      -43,
+      1,
+      1
+    ]
+  },
+  {
+    "id": "2-1",
+    "sectionId": "technology",
+    "title": "神经干细胞药品开发平台",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 2000,
+    "anchor": [
+      28,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-2",
+    "sectionId": "technology",
+    "title": "生物样本库",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 2137,
+    "anchor": [
+      32,
+      21,
+      -53
+    ]
+  },
+  {
+    "id": "2-3",
+    "sectionId": "technology",
+    "title": "神经干细胞外泌体平台",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 2274,
+    "anchor": [
+      36,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-4",
+    "sectionId": "technology",
+    "title": "质量与标准",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 2411,
+    "anchor": [
+      40,
+      21,
+      -53
+    ]
+  },
+  {
+    "id": "3-1",
+    "sectionId": "pipeline",
+    "title": "管线总览",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 3000,
+    "anchor": [
+      -4,
+      -18,
+      -98
+    ]
+  },
+  {
+    "id": "3-2",
+    "sectionId": "pipeline",
+    "title": "帕金森病",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 3137,
+    "anchor": [
+      0,
+      -13,
+      -98
+    ]
+  },
+  {
+    "id": "3-3",
+    "sectionId": "pipeline",
+    "title": "脊髓损伤",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 3274,
+    "anchor": [
+      4,
+      -18,
+      -98
+    ]
+  },
+  {
+    "id": "3-4",
+    "sectionId": "pipeline",
+    "title": "脑卒中·小儿脑瘫",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 3411,
+    "anchor": [
+      8,
+      -13,
+      -98
+    ]
+  },
+  {
+    "id": "3-5",
+    "sectionId": "pipeline",
+    "title": "AD 与外泌体管线",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 3548,
+    "anchor": [
+      12,
+      -18,
+      -98
+    ]
+  },
+  {
+    "id": "4-1",
+    "sectionId": "science",
+    "title": "发表文章",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 4000,
+    "anchor": [
+      -44,
+      15,
+      -142
+    ]
+  },
+  {
+    "id": "4-2",
+    "sectionId": "science",
+    "title": "ANGE-S003 研究",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 4137,
+    "anchor": [
+      -40,
+      20,
+      -142
+    ]
+  },
+  {
+    "id": "4-3",
+    "sectionId": "science",
+    "title": "备案与监管进展",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 4274,
+    "anchor": [
+      -36,
+      15,
+      -142
+    ]
+  },
+  {
+    "id": "4-4",
+    "sectionId": "science",
+    "title": "研究积淀",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 4411,
+    "anchor": [
+      -32,
+      20,
+      -142
+    ]
+  },
+  {
+    "id": "5-1",
+    "sectionId": "contact",
+    "title": "关注公众号",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 5000,
+    "anchor": [
+      35,
+      0,
+      -190
+    ]
+  },
+  {
+    "id": "5-2",
+    "sectionId": "contact",
+    "title": "合作方向",
+    "body": "",
+    "sourceIds": [
+      "AN3:内容架构与文案重排方案-v1:待定稿"
+    ],
+    "seed": 5137,
+    "anchor": [
+      39,
+      5,
+      -190
+    ]
+  }
+];
+    window.CONTENT_UNITS=CONTENT_UNITS;
+    (()=>{
+      const active=CONTENT_UNITS.filter(u=>u.sectionId==='about'),layer=document.querySelector('#unit-layer');
+      const dialog=document.querySelector('#info-dialog'),close=document.querySelector('#info-close');
+      const controller={hover:null,selected:null,hoverAt:0,lastInput:performance.now(),idleNode:-1,idleAt:0,nextIdle:0,ready:false,motion:false};
+      window.__UNIT_CONTROL__=controller;
+      window.__NET_STATS__={nodes:0,lines:0,mobile:matchMedia('(max-width:700px), (pointer:coarse)').matches,bloomOn:false,reducedMotion:matchMedia('(prefers-reduced-motion:reduce)').matches,motionEnabled:false,motionOverride:false,noticeShown:false,fps:0,fpsSamples:[],introDone:true,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled:false,gaze:[0,0],clusterFocus:0,proximity:0,clusters:[],unitsActive:0,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:true};
+      controller.sync=()=>{Object.assign(window.__NET_STATS__,{unitHover:controller.hover,unitSelected:controller.selected,transmission:null,idlePulse:null})};
+      const setHover=id=>{if(controller.selected)return;if(controller.hover!==id){controller.hover=id;controller.hoverAt=performance.now()}controller.buttons.forEach((b,key)=>b.classList.toggle('active',key===id));controller.sync()};
+      controller.clearHover=()=>setHover(null);
+      controller.buttons=new Map();
+      active.forEach(unit=>{
+        const article=document.createElement('article'),title=document.createElement('h2'),body=document.createElement('p');
+        article.dataset.unitId=unit.id;title.textContent=unit.title;body.textContent=unit.body;article.append(title,body);document.querySelector('#fallback-units').append(article);
+        const b=document.createElement('button'),label=document.createElement('span');b.type='button';b.className='unit-button';b.dataset.unitId=unit.id;b.setAttribute('aria-label',`阅读${unit.title}`);b.setAttribute('aria-haspopup','dialog');b.hidden=true;label.className='unit-label';label.textContent=unit.title;b.append(label);layer.append(b);controller.buttons.set(unit.id,b);
+        b.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')setHover(unit.id)});
+        b.addEventListener('pointerleave',()=>{if(document.activeElement!==b)setHover(null)});
+        b.addEventListener('focus',()=>setHover(unit.id));b.addEventListener('blur',()=>{if(controller.hover===unit.id)setHover(null)});
+        b.addEventListener('click',()=>controller.open(unit.title,unit.body,b,unit.id));
+      });
+      let trigger=null,scrollPosition=0,priorOverflow='',priorPadding='';
+      controller.open=(title,body,b,id=null)=>{
+        if(controller.selected||dialog.classList.contains('open'))return;
+        controller.clearHover();controller.selected=id;controller.idleNode=-1;trigger=b;scrollPosition=scrollY;
+        document.querySelector('#info-title').textContent=title;document.querySelector('#info-body').textContent=body;
+        const card=document.querySelector('.info-card');card.style.position='';card.style.left='';card.style.top='';
+        priorOverflow=document.body.style.overflow;priorPadding=document.body.style.paddingRight;
+        const gap=innerWidth-document.documentElement.clientWidth;document.body.style.paddingRight=`${gap}px`;document.body.style.overflow='hidden';
+        dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');layer.inert=true;document.querySelector('main').inert=true;document.querySelector('.topbar').inert=true;document.querySelector('.cluster-index').inert=true;document.querySelector('.footer').inert=true;
+        controller.buttons.forEach((button,key)=>button.classList.toggle('selected',key===id));controller.sync();close.focus({preventScroll:true});
+      };
+      controller.close=()=>{
+        if(!dialog.classList.contains('open'))return;
+        controller.selected=null;dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');document.querySelector('#unit-leader').style.display='none';
+        document.body.style.overflow=priorOverflow;document.body.style.paddingRight=priorPadding;layer.inert=false;document.querySelector('main').inert=false;document.querySelector('.topbar').inert=false;document.querySelector('.cluster-index').inert=false;document.querySelector('.footer').inert=false;
+        controller.buttons.forEach(b=>b.classList.remove('selected'));controller.lastInput=performance.now();controller.idleNode=-1;controller.sync();
+        // 焦点回原触发点；preventScroll 避免浏览器定位按钮改变阅读位置。
+        trigger?.focus({preventScroll:true});if(scrollY!==scrollPosition)scrollTo({top:scrollPosition,behavior:'instant'});
+      };
+      close.addEventListener('click',controller.close);dialog.addEventListener('click',e=>{if(e.target===dialog)controller.close()});
+      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){e.preventDefault();close.focus({preventScroll:true})}});
+      const input=()=>{controller.lastInput=performance.now();controller.idleNode=-1;controller.nextIdle=controller.lastInput+6000;window.__NET_STATS__.idlePulse=null;controller.skipIntro?.()};
+      for(const event of ['pointermove','pointerdown','keydown','wheel','touchstart','scroll','focusin'])addEventListener(event,input,{passive:true});
+      document.addEventListener('visibilitychange',()=>{input();if(document.hidden)controller.clearHover()});
+      document.querySelector('#intro-skip').addEventListener('click',()=>controller.skipIntro?.());
+      controller.fail=()=>{controller.ready=false;document.body.classList.add('static-network');controller.buttons.forEach(b=>b.hidden=true);document.querySelector('#intro-skip').hidden=true;Object.assign(window.__NET_STATS__,{fallback:true,unitsActive:0,introDone:true,unitHover:null,transmission:null,idlePulse:null})};
+    })();
+  </script>
   <script type="module">
-    import * as THREE from './vendor/three.module.js';
+    const THREE=await import('./vendor/three.module.js').catch(()=>null);
+    if(!THREE){window.__UNIT_CONTROL__.fail()}
+    if(THREE){
+    const unitControl=window.__UNIT_CONTROL__;
 
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const motionChoiceKey='network-motion-choice-v1';
@@ -79,10 +449,7 @@
       ['关注我们','通过安集协康官方渠道了解研究与技术平台动态。'],['安集协康','上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务。'],['研究网络','五个分区呈现公司介绍、技术平台、研发管线、科学数据与关注信息。']
     ];
     const infoDialog=document.querySelector('#info-dialog'),infoTitle=document.querySelector('#info-title'),infoBody=document.querySelector('#info-body');
-    let priorOverflow='',lastInfoTrigger=null;
-    function closeInfo(){if(!infoDialog.classList.contains('open'))return;infoDialog.classList.remove('open');infoDialog.setAttribute('aria-hidden','true');document.body.style.overflow=priorOverflow;lastInfoTrigger?.focus();}
-    document.querySelectorAll('.info-point').forEach(button=>button.addEventListener('click',()=>{const [title,body]=infoItems[Number(button.dataset.index)];infoTitle.textContent=title;infoBody.textContent=body;lastInfoTrigger=button;priorOverflow=document.body.style.overflow;document.body.style.overflow='hidden';infoDialog.classList.add('open');infoDialog.setAttribute('aria-hidden','false');document.querySelector('#info-close').focus()}));
-    document.querySelector('#info-close').addEventListener('click',closeInfo);infoDialog.addEventListener('click',e=>{if(e.target===infoDialog)closeInfo()});addEventListener('keydown',e=>{if(e.key==='Escape')closeInfo()});
+    document.querySelectorAll('.info-point').forEach(button=>button.addEventListener('click',()=>{const [title,body]=infoItems[Number(button.dataset.index)];unitControl.open(title,body,button)}));
     document.querySelectorAll('.cluster-index a').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',link.getAttribute('href'))}));
     const clusterTitle=document.querySelector('#cluster-title');
     const edgeSet=new Set(),edgePairs=[];
@@ -106,41 +473,129 @@
     function setCluster(c){if(c===activeCluster)return;activeCluster=c;document.querySelector('#readout-pulse').textContent='SIGNAL';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));clusterTitle.textContent=clusterNames[c];clusterTitle.classList.add('visible');clearTimeout(clusterTitle.hideTimer);clusterTitle.hideTimer=setTimeout(()=>clusterTitle.classList.remove('visible'),1800);if(stats)stats.activeCluster=c;}
     function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
     addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
-    function fallback(){document.querySelector('#fallback').style.display='block';document.querySelector('#fallback-content').style.display='block';document.querySelector('#hud').style.display='none';document.querySelector('.readout').style.display='none';stats={nodes:0,lines:0,mobile,bloomOn:false,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,introDone:true,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled:false,gaze:[0,0]};window.__NET_STATS__=stats;introDone=true;document.querySelector('#intro').classList.add('done');}
+    function fallback(){unitControl.fail();introDone=true;stats=window.__NET_STATS__;Object.assign(stats,{nodes:0,lines:0,mobile,bloomOn:false,gazeEnabled:false,introDone:true});}
+    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer?.setAnimationLoop(null);fallback()});
     try{
       renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x02060f,1);
-      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0012);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(0,0,60);const gazeRig=new THREE.Group();scene.add(gazeRig);gazeRig.add(camera);
-      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));pg.setAttribute('aCluster',new THREE.BufferAttribute(clusterIds,1));pg.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));pg.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));pg.setAttribute('aColor',new THREE.BufferAttribute(nodeColors,3));
-      const pmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uGrow:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uActive:{value:0},uFocus:{value:0},uPixelRatio:{value:Math.min(devicePixelRatio||1,mobile?1.15:1.5)}},vertexShader:`attribute float aSeed,aCluster,aSize,aPhase;attribute vec3 aColor;uniform float uTime,uGrow,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uActive,uFocus,uPixelRatio;varying vec3 vColor;varying float vLight;void main(){float grow=smoothstep(aSeed*.82,aSeed*.82+.18,uGrow);vec3 p=position; p.xy*=.08+.92*grow;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float d=abs(aCluster-uPulseNode[i]);pulse=max(pulse,uPulse[i]*exp(-d*1.7));}}float focus=1.+uFocus*(.22+max(0.,1.-abs(aCluster-uActive))*1.15);float breath=1.+sin(uTime*.72+aPhase)*.09*uMotion;vLight=(.55+max(0.,sin(uTime*.25+aPhase))*.14+ pulse*2.1)*breath*focus;vColor=aColor;gl_PointSize=clamp(aSize*(1.+pulse*3.+uFocus*max(0.,1.-abs(aCluster-uActive))*.55)*uPixelRatio*(120./max(1.,-mv.z)),1.,14.);}`,
+      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0012);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(-34,11,mobile?62:36);camera.lookAt(-34,11,-5);const gazeRig=new THREE.Group();scene.add(gazeRig);gazeRig.add(camera);
+      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aNode',new THREE.Float32BufferAttribute(Array.from({length:N},(_,i)=>i),1));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));pg.setAttribute('aCluster',new THREE.BufferAttribute(clusterIds,1));pg.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));pg.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));pg.setAttribute('aColor',new THREE.BufferAttribute(nodeColors,3));
+      const pmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uGrow:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uActive:{value:0},uFocus:{value:0},uPixelRatio:{value:Math.min(devicePixelRatio||1,mobile?1.15:1.5)}},vertexShader:`attribute float aSeed,aCluster,aSize,aPhase,aNode;attribute vec3 aColor;uniform float uTime,uGrow,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uActive,uFocus,uPixelRatio;varying vec3 vColor;varying float vLight;void main(){float grow=smoothstep(aSeed*.82,aSeed*.82+.18,uGrow);vec3 p=position; p.xy*=.08+.92*grow;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float d=abs(aNode-uPulseNode[i]);pulse=max(pulse,uPulse[i]*(1.-step(.1,d)));}}float focus=1.+uFocus*(.22+max(0.,1.-abs(aCluster-uActive))*1.15);float breath=1.+sin(uTime*.72+aPhase)*.09*uMotion;vLight=(.55+max(0.,sin(uTime*.25+aPhase))*.14+ pulse*2.1)*breath*focus;vColor=aColor;gl_PointSize=clamp(aSize*(1.+pulse*3.+uFocus*max(0.,1.-abs(aCluster-uActive))*.55)*uPixelRatio*(120./max(1.,-mv.z)),1.,14.);}`,
         fragmentShader:`varying vec3 vColor;varying float vLight;void main(){vec2 q=gl_PointCoord-.5;float d=length(q);if(d>.5)discard;float core=smoothstep(.24,.02,d);float halo=exp(-d*12.);gl_FragColor=vec4(vColor*(.72+core*1.6+halo*.45)*vLight,core*.9+halo*.24);}`});points=new THREE.Points(pg,pmat);scene.add(points);
       const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.BufferAttribute(linePositions,3));lg.setAttribute('aNode',new THREE.BufferAttribute(lineIds,1));lg.setAttribute('aPhase',new THREE.BufferAttribute(linePhases,1));lg.setAttribute('aColor',new THREE.BufferAttribute(lineColors,3));
-      const lmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uIntro:{value:0},uActive:{value:0},uFocus:{value:0},uPer:{value:per}},vertexShader:`attribute float aNode,aPhase;attribute vec3 aColor;uniform float uTime,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uIntro,uActive,uFocus,uPer;varying vec3 vColor;varying float vSignal,vDepth,vFocus;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float hop=abs(aNode-uPulseNode[i]);pulse=max(pulse,uPulse[i]*exp(-hop*.008));}}vSignal=pulse;float nodeCluster=floor(aNode/uPer);vFocus=max(0.,1.-abs(nodeCluster-uActive));vDepth=clamp((-mv.z-20.)/170.,0.,1.);vColor=aColor;}`,
+      const lmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:reduce?0:1},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uIntro:{value:0},uActive:{value:0},uFocus:{value:0},uPer:{value:per}},vertexShader:`attribute float aNode,aPhase;attribute vec3 aColor;uniform float uTime,uMotion,uPulse[8],uPulseNode[8],uPulseCount,uIntro,uActive,uFocus,uPer;varying vec3 vColor;varying float vSignal,vDepth,vFocus;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;float pulse=0.;for(int i=0;i<8;i++){if(float(i)<uPulseCount){float hop=abs(aNode-uPulseNode[i]);pulse=max(pulse,uPulse[i]*(1.-step(.1,hop)));}}vSignal=pulse;float nodeCluster=floor(aNode/uPer);vFocus=max(0.,1.-abs(nodeCluster-uActive));vDepth=clamp((-mv.z-20.)/170.,0.,1.);vColor=aColor;}`,
         fragmentShader:`uniform float uTime,uMotion,uIntro,uFocus;varying vec3 vColor;varying float vSignal,vDepth,vFocus;void main(){float flicker=.88+.12*sin(uTime*1.9+gl_FragCoord.x*.04)*uMotion;float wave=pow(max(0.,1.-abs(fract(gl_FragCoord.x*.0025+gl_FragCoord.y*.004+vColor.r+uTime*.25)-.5)*2.),18.)*uMotion;float a=(.10+vDepth*.12+vSignal*.68+wave*.2+vFocus*uFocus*.18)*flicker*uIntro;gl_FragColor=vec4(vColor*(.48+vSignal*2.+wave*.6+vFocus*uFocus*.72),a);}`});const lines=new THREE.LineSegments(lg,lmat);scene.add(lines);
       const bloomOn=!mobile;
       if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .52 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
-      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,clusters:infoItems};stats=state;window.__NET_STATS__=stats;
+      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,clusters:infoItems,unitsActive:5,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
       function burst(now){const c=activeCluster,start=Math.floor(c*per),end=Math.min(N,start+per),idx=start+Math.floor(Math.random()*(end-start));pulses.unshift({node:idx,cluster:c,at:now,life:2.4,strength:rand(.8,1.25)});pulses=pulses.slice(0,8);document.querySelector('#readout-pulse').textContent='BURST';}
-      let introTimer=null;
-      function startIntro(){if(introDone)return;clearTimeout(introTimer);document.querySelector('#intro').classList.remove('done');introTimer=setTimeout(()=>{const start=performance.now();const grow=()=>{if(!motionEnabled)return;const t=Math.min(1,(performance.now()-start)/2050);pmat.uniforms.uGrow.value=t;lmat.uniforms.uIntro.value=t;document.querySelector('#intro-progress').style.transform=`scaleX(${t})`;document.querySelector('#intro-count').textContent=`${Math.round(N*t)} / ${N} NODES`;if(t<1)requestAnimationFrame(grow);else{introDone=true;stats.introDone=true;document.querySelector('#intro').classList.add('done')}};requestAnimationFrame(grow)},100)}; if(motionEnabled)startIntro();
-      else {pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1;introDone=true;stats.introDone=true;document.querySelector('#intro').classList.add('done');}
+
+      // 三次主场景绘制：胞体/内核实例、细环实例、合批树突带。
+      const aboutUnits=CONTENT_UNITS.filter(u=>u.sectionId==='about');
+      const unitWorld=aboutUnits.map(u=>new THREE.Vector3(...u.anchor));
+      function seeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
+      const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false});
+      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,10);
+      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(1.18,.025,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),5);
+      const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.4);
+      aboutUnits.forEach((unit,i)=>{const rng=seeded(unit.seed);dummy.position.copy(unitWorld[i]);dummy.rotation.set(rng()*.4,rng()*.4,rng()*Math.PI);dummy.scale.set(.65+rng()*.16,.55+rng()*.2,.46);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+5,dummy.matrix);dummy.rotation.set(0,0,0);dummy.scale.setScalar(.9);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+5,green);rings.setColorAt(i,green)});
+      scene.add(somas,rings);
+      const treePositions=[],treeUnits=[],treeDistances=[],treeSignals=[],paths=[];
+      function ribbon(points,width,id,signal){
+        const cumulative=[0];for(let j=1;j<points.length;j++)cumulative.push(cumulative[j-1]+points[j].distanceTo(points[j-1]));
+        const total=cumulative.at(-1);if(signal)paths[id]={points:points.map(p=>p.clone()),distances:cumulative,total};
+        for(let j=0;j<points.length-1;j++){
+          const a=points[j],b=points[j+1],tangent=b.clone().sub(a).normalize(),normal=new THREE.Vector3(-tangent.y,tangent.x,0);
+          const wa=width*(1-.8*j/(points.length-1)),wb=width*(1-.8*(j+1)/(points.length-1));
+          const vertices=[a.clone().addScaledVector(normal,wa),a.clone().addScaledVector(normal,-wa),b.clone().addScaledVector(normal,wb),b.clone().addScaledVector(normal,wb),a.clone().addScaledVector(normal,-wa),b.clone().addScaledVector(normal,-wb)];
+          vertices.forEach((v,k)=>{treePositions.push(v.x,v.y,v.z);treeUnits.push(id);treeDistances.push(cumulative[k===0||k===1||k===4?j:j+1]/total);treeSignals.push(signal?1:0)});
+        }
+      }
+      aboutUnits.forEach((unit,id)=>{
+        const rng=seeded(unit.seed),origin=unitWorld[id],segments=mobile?6:12,roots=mobile?4:5;
+        function branch(start,angle,length,depth,signal=false){
+          const end=start.clone().add(new THREE.Vector3(Math.cos(angle)*length,Math.sin(angle)*length,(rng()-.5)*.6));
+          const bend=(rng()-.5)*length*.35,points=[];
+          for(let j=0;j<=segments;j++){const t=j/segments;points.push(start.clone().lerp(end,t).add(new THREE.Vector3(-Math.sin(angle)*Math.sin(t*Math.PI)*bend,Math.cos(angle)*Math.sin(t*Math.PI)*bend,0)))}
+          ribbon(points,.065*Math.pow(.6,depth),id,signal);
+          if(depth<2){branch(end,angle+.35+rng()*.32,length*.58,depth+1);branch(end,angle-.35-rng()*.32,length*.58,depth+1)}
+        }
+        for(let r=0;r<roots;r++)branch(origin,(r/roots)*Math.PI*2+rng()*.3,2.1+rng()*.9,0,r===0);
+        // 较长轴突独立于三层树突分叉。
+        const angle=Math.PI*1.45+rng()*.5,axon=[];
+        for(let j=0;j<=segments;j++){const t=j/segments;axon.push(origin.clone().add(new THREE.Vector3(Math.cos(angle)*t*7+Math.sin(t*5)*.25,Math.sin(angle)*t*7,t*.5)))}
+        ribbon(axon,.045,id,false);
+      });
+      const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.Float32BufferAttribute(treePositions,3));tg.setAttribute('aUnit',new THREE.Float32BufferAttribute(treeUnits,1));tg.setAttribute('aDistance',new THREE.Float32BufferAttribute(treeDistances,1));tg.setAttribute('aSignal',new THREE.Float32BufferAttribute(treeSignals,1));
+      const treeMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uReveal:{value:0},uHover:{value:-1},uSelected:{value:-1},uPhase:{value:-1}},vertexShader:`attribute float aUnit,aDistance,aSignal;varying float vUnit,vDistance,vSignal;void main(){vUnit=aUnit;vDistance=aDistance;vSignal=aSignal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uReveal,uHover,uSelected,uPhase;varying float vUnit,vDistance,vSignal;void main(){float selected=1.-step(.1,abs(vUnit-uSelected));float hovered=(1.-step(.1,abs(vUnit-uHover)))*(1.-step(0.,uSelected));float light=hovered*vSignal*(1.-smoothstep(.015,.12,abs(vDistance-uPhase)))*step(0.,uPhase);float reveal=smoothstep(vDistance-.08,vDistance+.08,uReveal);gl_FragColor=vec4(vec3(.1764706,.8784314,.4156863)*(.6+light*1.4+selected*.4),(.34+light*.65+selected*.3)*reveal);}`});
+      const trees=new THREE.Mesh(tg,treeMaterial);scene.add(trees);
+      Object.assign(stats,{unitDrawCalls:3,unitTreeTriangles:treePositions.length/9,unitPaths:paths.map((p,i)=>({id:aboutUnits[i].id,length:p.total,distances:p.distances})),unitAnchors:aboutUnits.map(u=>({id:u.id,anchor:u.anchor,seed:u.seed})),introDone:false});
+      let introStarted=performance.now();
+      unitControl.skipIntro=()=>{introDone=true;stats.introDone=true;pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1;treeMaterial.uniforms.uReveal.value=1;document.querySelector('#intro-skip').hidden=true};
+      function startIntro(){if(introDone)return;introStarted=performance.now();document.querySelector('#intro-skip').hidden=false}
+      if(motionEnabled)startIntro();else unitControl.skipIntro();
+      const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
+      const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
+      let previousHighlight=-2;
+      function updateUnits(now){
+        if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}
+        const hover=aboutUnits.findIndex(u=>u.id===unitControl.hover),selected=aboutUnits.findIndex(u=>u.id===unitControl.selected),highlight=selected>=0?selected:hover;
+        treeMaterial.uniforms.uHover.value=hover;treeMaterial.uniforms.uSelected.value=selected;
+        const age=now-unitControl.hoverAt,phase=motionEnabled&&!document.hidden&&selected<0&&hover>=0&&age>=80&&age<=240?1-(age-80)/160:-1;
+        treeMaterial.uniforms.uPhase.value=phase;stats.transmission=phase>=0?{id:aboutUnits[hover].id,phase,distance:phase*paths[hover].total}:null;
+        stats.unitHover=unitControl.hover;stats.unitSelected=unitControl.selected;
+        if(highlight!==previousHighlight){aboutUnits.forEach((u,i)=>{somas.setColorAt(i,i===highlight?green:dimGreen);rings.setColorAt(i,i===highlight?green:dimGreen)});somas.instanceColor.needsUpdate=true;rings.instanceColor.needsUpdate=true;previousHighlight=highlight}
+        camera.updateMatrixWorld(true);camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+        let cardRect=null;
+        if(selected>=0){
+          projection.copy(unitWorld[selected]).project(camera);
+          const sx=(projection.x*.5+.5)*innerWidth,sy=(-projection.y*.5+.5)*innerHeight;
+          const width=cardElement.offsetWidth,height=cardElement.offsetHeight,padding=mobile?16:24;
+          const preferred=sx+38+width<=innerWidth-padding?sx+38:sx-width-38;
+          cardElement.style.position='absolute';cardElement.style.left=`${THREE.MathUtils.clamp(preferred,padding,Math.max(padding,innerWidth-width-padding))}px`;
+          cardElement.style.top=`${THREE.MathUtils.clamp(sy-height/2,padding,Math.max(padding,innerHeight-height-padding))}px`;
+          cardRect=cardElement.getBoundingClientRect();
+        }
+        let visibleCount=0;leader.style.display='none';
+        aboutUnits.forEach((unit,i)=>{
+          projection.copy(unitWorld[i]).project(camera);viewPoint.copy(unitWorld[i]).applyMatrix4(camera.matrixWorldInverse);
+          const visible=viewPoint.z<0&&projection.z>=-1&&projection.z<=1&&Math.abs(projection.x)<=1&&Math.abs(projection.y)<=1;
+          const button=unitControl.buttons.get(unit.id);button.hidden=!visible;
+          if(!visible){if(unitControl.hover===unit.id)unitControl.clearHover();return}
+          visibleCount++;const x=(projection.x*.5+.5)*innerWidth,y=(-projection.y*.5+.5)*innerHeight;button.style.left=`${x}px`;button.style.top=`${y}px`;
+          const label=button.firstElementChild;label.style.marginLeft=`${THREE.MathUtils.clamp(x,128,Math.max(128,innerWidth-128))-x}px`;label.style.bottom=y<75?'auto':'';label.style.top=y<75?'34px':'';
+          if(i===selected){const endX=THREE.MathUtils.clamp(x,cardRect.left,cardRect.right),endY=THREE.MathUtils.clamp(y,cardRect.top,cardRect.bottom);leader.style.display='block';leaderLine.setAttribute('x1',x);leaderLine.setAttribute('y1',y);leaderLine.setAttribute('x2',endX);leaderLine.setAttribute('y2',endY)}
+        });
+        if(selected<0)leader.style.display='none';stats.unitsVisible=visibleCount;
+      }
+      const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);
       let last=performance.now(),elapsed=0,frameWindow=last,windowFrames=0;
-      chooseMotion=choice=>{motionChoice=choice;try{sessionStorage.setItem(motionChoiceKey,choice)}catch{}motionEnabled=choice==='enable';notice.hidden=true;quietGlow.style.opacity=motionEnabled?'0':'1';syncMotionStats();if(motionEnabled){pmat.uniforms.uMotion.value=1;lmat.uniforms.uMotion.value=1;if(bloom)bloom.strength=.52;if(!introDone)startIntro();else{pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1}}else{pulses=[];lastBurst=elapsed;pmat.uniforms.uMotion.value=0;lmat.uniforms.uMotion.value=0;if(bloom)bloom.strength=0;}};
+      chooseMotion=choice=>{motionChoice=choice;try{sessionStorage.setItem(motionChoiceKey,choice)}catch{}motionEnabled=choice==='enable';notice.hidden=true;quietGlow.style.opacity=motionEnabled?'0':'1';syncMotionStats();if(motionEnabled){pmat.uniforms.uMotion.value=1;lmat.uniforms.uMotion.value=1;if(bloom)bloom.strength=.52;if(!introDone)startIntro();else{pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1}}else{pulses=[];lastBurst=elapsed;pmat.uniforms.uMotion.value=0;lmat.uniforms.uMotion.value=0;if(bloom)bloom.strength=0;unitControl.skipIntro();}};
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;elapsed+=dt;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
         const from=centers[c],next=centers[Math.min(K-1,c+1)],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));let approach=ease(local),orbit=ease(Math.max(0,(local-.18)/.55)),dive=ease(Math.max(0,(local-.55)/.45));const target=[from[0]*(1-approach)+next[0]*approach,from[1]*(1-approach)+next[1]*approach,from[2]*(1-approach)+next[2]*approach];const localAngle=(progress*4.2-c*.9)*Math.PI+elapsed*.035*(motionEnabled?1:0),rad=46,stageOffset=[18,2,-20,8,34][c],approachZ=20-approach*24,diveY=dive*17;
-        const pull=c===4?1:0,cam=[target[0]+Math.cos(localAngle)*rad*(.28+orbit*.72),target[1]+Math.sin(localAngle*.7)*13+diveY,target[2]+rad*.45+stageOffset+approachZ-dive*13-pull*22];const focus=ease(Math.max(0,Math.min(1,approach*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(motionEnabled){camera.position.lerp(new THREE.Vector3(...cam),.045);camera.lookAt(...target);if(!mobile){gaze.x+=(gaze.targetX-gaze.x)*.05;gaze.y+=(gaze.targetY-gaze.y)*.05;gazeRig.rotation.y=gaze.x;gazeRig.rotation.x=-gaze.y;stats.gaze=[+gaze.x.toFixed(4),+gaze.y.toFixed(4)]}else{gazeRig.rotation.set(0,0,0)}pmat.uniforms.uTime.value=elapsed;lmat.uniforms.uTime.value=elapsed;if(elapsed-lastBurst>1.15){burst(elapsed);lastBurst=elapsed}if(elapsed-lastFlicker>.31){lastFlicker=elapsed;}
-        }else{camera.position.set(0,0,60);camera.lookAt(0,0,-45);pmat.uniforms.uTime.value=0;lmat.uniforms.uTime.value=0;}
-        pulses=pulses.filter(p=>elapsed-p.at<p.life);const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);pulses.forEach((p,i)=>{pulseValues[i]=p.strength*Math.max(0,1-(elapsed-p.at)/p.life);pulseNodes[i]=p.cluster*per+p.node%per});for(const mat of [pmat,lmat]){mat.uniforms.uPulse.value=pulseValues;mat.uniforms.uPulseNode.value=pulseNodes;mat.uniforms.uPulseCount.value=pulses.length}
+        const pull=c===4?1:0,cam=[target[0]+Math.cos(localAngle)*rad*(.28+orbit*.72),target[1]+Math.sin(localAngle*.7)*13+diveY,target[2]+rad*.45+stageOffset+approachZ-dive*13-pull*22];const focus=ease(Math.max(0,Math.min(1,approach*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(animate){if(mobile&&c===0){camera.position.set(-34,11,62);camera.lookAt(-34,11,-5)}else{camera.position.lerp(new THREE.Vector3(...cam),.045);camera.lookAt(...target)}if(!mobile){gaze.x+=(gaze.targetX-gaze.x)*.05;gaze.y+=(gaze.targetY-gaze.y)*.05;gazeRig.rotation.y=gaze.x;gazeRig.rotation.x=-gaze.y;stats.gaze=[+gaze.x.toFixed(4),+gaze.y.toFixed(4)]}else{gazeRig.rotation.set(0,0,0)}pmat.uniforms.uTime.value=elapsed;lmat.uniforms.uTime.value=elapsed;if(elapsed-lastFlicker>.31){lastFlicker=elapsed;}
+        }else if(!motionEnabled){camera.position.set(-34,11,Math.max(36,13/(Math.tan(THREE.MathUtils.degToRad(53/2))*camera.aspect)));camera.lookAt(-34,11,-5);pmat.uniforms.uTime.value=0;lmat.uniforms.uTime.value=0;}
+        // 无操作六秒后，仅一枚背景点与直接邻接轻响应；输入/弹窗/后台立即清零。
+        if(!animate||mobile||now-unitControl.lastInput<6000){unitControl.idleNode=-1}
+        else if(unitControl.idleNode<0&&now>=unitControl.nextIdle){unitControl.idleNode=c*per+Math.floor(Math.random()*per);unitControl.idleAt=now;unitControl.nextIdle=now+4000+Math.random()*3000}
+        let idleStrength=0;
+        if(unitControl.idleNode>=0){const age=(now-unitControl.idleAt)/1600;if(age>=1)unitControl.idleNode=-1;else idleStrength=Math.sin(age*Math.PI)*.65}
+        pulseValues.fill(0);pulseNodes.fill(0);pulses=[];
+        if(unitControl.idleNode>=0){pulseValues[0]=idleStrength;pulseNodes[0]=unitControl.idleNode;pulses.push({node:unitControl.idleNode})}
+        stats.idlePulse=unitControl.idleNode>=0?{node:unitControl.idleNode,phase:(now-unitControl.idleAt)/1600}:null;
+        for(const mat of [pmat,lmat]){mat.uniforms.uPulse.value=pulseValues;mat.uniforms.uPulseNode.value=pulseNodes;mat.uniforms.uPulseCount.value=pulses.length}
         stats.pulses=pulses.length;stats.cam=[+camera.position.x.toFixed(2),+camera.position.y.toFixed(2),+camera.position.z.toFixed(2)];document.querySelector('#readout-nodes').textContent=`${N}`;document.querySelector('#readout-lines').textContent=`${L.toLocaleString('en-US')}`;document.querySelector('#hud-state').textContent=pulses.length?'SIGNAL BURST':'NETWORK ACTIVE';
+        gazeRig.updateMatrixWorld(true);updateUnits(now);if(document.hidden)return;
         if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
       });
       function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
       addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
       const observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting)setCluster(Number(e.target.closest('.cluster-section').dataset.cluster))},{rootMargin:'-42% 0px -42% 0px'});document.querySelectorAll('.cluster-anchor').forEach(x=>observer.observe(x));
-      }catch(e){console.error('WebGL fallback',e);fallback()}
+      }catch(e){fallback()}
     if(motionEnabled){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
+    }
   </script>
 </body>
 </html>
