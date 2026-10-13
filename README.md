@@ -1,67 +1,67 @@
 # 安集协康 · 研究网络
 
-「窥探大脑」沉浸式单页原型：桌面以五个神经元簇呈现关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动驱动既有镜头路径，鼠标环视叠加在路径相机之外；接近分区时网络渐亮并显示区名，信息点由点击打开说明。移动端使用 240 节点并关闭 Bloom；系统减少动态效果时默认静谧显示提示条，保留无位移微光呼吸并可由用户主动开启本会话完整动效。WebGL 不可用时显示可读静态内容。
+M4b 单页原型：五区共 20 枚内容胞体（5+4+5+4+2），覆盖关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动切换分区；桌面鼠标小幅环视，hover/focus 显示主题，click 打开详情。移动与减少动态效果模式使用固定取景，五区均可访问。
 
 ## 本地运行
 
-需要 Node.js 18 或更新版本。在仓库根目录启动：
+需要 Node.js 18 或更新版本，在仓库根目录运行：
 
 ```powershell
 node -e "require('http').createServer((q,s)=>require('fs').createReadStream('.'+(q.url==='/'?'/index.html':decodeURIComponent(q.url.split('?')[0]))).on('error',()=>{s.statusCode=404;s.end()}).pipe(s)).listen(8080)"
 ```
 
-访问 `http://localhost:8080/`。ES modules 需要 HTTP 服务，不能使用 `file://` 验证。
+浏览器访问 `http://localhost:8080/`。ES modules 需要 HTTP 服务，不能使用 `file://` 验证。
 
-## 本地依赖
+## 内容与交互
 
-- Three.js 0.186.1 与 EffectComposer、RenderPass、UnrealBloomPass 使用仓库 vendor 本地文件，不访问 CDN。
-- 点云 shader 绘制节点、连线、脉冲及当前分区聚焦；环视父级 rig 只在桌面、非 reduced-motion 下启用。
-- 分区说明来自现有章节内容拆分；具体管线进展和科学数据以安集协康官方发布为准。
+`index.html` 内 `CONTENT_UNITS` 为内容单一来源，20 条均启用。新增 15 条标题与正文逐字采用 M4b 任务卡；原有 ID、seed、anchor 保持不变。更新文案只改 title/body。桌面沿用世界锚点，移动初始化时依据分区中心与固定槽位生成可读布局；`unitAnchors` 同时提供原 anchor 与实际 world 坐标。
+
+五区分别使用放射、双向、长轴突、密短枝与成对枝形态；仅表示栏目布局，不表示解剖、因果或疗效关系。所有胞体、内核、细环及树突初始化时合批生成，分区切换只更新实例矩阵和 shader 参数。只有当前分区的内容可命中，背景不接受输入；主题、按钮与详情引线均从同一世界坐标投影。
+
+打开详情即时显示文字并冻结环视/焦面/idle，支持 ×、遮罩、Esc 和 Tab 焦点圈定；关闭后恢复触发焦点与原滚动位置。首次打开把内容 ID 放入会话内 Set，保留 DOM 空心已读环及 aria「已阅读」；桌面正常性能下额外点亮该胞体邻接支路的短段。移动与性能降级时仅保留 DOM 环，reduce 直接置位；刷新清空，无后端或埋点。
+
+5-1 详情与静态兜底均显示带名称的双公众号二维码，原素材逐字节复制到 `assets/qr-angecon.jpg`、`assets/qr-anku.png`，无远程资源与跳转链接。双列自适应宽度，详情超过屏高时卡片内部滚动。
+
+## 光学切片与性能
+
+桌面滚动以本区进度控制视空间焦面距离，背景 Points 与远景线段按离焦距离调整亮度，点大小模拟离焦；不新增全屏景深后处理。内容胞体不接受焦面衰减，始终保留内核、描边与最低亮度。相机按既有五簇路径分区取景，桌面环视绕相机自身轻微偏转，跨区即时切换本区内容，避免镜头过渡让内容脱离视口。
+
+桌面背景初始 800 点，移动 240 点；移动关闭 Bloom 与环视，焦面固定。像素比初始上限桌面 1.5、移动 1.15。连续三个采样窗口低于 45fps 后依次关闭 Bloom、像素比降至 1、减少背景密度；第一层降级即固定焦面，仅亮度分层，始终保留 20 条内容。
+
+20 胞体树突总三角形：桌面 **4160**，移动 **1600**；新增主场景对象合批 **3**（胞体/内核实例、细环实例、树突）。这些为 CPU 几何计数与工程批次，实际 GPU 调用及 60fps 由 HEBE 复测。每帧不重建几何。
+
+保留原生滚动、纯文字品牌、深蓝 `#02060f` 与品牌绿 `#2de06a`；本地 Three.js 0.186.1、EffectComposer、RenderPass、UnrealBloomPass 均在 vendor 内。入场、80–240ms 单枝传导与 6 秒后单背景点 idle 延续 M4a。系统减少动态效果保留静谧微光、提示条、会话主动开启/知道了三层；默认跳过传导与入场，五区相机和焦面固定，滚动仅即时切换分区。
+
+普通脚本先生成 20 条静态清单与双码，默认显示；三维初始化成功后才隐藏兜底。模块导入失败、WebGL 不可用或上下文丢失时恢复完整清单。
 
 ## 运行态诊断
 
 控制台读取 `window.__NET_STATS__`：
 
-```js
-window.__NET_STATS__
-// { nodes, lines, mobile, bloomOn, reducedMotion, motionEnabled,
-//   motionOverride, noticeShown, fps, introDone, activeCluster,
-//   pulses, cam: [x, y, z], gazeEnabled, gaze: [yaw, pitch],
-//   clusterFocus, proximity, clusters }
+- `unitsActive / unitsVisible`：启用数 20 / 当前区可见数。
+- `unitHover / unitSelected / transmission`：悬停、选中 ID 与单支真实累计距离传导。
+- `visited`：会话已读 ID 列表；关闭保留，刷新清空。
+- `focusDepth / focusMode / scrollProgress`：视空间焦面距离、scroll/fixed 模式、原生滚动进度。
+- `performanceTier / backgroundVisible`：降级层数 0–3 / 减密后的背景点数。
+- `unitTreeTriangles / unitDrawCalls / unitPaths / unitAnchors`：树突预算、工程合批、支路距离与稳定锚点/实际世界坐标。
+- `nodes / lines / mobile / bloomOn / fps / fpsSamples / activeCluster / cam / gaze / introDone / idlePulse / fallback`：场景与故障诊断。
+- `reducedMotion / motionEnabled / motionOverride / noticeShown / gazeEnabled`：系统及会话动效选择。
+
+旧信息列表字段已移除；不以诊断预算代替 GPU 实测。
+
+## 自测与交付
+
+非浏览器自测 **19/19 通过**：
+
+```powershell
+node D:\will\cache\scratch\an3\m4b\selftest.mjs
+node --check D:\will\cache\scratch\an3\m4b\syntax-1.cjs
+node --check D:\will\cache\scratch\an3\m4b\syntax-2.mjs
+git diff --check
 ```
 
-`activeCluster` 为 0–4；`gaze` 为弧度；`proximity` 为当前分区渐亮系数；`clusters` 提供 16 个信息点条目。
+证据：`D:\will\cache\scratch\an3\m4b\selftest-report.json`。使用本地 Three.js CPU 几何/矩阵与实际模块帧循环，DOM 与渲染器为替身；覆盖全部文案、20 条开关与已读、五区可达、移动命中间距、极限环视、焦面采样、降级顺序、模态冻结、减动画选择及故障兜底。修改前备份为同目录 `index.html.before` 与 `README.md.before`。
 
-## M4a：内容胞体与数据链
+按 Will 本轮指令未跑浏览器自测，未生成截图。真实 shader 编译/控制台、GPU 调用与 60fps、375px 排版/遮挡/触屏、实际键盘与滚动恢复、reduce 三层视觉、二维码扫码和浏览器网络请求由 HEBE 独立验收；每区侧写/详情共 ≥8 张截图由 HEBE 补齐。
 
-`index.html` 中的 `CONTENT_UNITS` 是本阶段内容单一来源，共 20 条（5+4+5+4+2），包含 `id / sectionId / title / body / sourceIds / seed / anchor`。关于我们五条按任务卡原文启用；其余 15 条正文留空，待 M4b 定稿启用。其他四区保留 M3 原有信息点与文案，本阶段不升级为内容胞体。
-
-修改文案只改 `title / body`，保持 `id / seed / anchor`。五枚圆润胞体、内核、细环与三层分叉树突按 seed 一次生成；桌面树突 4,320 个三角形，移动 1,740 个，新增主场景绘制三批（胞体/内核实例、细环实例、树突合批）。帧循环只更新状态与投影，不重建树突。品牌区采用纯文字「安集协康 / ANGECON」，移除原自绘标记。
-
-每帧更新相机矩阵后，把同一世界锚点投影到 CSS 像素，用于按钮、主题标签和详情引线；屏幕外/相机背后按钮隐藏。桌面命中 48px，移动 44px。hover/focus 即时显示主题和亮环，80–240ms 的光段沿预计算累计距离向胞体收拢；移出取消。触屏一次点击直接打开主题与详情。详情正文立即写入，打开时冻结相机环视与 idle，支持 ×、遮罩、Esc，Tab 留在卡片内，关闭后恢复触发焦点和滚动位置。
-
-入场分树突（250–650ms）、组织（650–1000ms）两段，品牌和内容胞体即时可见；可点「跳过入场」，任何输入也会跳过，不覆盖或阻挡页面。无操作 6 秒后，桌面每 4–7 秒只激活一个背景点及其直接邻接线；输入、弹窗、隐藏标签页取消。移动关闭 idle，关于我们采用固定取景，五枚胞体在窄屏内可达。系统减少动态效果默认跳过传导、入场和自动相机运动，保留 M3 静谧微光、提示条与会话主动开启动效入口。
-
-兜底清单由普通脚本先从同一数据源生成，默认显示；仅三维初始化成功后切换场景。因此本地模块导入失败、WebGL 不可用或上下文丢失时，五条内容仍能阅读。二维码保留 M3 现状，M4b 再归位。
-
-`__NET_STATS__` 保留 M3 字段，并增加：
-
-- `unitsActive / unitsVisible`：启用数与当前视口内数量。
-- `unitHover / unitSelected`：内容 ID 或 `null`。
-- `transmission`：`{ id, phase, distance }` 或 `null`，相位按真实树突累计距离更新。
-- `introDone / idlePulse`：入场状态；背景信号 `{ node, phase }` 或 `null`。
-- `unitDrawCalls / unitTreeTriangles / unitPaths / unitAnchors / fallback`：工程预算、支路累计距离、稳定锚点及兜底状态。`unitDrawCalls=3` 是主场景对象批次，Bloom 后处理的实际调用另由浏览器复测。
-
-非浏览器自测脚本：`D:\will\cache\scratch\an3\m4a-selftest.mjs`；证据：同目录 `m4a-selftest-report.json`。运行 `node D:\will\cache\scratch\an3\m4a-selftest.mjs` 可复现数据、几何、矩阵投影、交互状态、故障兜底、入场/idle 时序与弹窗相机冻结检查。测试使用真实本地 Three.js CPU 几何和实际帧循环，DOM/渲染器使用替身，不构成浏览器或 GPU 验收。
-
-## M4a-fix：移除左侧面板
-
-左侧大型 HUD 面板及其桌面/移动样式、状态点样式和帧循环状态绑定已全部移除，`index.html` 中 `hud` 引用为 0。`setCluster()` 原本已只更新分区标题、索引和读数，无需修改；兜底标题共用样式改名为 `.fallback-head`，外观保持。顶栏、分区索引、读数、四角标、滚动提示、暗角及胞体系统代码保留。
-
-2026-10-13 非浏览器回归自测 **20/20 通过**：使用本地 Three.js CPU 几何、矩阵与实际帧循环，DOM/渲染器为替身，并禁止查询已删除的面板。脚本 `D:\will\cache\scratch\an3\m4a-fix-hud\selftest.mjs`，运行 `node D:\will\cache\scratch\an3\m4a-fix-hud\selftest.mjs`；报告为同目录 `selftest-report.json`。另通过脚本语法、精确改动范围比对、CSS 括号及 `git diff --check` 检查，范围证据为 `scope-report.json`；修改前备份为同目录 `index.html.before` 和 `README.md.before`。
-
-按 Will 指令未运行浏览器自测，未生成 1440×900 首屏截图。真实控制台/shader、60fps、桌面画面与胞体交互、375px 溢出/触屏、键盘焦点/滚动恢复、reduced-motion 三层体验及运行网络请求由 HEBE 独立验收并补截图。源码外链检查通过，不代表浏览器请求已验证。未提交、未推送 Git，待 HEBE 验收发布。
-
-## 浏览器验收
-
-本次按 Will 指令未运行浏览器自测；桌面视觉/60fps、375px 实际溢出/遮挡与触屏命中、真实键盘焦点及滚动恢复、reduced-motion 提示条与主动开启、shader/控制台、滚动五区进入与外链请求由 HEBE 独立复测。激活态、详情态、兜底态、品牌区截图由 HEBE 补齐。本次不提交、不推送 Git，发布由 HEBE 验收通过后执行。
+未提交、未推送 Git；任务卡与 STATUS 已回写为实施完成、待 HEBE 验收。HEBE 验收通过后发布。
