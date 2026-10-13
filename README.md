@@ -1,4 +1,4 @@
-﻿# 安集协康 · 研究网络
+# 安集协康 · 研究网络
 
 「窥探大脑」沉浸式单页原型：桌面以五个神经元簇呈现关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动驱动既有镜头路径，鼠标环视叠加在路径相机之外；接近分区时网络渐亮并显示区名，信息点由点击打开说明。移动端使用 240 节点并关闭 Bloom；系统减少动态效果时默认静谧显示提示条，保留无位移微光呼吸并可由用户主动开启本会话完整动效。WebGL 不可用时显示可读静态内容。
 
@@ -53,6 +53,14 @@ window.__NET_STATS__
 - `unitDrawCalls / unitTreeTriangles / unitPaths / unitAnchors / fallback`：工程预算、支路累计距离、稳定锚点及兜底状态。`unitDrawCalls=3` 是主场景对象批次，Bloom 后处理的实际调用另由浏览器复测。
 
 非浏览器自测脚本：`D:\will\cache\scratch\an3\m4a-selftest.mjs`；证据：同目录 `m4a-selftest-report.json`。运行 `node D:\will\cache\scratch\an3\m4a-selftest.mjs` 可复现数据、几何、矩阵投影、交互状态、故障兜底、入场/idle 时序与弹窗相机冻结检查。测试使用真实本地 Three.js CPU 几何和实际帧循环，DOM/渲染器使用替身，不构成浏览器或 GPU 验收。
+
+## M4a-fix：移除左侧面板
+
+左侧大型 HUD 面板及其桌面/移动样式、状态点样式和帧循环状态绑定已全部移除，`index.html` 中 `hud` 引用为 0。`setCluster()` 原本已只更新分区标题、索引和读数，无需修改；兜底标题共用样式改名为 `.fallback-head`，外观保持。顶栏、分区索引、读数、四角标、滚动提示、暗角及胞体系统代码保留。
+
+2026-10-13 非浏览器回归自测 **20/20 通过**：使用本地 Three.js CPU 几何、矩阵与实际帧循环，DOM/渲染器为替身，并禁止查询已删除的面板。脚本 `D:\will\cache\scratch\an3\m4a-fix-hud\selftest.mjs`，运行 `node D:\will\cache\scratch\an3\m4a-fix-hud\selftest.mjs`；报告为同目录 `selftest-report.json`。另通过脚本语法、精确改动范围比对、CSS 括号及 `git diff --check` 检查，范围证据为 `scope-report.json`；修改前备份为同目录 `index.html.before` 和 `README.md.before`。
+
+按 Will 指令未运行浏览器自测，未生成 1440×900 首屏截图。真实控制台/shader、60fps、桌面画面与胞体交互、375px 溢出/触屏、键盘焦点/滚动恢复、reduced-motion 三层体验及运行网络请求由 HEBE 独立验收并补截图。源码外链检查通过，不代表浏览器请求已验证。未提交、未推送 Git，待 HEBE 验收发布。
 
 ## 浏览器验收
 
