@@ -1,6 +1,6 @@
-﻿# angecon-an3
+﻿# 安集协康 · 研究网络
 
-AN3 官网单页原型：方向二「内容即网络」。桌面以五个神经元簇承载五个内容章节，滚动驱动章节切换与镜头接近、环绕、俯冲和拉远。页面使用 WebGL 点云、突触脉冲 shader、玻璃 HUD 和开场网络生长；移动端使用 240 节点并关闭 Bloom，系统减少动态效果时默认静谧显示提示条，保留无位移的 7 秒微光呼吸，并可由用户主动开启本会话完整动效。WebGL 不可用时显示可读的静态内容。原生页面滚动，不拦截滚轮或触摸输入。
+「窥探大脑」沉浸式单页原型：桌面以五个神经元簇呈现关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动驱动既有镜头路径，鼠标环视叠加在路径相机之外；接近分区时网络渐亮并显示区名，信息点由点击打开说明。移动端使用 240 节点并关闭 Bloom；系统减少动态效果时默认静谧显示提示条，保留无位移微光呼吸并可由用户主动开启本会话完整动效。WebGL 不可用时显示可读静态内容。
 
 ## 本地运行
 
@@ -14,25 +14,24 @@ node -e "require('http').createServer((q,s)=>require('fs').createReadStream('.'+
 
 ## 本地依赖
 
-- Three.js 0.186.1、EffectComposer、RenderPass、UnrealBloomPass 与 GSAP/ScrollTrigger 沿用 M1 仓库本地 vendor 文件；本页仅使用 Three.js 本地模块和后处理文件，不访问 CDN。
-- 顶点 shader 驱动节点渐进显现、呼吸和脉冲亮度；片元 shader 渲染节点光晕、连线信号和微闪，不逐帧遍历节点。
-- 五个章节文字摘自本地 AN1 现文，最多两句，并提供来源页面链接。科学数据章节使用技术平台页的研究体系原文。
+- Three.js 0.186.1 与 EffectComposer、RenderPass、UnrealBloomPass 使用仓库 vendor 本地文件，不访问 CDN。
+- 点云 shader 绘制节点、连线、脉冲及当前分区聚焦；环视父级 rig 只在桌面、非 reduced-motion 下启用。
+- 分区说明来自现有章节内容拆分；具体管线进展和科学数据以安集协康官方发布为准。
 
 ## 运行态诊断
 
-控制台读取 `window.__AN3_STATS__`：
+控制台读取 `window.__NET_STATS__`：
 
 ```js
-window.__AN3_STATS__
+window.__NET_STATS__
 // { nodes, lines, mobile, bloomOn, reducedMotion, motionEnabled,
 //   motionOverride, noticeShown, fps, introDone, activeCluster,
-//   pulses, cam: [x, y, z] }
+//   pulses, cam: [x, y, z], gazeEnabled, gaze: [yaw, pitch],
+//   clusterFocus, proximity, clusters }
 ```
 
-`activeCluster` 为 0–4；`pulses` 是活跃脉冲数量；`cam` 为相机位置；`fpsSamples` 保存最近 60 个每秒采样值。
+`activeCluster` 为 0–4；`gaze` 为弧度；`proximity` 为当前分区渐亮系数；`clusters` 提供 16 个信息点条目。
 
-## M2 验收记录
+## 浏览器验收
 
-- 截图与 JSON 证据归档于本机 `D:\will\cache\scratch\an3\m2-evidence\`，不进入站点仓库：桌面首屏、五个章节、两张脉冲瞬间、375px 移动端及 reduced-motion 共 11 张 PNG；另有章节统计、相机位置、移动端统计和同源请求记录。
-- 本机 Chrome headless 使用 ANGLE SwiftShader 软件 WebGL：移动端约 57–61 FPS；桌面样本约 3–10 FPS。该桌面数值是软件渲染数据，不能代表用户硬件，故桌面 ≥45 FPS 需在真实 GPU/HEBE 复测。
-- 验证覆盖五章节 `activeCluster` 0→4、相机位置变化、pulse 活跃、移动端 240 节点与零横向溢出、reduced-motion 停止脉冲且相机静止、零外部网络请求、无滚动劫持与 WebGL fallback。
+本次按任务卡要求未运行浏览器自测；桌面视觉/60fps、375px 溢出与命中、弹窗三种关闭及滚动锁定、reduced-motion 交互、shader/控制台、滚动五区进入与外链请求由 HEBE 独立复测。
