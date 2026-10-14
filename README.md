@@ -1,6 +1,6 @@
 # 安集协康 · 研究网络
 
-M4b 单页原型：五区共 20 枚内容胞体（5+4+5+4+2），覆盖关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动切换分区；桌面鼠标小幅环视，hover/focus 显示主题，click 打开详情。移动与减少动态效果模式使用固定取景，五区均可访问。
+M4d 单页原型：五区共 20 枚内容胞体（5+4+5+4+2），覆盖关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动切换分区；桌面鼠标小幅环视，hover/focus 显示主题，click 打开详情。移动与减少动态效果模式使用固定取景，五区均可访问。
 
 ## 本地运行
 
@@ -49,19 +49,42 @@ node -e "require('http').createServer((q,s)=>require('fs').createReadStream('.'+
 
 旧信息列表字段已移除；不以诊断预算代替 GPU 实测。
 
+## M4d 左侧文字与字号调整
+
+新增左侧纯文字悬浮组：透明填充与 1px 描边区名、英文分区名、全部单元标题。启动时按 `CONTENT_UNITS.sectionId` 读取并缓存五组 DOM；随 `setCluster` 与 `activeCluster` 同步显示，不在每帧重建内容，也不改写源数据。各区标题数保持真实数据的 5 / 4 / 5 / 4 / 2；关注我们不会补造条目。
+
+左块无底板、无边框、无阴影，禁用指针交互；层级高于画布，低于胞体标签与弹窗。桌面区名字号 64–84px，9 秒上下 ±6px 浮动，切换 500ms 淡入轻滑。移动端仅显示 42px 区名与 11px 英文，隐藏清单并降低不透明度；系统减少动态效果时取消左块全部浮动与切换动画，原有减少动态效果三层保留。
+
+滚动提示采用方案 A：改为左下横排。桌面索引保持右侧，读数保持右下；移动索引改为底部可换行文字导航，索引/提示/读数分别距底 118 / 78 / 18px，预留分离空间。真实包围盒与 ≥24px 间距待 HEBE 实测。
+
+| 元素 | 桌面字号 | ≤700px 字号 |
+|---|---|---|
+| 顶栏导航 | 14px | 12px |
+| 顶栏品牌 | 14px | 13px |
+| 分区索引 | 15px | 15px |
+| 滚动提示 | 11px | 11px |
+| 底部读数标签与数值 | 12px | 10px |
+| 胞体悬停标签 | 14px | 14px |
+| 详情正文 | 17px | 16px |
+| 兜底清单正文 | 15px | 15px |
+
+以上为源码声明值，移动值按卡片的原值上调要求调整；未以浏览器 `getComputedStyle` 实测。
+
 ## 自测与交付
 
-非浏览器自测 **19/19 通过**：
+M4d 非浏览器自测 **22/22 通过**：
 
 ```powershell
-node D:\will\cache\scratch\an3\m4b\selftest.mjs
-node --check D:\will\cache\scratch\an3\m4b\syntax-1.cjs
-node --check D:\will\cache\scratch\an3\m4b\syntax-2.mjs
+node D:\will\cache\scratch\an3\m4d\selftest.mjs
+node D:\will\cache\scratch\an3\m4d\quality-check.mjs
+node --check D:\will\cache\scratch\an3\m4d\browser-acceptance.js
 git diff --check
 ```
 
-证据：`D:\will\cache\scratch\an3\m4b\selftest-report.json`。使用本地 Three.js CPU 几何/矩阵与实际模块帧循环，DOM 与渲染器为替身；覆盖全部文案、20 条开关与已读、五区可达、移动命中间距、极限环视、焦面采样、降级顺序、模态冻结、减动画选择及故障兜底。修改前备份为同目录 `index.html.before` 与 `README.md.before`。
+自测证据：`D:\will\cache\scratch\an3\m4d\selftest-report.json` 与 `quality-report.json`。使用 Node VM、DOM/渲染器替身与本地 Three.js CPU 几何/矩阵及实际模块循环；覆盖五区左块数据和切换、八类字号与降级 CSS 声明、20 条原数据完整不变、胞体/弹窗/双码/记忆环逻辑、五区可达、reduce 与性能三层、模块/WebGL 失败兜底。本地 HTTP 资源与两段脚本语法检查通过。备份位于同目录 `index.html.before`、`README.md.before`，测试脚本不放进网站仓库。
 
-按 Will 本轮指令未跑浏览器自测，未生成截图。真实 shader 编译/控制台、GPU 调用与 60fps、375px 排版/遮挡/触屏、实际键盘与滚动恢复、reduce 三层视觉、二维码扫码和浏览器网络请求由 HEBE 独立验收；每区侧写/详情共 ≥8 张截图由 HEBE 补齐。
+按 Will 本轮指令未跑浏览器自测，未生成截图或真实包围盒数值表。待 HEBE 独立验收：1440px 与 375px 零溢出/零裁切/零遮挡；至少六个滚动位置三类固定元素两两间距 ≥24px；八类字号实测；五区与首屏共六张截图；reduce 左块静止与原三层视觉；真实 shader/控制台零错误、GPU 60fps、悬停/键盘/触屏/弹窗/双码/记忆环回归。
 
-未提交、未推送 Git；任务卡与 STATUS 已回写为实施完成、待 HEBE 验收。HEBE 验收通过后发布。
+HEBE 可在两个视口分别通过控制台或 CDP 执行 `D:\will\cache\scratch\an3\m4d\browser-acceptance.js`，采样结果存入 `window.__M4D_ACCEPTANCE__`（包含包围盒、间距、字号及左块内容）。该辅助脚本只通过语法检查，Cain 未在浏览器运行；截图、视觉与交互仍需 HEBE 单独完成。
+
+未提交、未推送 Git；任务卡与 STATUS 回写为实施完成、待 HEBE 独立验收。验收通过后由 HEBE 发布。
