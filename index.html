@@ -62,16 +62,22 @@
     .footer-visible .readout,.footer-visible .scroll-cue,.footer-visible .section-float,.footer-visible .cluster-index,.footer-visible .cluster-title{opacity:0;pointer-events:none}
     .footer-visible .cluster-index{visibility:hidden}
     @media(max-width:700px){.topbar{flex-direction:column;align-items:flex-start;gap:12px}.nav{width:100%;flex-wrap:wrap;gap:10px 14px}.nav a{display:inline}.language-toggle{margin-left:auto}.language-toast{top:128px}}
+    /* M7：品牌英文保留，语言按钮额外留白，页尾愿景跟随滚动。 */
+    .language-toggle{margin-left:16px}
+    .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s ease-out}
+    .footer-vision-label{margin:0 0 16px;color:#95aaa0;font-size:12px;line-height:1.5;letter-spacing:.35em}
+    .footer-vision-title{margin:0;color:#c3d3c9;font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.4;text-shadow:0 0 18px rgba(117,220,159,.06)}
+    @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-label{margin-bottom:12px;font-size:11px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
   </style>
 </head>
 <body class="static-network">
   <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
   <aside class="motion-notice" id="motion-notice" aria-label="减少动态效果设置提示" hidden><div class="motion-notice-copy">检测到系统&quot;减少动态效果&quot;，已为您简化动画</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">开启完整动效</button><button id="motion-dismiss" type="button">知道了</button></div></aside>
-  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div><div class="cluster-title" id="cluster-title" aria-live="polite"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">网络组装中</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">初始化</div></div></div>
   <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="五区内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
-  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康首页"><span>安集协康</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，查看英文站上线提示"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
+  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康 / ANGECON 首页"><span>安集协康 / ANGECON</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，查看英文站上线提示"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
   <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
   <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
   <div class="scroll-cue">向下滚动 · 穿行神经之网</div>
@@ -84,9 +90,10 @@
     <section class="cluster-section" id="contact" data-cluster="4"><span class="cluster-anchor"></span></section>
   </main>
   <nav class="cluster-index" aria-label="分区索引"><a href="#company" data-index="0">关于我们</a><a href="#technology" data-index="1">技术平台</a><a href="#pipeline" data-index="2">研发管线</a><a href="#science" data-index="3">科学数据</a><a href="#contact" data-index="4">关注我们</a></nav>
-  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">神经之网</div><h1>安集协康神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
+  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><div id="info-qr" hidden></div><p class="info-foot"><a id="info-publications" href="#info-qr">完整内容见公众号</a></p></div></article></div>
-  <footer class="footer"><div><div class="brand"><span>安集协康</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+  <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-label">愿 景</p><p class="footer-vision-title">世界一流的细胞公司</p></div>
+  <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
 
   <script>
     const CONTENT_UNITS = [
@@ -412,6 +419,25 @@
         const update=()=>{const rect=footer.getBoundingClientRect();setFooterVisible(rect.top<innerHeight&&rect.bottom>0)};
         addEventListener('scroll',update,{passive:true});addEventListener('resize',update);update();
       }
+    })();
+    (()=>{
+      const footer=document.querySelector('.footer'),vision=document.querySelector('#footer-vision');
+      const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)');
+      let queued=false;
+      const update=()=>{
+        queued=false;
+        const rect=footer.getBoundingClientRect();
+        const progress=Math.max(0,Math.min(1,(innerHeight-rect.top)/Math.max(1,rect.height)));
+        const opacity=reducedMotion.matches?(progress>0?1:0):progress*progress*(3-2*progress);
+        vision.style.opacity=String(opacity);
+        vision.style.visibility=progress>0?'visible':'hidden';
+        vision.setAttribute('aria-hidden',String(progress===0));
+      };
+      const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(update)}};
+      addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule);
+      reducedMotion.addEventListener?.('change',schedule);
+      if('ResizeObserver' in window)new ResizeObserver(schedule).observe(footer);
+      update();
     })();
     // 五组文字只在启动时读取数据；滚动切换不重建 DOM 或几何。
     (()=>{
