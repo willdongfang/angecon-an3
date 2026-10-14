@@ -123,3 +123,24 @@ node D:\will\cache\scratch\an3\m5c\integrity.mjs
 证据：同目录 `selftest-report.json`（28 项逻辑/几何/降级/交互回归）、`integrity-report.json`（当前 HTML 两段脚本 node --check、导入映射、直接本地资源、冲突/TODO、SHA256 和差异空白检查）。M5c 未修改页面字节，只补齐文档与任务记录。M5/M5b 原执行均在收尾被模型容量中断（任务卡记载 rc=1），本轮没有新增美学迭代。历史备份和诊断位于同级 `m5`、`m5b`；本轮备份位于 `m5c`。
 
 本轮未跑浏览器自测：造型/光效可见性、与 HEBE 快照对比、真实 shader 编译/控制台、GPU 60fps、375px 溢出与遮挡、真实 hover/触屏/弹窗/扫码/记忆环和 reduce 视觉均待 HEBE 独立验收。卡中既有 60fps/0 错误为 HEBE 前轮实测背景，非本轮 Cain 测量。未提交或推送 Git，由 HEBE 验收后发布。
+
+
+## M6 中文化、导航、弹窗与页脚避让
+
+界面品牌、副标、读数、提示与兜底文案改为中文。保留审定内容的专有名词、事实标识与联系邮箱；任务指定的「中 / EN」为语言按钮例外。五项导航使用相同普通链接样式，语言按钮支持键盘聚焦，点击展示「英文站建设中，敬请期待」，1700ms 后淡出，不跳转。窄屏导航换行排列。
+
+详情遮罩采用 32% 暗化与 3px 模糊，350ms 淡入淡出；面板从缩放 0.96、下移 14px、透明状态于 480ms 入场，280ms 关闭。公众号链接以 140ms 淡出、140ms 淡入切换双码内容，5-1 直接打开相同视图。二维码复用本地原资源。键盘焦点循环覆盖关闭按钮及公众号链接，关闭取消待执行切换并回收焦点；系统减少动态效果时过渡及内容切换瞬时完成。
+
+页脚进入视口时，读数、滚动提示、左块、索引与簇标题淡出，离开恢复；读数/提示过渡 300ms，索引同时退出键盘焦点。通过 IntersectionObserver 监听，无此接口时使用被动滚动/resize 回退。20 条 CONTENT_UNITS 与内容几何保持逐字一致。
+
+复验命令（测试与备份均在仓库外）：
+
+```powershell
+node D:\will\cache\scratch\an3\m6\selftest.mjs
+python D:\will\cache\scratch\an3\m6\integrity.py
+git diff --check
+```
+
+自测结果：38/38 非浏览器逻辑/几何回归通过（含原 28 项和新增 10 项），两段脚本语法、导入映射、界面文本白名单扫描、本地资源、零外链与差异空白检查通过。证据：`D:\will\cache\scratch\an3\m6\regression-report.json`、`integrity-report.json`；备份为同目录 `index.html.before`、`README.md.before`。测试使用 Node VM、真实 Three.js CPU 几何与 DOM/渲染器替身；模拟帧循环不代表真实 GPU 帧率。
+
+按 Will 指令未跑浏览器自测。待 HEBE 独立验收：遮罩下网络可见性、实际动画采样、正文到双码的视觉切换与图片加载/扫码、键盘/触屏交互、页脚进入/离开时实际透明度与包围盒零重叠、375px 零溢出/遮挡、真实 shader/控制台、GPU 60fps、记忆环/光学切片及 reduce 视觉。未提交或推送 Git；验收通过后由 HEBE 发布。
