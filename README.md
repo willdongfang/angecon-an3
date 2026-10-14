@@ -144,3 +144,9 @@ git diff --check
 自测结果：38/38 非浏览器逻辑/几何回归通过（含原 28 项和新增 10 项），两段脚本语法、导入映射、界面文本白名单扫描、本地资源、零外链与差异空白检查通过。证据：`D:\will\cache\scratch\an3\m6\regression-report.json`、`integrity-report.json`；备份为同目录 `index.html.before`、`README.md.before`。测试使用 Node VM、真实 Three.js CPU 几何与 DOM/渲染器替身；模拟帧循环不代表真实 GPU 帧率。
 
 按 Will 指令未跑浏览器自测。待 HEBE 独立验收：遮罩下网络可见性、实际动画采样、正文到双码的视觉切换与图片加载/扫码、键盘/触屏交互、页脚进入/离开时实际透明度与包围盒零重叠、375px 零溢出/遮挡、真实 shader/控制台、GPU 60fps、记忆环/光学切片及 reduce 视觉。未提交或推送 Git；验收通过后由 HEBE 发布。
+
+## M7 品牌、愿景与菜单收尾
+
+品牌字标在顶栏、页脚与两个静态兜底位置统一显示「安集协康 / ANGECON」。页脚进入视口后，企业愿景在视窗中央随滚动进度渐显，向上滚动渐隐；减少动态效果时直接显隐。导航语言按钮在桌面和移动布局增加额外间距。CONTENT_UNITS 与三维模块相对 M7 前基线未变。
+
+M7b 非浏览器复验：Node 回归 38/38；愿景滚动/减少动态效果专项 6/6；两段脚本语法、import map、静态 UI 文案、原内容数据、本地资源与 `git diff --check` 通过。证据在 `D:\will\cache\scratch\an3\m7\`。浏览器视觉、真实包围盒/移动溢出、GLSL/控制台及 GPU 帧率未由 Cain 测试，交由 HEBE 独立验收。未推送 Git。
