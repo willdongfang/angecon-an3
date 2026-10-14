@@ -1,6 +1,6 @@
 # 安集协康 · 研究网络
 
-M4d 单页原型：五区共 20 枚内容胞体（5+4+5+4+2），覆盖关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动切换分区；桌面鼠标小幅环视，hover/focus 显示主题，click 打开详情。移动与减少动态效果模式使用固定取景，五区均可访问。
+M5 单页原型：五区共 20 枚内容胞体（5+4+5+4+2），覆盖关于我们、技术平台、研发管线、科学数据与关注我们。原生滚动切换分区；桌面鼠标小幅环视，hover/focus 显示主题，click 打开详情。移动与减少动态效果模式使用固定取景，五区均可访问。
 
 ## 本地运行
 
@@ -88,3 +88,38 @@ git diff --check
 HEBE 可在两个视口分别通过控制台或 CDP 执行 `D:\will\cache\scratch\an3\m4d\browser-acceptance.js`，采样结果存入 `window.__M4D_ACCEPTANCE__`（包含包围盒、间距、字号及左块内容）。该辅助脚本只通过语法检查，Cain 未在浏览器运行；截图、视觉与交互仍需 HEBE 单独完成。
 
 未提交、未推送 Git；任务卡与 STATUS 回写为实施完成、待 HEBE 独立验收。验收通过后由 HEBE 发布。
+
+## M5 / M5b 网络造型与光效（M5c 收尾）
+
+`index.html` 模块脚本中的 `NET_CONFIG` 为集中调优表，搜索名称即可定位。`growBranch` 用受约束二叉 L-system 和二次曲线生成渐细带状树突，跨簇采用 Catmull-Rom 曲线；`createLightClock` 编排五簇错相事件；`lightGLSL` 按真实累计距离传播。节点、带状网格与微尘各自合批。已有内容和交互区保持原接口。
+
+| 配置位置 | 当前值与用途 |
+|---|---|
+| `seed / desktopNodes / mobileNodes` | 20261014 / 800 / 240，确定性生长与节点预算 |
+| `form.desktopRoots / mobileRoots / desktopArms` | 每簇 2 / 1 个主核，每核 3 路主枝 |
+| `form.desktopDepth / mobileDepth` | 4 / 1（从 0 计，即 5 / 2 层） |
+| `form.length / lengthDecay / width / widthDecay` | 6 / 0.59 / 0.17 / 0.56，层级缩短与变细 |
+| `form.tipTaper / terminalLight / levelLightDecay` | 0.72 / 0.22 / 0.73，末梢渐细、弱光与层级明暗 |
+| `light.interval / phaseStep / jitter` | 2.65s / 0.47s / 0.38s，错相与间隔抖动 |
+| `light.spikeCore / spikeTravel / spikeTailSamples` | 0.24s / 0.28s / 8，尖峰亮芯与拖尾 |
+| `light.converge / cascade / cascadeRelays` | 2.1s / 2.6s / 3，汇聚与变速回折接力 |
+| `light.stormMin / stormMax / stormDuration` | 12s / 18s / 2.5s，风暴间隔与传播时长 |
+| `light.stormPulse / stormFade / bridgeGain` | 0.10 / 0.85s / 1.5，簇脉冲、衰减与桥接增亮 |
+| `light.breathAmplitude / breathPeriod / hoverGain` | ±3% / 8s / 0.12，呼吸与光标近邻增亮 |
+| `atmosphere.desktopDust / mobileDust / dustOpacity` | 每簇 48 / 16 / 0.09，轻微微尘 |
+| `budget.maxEvents / meshFraction` | 40 条有界日志 / 降级保留 60% 网格顶点（完整三角形） |
+
+诊断 `window.__NET_STATS__` 新增 `lightEvents`、`lightDirections`、`lightEventLog`、`lightActive`、`lightPaused`、`networkPaths`、`networkTriangles`、`networkRoots`、`networkDepth`、`lightConfig`；`pulses` 合计旧 idle 点与当前光效活动数。`lines` / `networkPaths` 现在表示曲线路径数，桌面 934 条；桌面网络 10936 三角形，内容树突另计 4160；移动网络 880、内容树突 1600。真实 GPU 调用和性能须浏览器实测。
+
+### M5c 非浏览器复验
+
+复用 M5b 自测读取当前页面，28/28 通过；使用 Node VM、实际本地 Three.js CPU 几何及 DOM/渲染器替身运行页面模块。模拟 60Hz 的 10s 事件为 spike-out 9 / converge 5 / cascade 5 / rare-storm 0；12s 为 10 / 9 / 5 / 0；120s 为 76 / 75 / 74 / 8。风暴按 12–18s 配置触发，前 10s 的三类覆盖来自外放、汇聚和回折。模拟不证明画面可见性或真实帧率。
+
+```powershell
+node D:\will\cache\scratch\an3\m5c\selftest.mjs
+node D:\will\cache\scratch\an3\m5c\integrity.mjs
+```
+
+证据：同目录 `selftest-report.json`（28 项逻辑/几何/降级/交互回归）、`integrity-report.json`（当前 HTML 两段脚本 node --check、导入映射、直接本地资源、冲突/TODO、SHA256 和差异空白检查）。M5c 未修改页面字节，只补齐文档与任务记录。M5/M5b 原执行均在收尾被模型容量中断（任务卡记载 rc=1），本轮没有新增美学迭代。历史备份和诊断位于同级 `m5`、`m5b`；本轮备份位于 `m5c`。
+
+本轮未跑浏览器自测：造型/光效可见性、与 HEBE 快照对比、真实 shader 编译/控制台、GPU 60fps、375px 溢出与遮挡、真实 hover/触屏/弹窗/扫码/记忆环和 reduce 视觉均待 HEBE 独立验收。卡中既有 60fps/0 错误为 HEBE 前轮实测背景，非本轮 Cain 测量。未提交或推送 Git，由 HEBE 验收后发布。
