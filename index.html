@@ -13,9 +13,8 @@
     .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,3,9,.16) 76%,rgba(0,2,8,.52) 125%)}
     .cursor-glow{position:fixed;z-index:3;left:0;top:0;width:180px;height:180px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(45,224,106,.10),rgba(45,224,106,.025) 32%,transparent 70%);transform:translate(-50%,-50%);transition:opacity .25s}
     .cluster-index{position:fixed;z-index:6;right:5.8vw;top:clamp(190px,50svh,calc(100svh - 220px));display:grid;gap:9px;transform:translateY(-50%)}.cluster-index a{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:38px;color:#93a49b;font:15px/1.4 var(--mono);opacity:.74;transition:color .2s,opacity .2s}.cluster-index a:after{content:"";width:7px;height:7px;border:1px solid #7b9085;border-radius:50%;transition:background .2s,box-shadow .2s}.cluster-index a.active,.cluster-index a:hover{color:var(--green);opacity:1}.cluster-index a.active:after{background:var(--green);border-color:var(--green);box-shadow:0 0 11px var(--green)}
-    .cluster-title{position:fixed;z-index:3;top:18%;left:50%;transform:translate(-50%,-8px);opacity:0;pointer-events:none;color:rgba(220,244,229,.82);font:11px var(--mono);letter-spacing:.22em;text-shadow:0 0 18px rgba(45,224,106,.42);transition:opacity .5s,transform .5s}.cluster-title.visible{opacity:1;transform:translate(-50%,0)}
     .info-dialog{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:rgba(0,4,10,.32);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .35s ease-out,visibility 0s linear .35s}.info-dialog.open{opacity:1;visibility:visible;transition:opacity .35s ease-out,visibility 0s}.info-card{position:relative;width:min(540px,100%);padding:34px 38px;border:1px solid rgba(117,220,159,.2);border-radius:16px;background:linear-gradient(145deg,rgba(9,28,34,.96),rgba(4,12,23,.96));box-shadow:0 22px 90px rgba(0,0,0,.4),0 0 32px rgba(45,224,106,.06),inset 0 0 35px rgba(45,224,106,.045);opacity:0;transform:translateY(14px) scale(.96);transition:transform .28s ease-out,opacity .28s ease-out}.info-dialog.open .info-card{opacity:1;transform:translateY(0) scale(1);transition-duration:.48s}.info-card h2{margin:0 42px 18px 0;color:#e8f4ed;font-size:clamp(25px,5vw,34px);font-weight:500}.info-card p{margin:0;color:#c3d2ca;font-size:17px;line-height:1.85;overflow-wrap:anywhere}.info-close{position:absolute;right:14px;top:14px;width:44px;height:44px;border:1px solid rgba(117,220,159,.3);border-radius:50%;background:rgba(7,24,29,.9);color:#e8f4ed;font-size:25px;cursor:pointer}.info-close:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-    @media(max-width:700px){.cluster-index{top:auto;right:5vw;left:5vw;bottom:118px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;transform:none;padding:4px 0}.cluster-index a{min-width:0;min-height:30px;justify-content:center;gap:6px;font-size:15px}.cluster-index a:after{width:6px;height:6px}.cursor-glow{display:none}.cluster-title{top:15%;font-size:9px}.info-card{padding:30px 25px}.info-card p{font-size:16px}}
+    @media(max-width:700px){.cluster-index{top:auto;right:5vw;left:5vw;bottom:118px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;transform:none;padding:4px 0}.cluster-index a{min-width:0;min-height:30px;justify-content:center;gap:6px;font-size:15px}.cluster-index a:after{width:6px;height:6px}.cursor-glow{display:none}.info-card{padding:30px 25px}.info-card p{font-size:16px}}
     @media(hover:hover) and (pointer:fine){body:hover .cursor-glow{opacity:1}}
     .motion-notice{position:fixed;z-index:12;top:14px;left:50%;width:min(680px,calc(100vw - 28px));transform:translateX(-50%);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px 12px 18px;border:1px solid rgba(117,220,159,.34);border-radius:10px;background:linear-gradient(135deg,rgba(7,24,29,.94),rgba(6,16,27,.9));backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 0 20px rgba(62,133,111,.05);color:#d0dad5;font-size:13px;line-height:1.5}.motion-notice[hidden]{display:none}.motion-notice-copy{min-width:0}.motion-notice-actions{display:flex;flex-shrink:0;gap:8px}.motion-notice button{min-height:36px;padding:7px 11px;border:1px solid rgba(117,220,159,.35);border-radius:6px;background:rgba(11,30,31,.78);color:#d9e8df;font:11px var(--mono);cursor:pointer}.motion-notice button:focus-visible{outline:2px solid var(--green);outline-offset:2px}.motion-notice .motion-enable{border-color:rgba(45,224,106,.62);color:var(--green)}.quiet-glow{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0}.quiet-glow:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 52% 47%,rgba(45,224,106,.035),transparent 57%);animation:quietBreath 7s ease-in-out infinite alternate}@keyframes quietBreath{from{opacity:.58}to{opacity:.78}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
@@ -58,23 +57,22 @@
     .language-toggle{padding:3px 0;border:0;background:none;color:#aab9b4;font:inherit;white-space:nowrap;cursor:pointer}.language-current{color:var(--green)}
     .language-toast{position:fixed;z-index:13;top:92px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:10px 16px;border:1px solid rgba(117,220,159,.2);border-radius:8px;background:rgba(7,24,29,.92);color:#d0dad5;font-size:13px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,visibility 0s linear .2s}.language-toast.visible{opacity:1;visibility:visible;transition-delay:0s}
     .info-content{opacity:1;transition:opacity .14s ease-out}.info-content.switching{opacity:0}#info-publications{text-decoration:underline;text-underline-offset:4px}
-    .readout,.scroll-cue,.section-float,.cluster-index,.cluster-title{transition:opacity .3s ease-out}
-    .footer-visible .readout,.footer-visible .scroll-cue,.footer-visible .section-float,.footer-visible .cluster-index,.footer-visible .cluster-title{opacity:0;pointer-events:none}
+    .readout,.scroll-cue,.section-float,.cluster-index{transition:opacity .3s ease-out}
+    .footer-visible .readout,.footer-visible .scroll-cue,.footer-visible .section-float,.footer-visible .cluster-index{opacity:0;pointer-events:none}
     .footer-visible .cluster-index{visibility:hidden}
     @media(max-width:700px){.topbar{flex-direction:column;align-items:flex-start;gap:12px}.nav{width:100%;flex-wrap:wrap;gap:10px 14px}.nav a{display:inline}.language-toggle{margin-left:auto}.language-toast{top:128px}}
     /* M7：品牌英文保留，语言按钮额外留白，页尾愿景跟随滚动。 */
     .language-toggle{margin-left:16px}
-    .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s ease-out}
-    .footer-vision-label{margin:0 0 16px;color:#95aaa0;font-size:12px;line-height:1.5;letter-spacing:.35em}
+    .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:none}
     .footer-vision-title{margin:0;color:#c3d3c9;font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.4;text-shadow:0 0 18px rgba(117,220,159,.06)}
-    @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-label{margin-bottom:12px;font-size:11px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
+    @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
   </style>
 </head>
 <body class="static-network">
   <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
   <aside class="motion-notice" id="motion-notice" aria-label="减少动态效果设置提示" hidden><div class="motion-notice-copy">检测到系统&quot;减少动态效果&quot;，已为您简化动画</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">开启完整动效</button><button id="motion-dismiss" type="button">知道了</button></div></aside>
   <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
-  <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div><div class="cluster-title" id="cluster-title" aria-live="polite"></div>
+  <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">网络组装中</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">初始化</div></div></div>
   <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="五区内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
   <header class="topbar"><a class="brand" href="#top" aria-label="安集协康 / ANGECON 首页"><span>安集协康 / ANGECON</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，查看英文站上线提示"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
@@ -92,7 +90,7 @@
   <nav class="cluster-index" aria-label="分区索引"><a href="#company" data-index="0">关于我们</a><a href="#technology" data-index="1">技术平台</a><a href="#pipeline" data-index="2">研发管线</a><a href="#science" data-index="3">科学数据</a><a href="#contact" data-index="4">关注我们</a></nav>
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><div id="info-qr" hidden></div><p class="info-foot"><a id="info-publications" href="#info-qr">完整内容见公众号</a></p></div></article></div>
-  <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-label">愿 景</p><p class="footer-vision-title">世界一流的细胞公司</p></div>
+  <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">创造奇迹，造福人类</p></div>
   <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
 
   <script>
@@ -423,20 +421,30 @@
     (()=>{
       const footer=document.querySelector('.footer'),vision=document.querySelector('#footer-vision');
       const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)');
-      let queued=false;
-      const update=()=>{
-        queued=false;
-        const rect=footer.getBoundingClientRect();
-        const progress=Math.max(0,Math.min(1,(innerHeight-rect.top)/Math.max(1,rect.height)));
-        const opacity=reducedMotion.matches?(progress>0?1:0):progress*progress*(3-2*progress);
-        vision.style.opacity=String(opacity);
-        vision.style.visibility=progress>0?'visible':'hidden';
-        vision.setAttribute('aria-hidden',String(progress===0));
+      // 文字与相机共用一个时钟和 ease 进度；快速反向从当前值对称回收。
+      const view={active:false,blend:0,duration:1000,started:performance.now(),from:0};
+      let frame=0;
+      view.tick=now=>{
+        if(reducedMotion.matches)view.blend=view.active?1:0;
+        else{const t=Math.max(0,Math.min(1,(now-view.started)/view.duration));view.blend=view.from+((view.active?1:0)-view.from)*t*t*(3-2*t)}
+        vision.style.opacity=String(view.blend);
+        vision.style.visibility=view.blend>0?'visible':'hidden';
+        vision.setAttribute('aria-hidden',String(view.blend===0));
+        return view.blend;
       };
-      const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(update)}};
-      addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule);
-      reducedMotion.addEventListener?.('change',schedule);
-      if('ResizeObserver' in window)new ResizeObserver(schedule).observe(footer);
+      const animate=now=>{frame=0;view.tick(now);if(view.blend!==(view.active?1:0))frame=requestAnimationFrame(animate)};
+      const update=()=>{
+        const now=performance.now(),rect=footer.getBoundingClientRect();
+        const active=rect.top<innerHeight&&rect.bottom>0;
+        view.tick(now);
+        if(active!==view.active){view.from=view.blend;view.started=now;view.active=active}
+        view.tick(now);
+        if(!frame&&view.blend!==(view.active?1:0))frame=requestAnimationFrame(animate);
+      };
+      window.__FOOTER_VIEW__=view;
+      addEventListener('scroll',update,{passive:true});addEventListener('resize',update);
+      reducedMotion.addEventListener?.('change',update);
+      if('ResizeObserver' in window)new ResizeObserver(update).observe(footer);
       update();
     })();
     // 五组文字只在启动时读取数据；滚动切换不重建 DOM 或几何。
@@ -567,10 +575,8 @@
     const nodeDistances=new Float32Array(N),nodeRoots=new Float32Array(N);
     const rand=(a,b)=>a+Math.random()*(b-a); let renderer,scene,camera,points,composer,bloom,stats;
     let pulses=[],lastBurst=0,lastFlicker=0,activeCluster=0,introDone=false,fps=0,frameCount=0,fpsAt=0;
-    const clusterNames=['关于我们','技术平台','研发管线','科学数据','关注我们'];
     const infoDialog=document.querySelector('#info-dialog'),infoTitle=document.querySelector('#info-title'),infoBody=document.querySelector('#info-body');
     document.querySelectorAll('.cluster-index a').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',link.getAttribute('href'))}));
-    const clusterTitle=document.querySelector('#cluster-title');
     const growthRandom=netSeeded(NET_CONFIG.seed),form=NET_CONFIG.form;
     const networkPaths=[],rootPositions=[],linePositions=[],lineDistances=[],lineRoots=[],lineClusters=[],lineRoutes=[],lineBridges=[],lineLevels=[];
     const rootCount=mobile?form.mobileRoots:form.desktopRoots,maxDepth=mobile?form.mobileDepth:form.desktopDepth,arms=mobile?form.mobileArms:form.desktopArms;
@@ -674,7 +680,7 @@
       }
       float clusterPulse(float cluster){return 1.+${NET_CONFIG.light.stormPulse}*stormEnvelope(cluster);
       }`;
-    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent='活跃';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));clusterTitle.textContent=clusterNames[c];clusterTitle.classList.add('visible');clearTimeout(clusterTitle.hideTimer);clusterTitle.hideTimer=setTimeout(()=>clusterTitle.classList.remove('visible'),1800);if(stats)stats.activeCluster=c;}
+    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent='活跃';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));if(stats)stats.activeCluster=c;}
     function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
     addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
     function fallback(){unitControl.fail();introDone=true;stats=window.__NET_STATS__;Object.assign(stats,{nodes:0,lines:0,mobile,bloomOn:false,gazeEnabled:false,introDone:true,pulses:0,lightActive:0,lightPaused:true});}
@@ -758,7 +764,7 @@
       });
       const visitedAttribute=new THREE.Float32BufferAttribute(new Float32Array(treeUnits.length),1);
       const tg=new THREE.BufferGeometry();tg.setAttribute('aVisited',visitedAttribute);tg.setAttribute('aSection',new THREE.Float32BufferAttribute(treeUnits.map(i=>Number(aboutUnits[i].id[0])-1),1));tg.setAttribute('position',new THREE.Float32BufferAttribute(treePositions,3));tg.setAttribute('aUnit',new THREE.Float32BufferAttribute(treeUnits,1));tg.setAttribute('aDistance',new THREE.Float32BufferAttribute(treeDistances,1));tg.setAttribute('aSignal',new THREE.Float32BufferAttribute(treeSignals,1));
-      const treeMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uActive:{value:0},uReveal:{value:0},uHover:{value:-1},uSelected:{value:-1},uPhase:{value:-1}},vertexShader:`attribute float aUnit,aDistance,aSignal,aVisited,aSection;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){vSection=aSection;vVisited=aVisited;vUnit=aUnit;vDistance=aDistance;vSignal=aSignal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uActive,uReveal,uHover,uSelected,uPhase;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){if(abs(vSection-uActive)>.1)discard;float memory=vVisited*vSignal*(1.-smoothstep(.22,.38,vDistance));float selected=1.-step(.1,abs(vUnit-uSelected));float hovered=(1.-step(.1,abs(vUnit-uHover)))*(1.-step(0.,uSelected));float light=hovered*vSignal*(1.-smoothstep(.015,.12,abs(vDistance-uPhase)))*step(0.,uPhase);float reveal=smoothstep(vDistance-.08,vDistance+.08,uReveal);gl_FragColor=vec4(vec3(.1764706,.8784314,.4156863)*(.6+light*1.4+selected*.4+memory*.3),(.34+light*.65+selected*.3+memory*.15)*reveal);}`});
+      const treeMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uPanorama:{value:0},uActive:{value:0},uReveal:{value:0},uHover:{value:-1},uSelected:{value:-1},uPhase:{value:-1}},vertexShader:`attribute float aUnit,aDistance,aSignal,aVisited,aSection;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){vSection=aSection;vVisited=aVisited;vUnit=aUnit;vDistance=aDistance;vSignal=aSignal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uPanorama,uActive,uReveal,uHover,uSelected,uPhase;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){if(uPanorama<.5&&abs(vSection-uActive)>.1)discard;float memory=vVisited*vSignal*(1.-smoothstep(.22,.38,vDistance));float selected=1.-step(.1,abs(vUnit-uSelected));float hovered=(1.-step(.1,abs(vUnit-uHover)))*(1.-step(0.,uSelected));float light=hovered*vSignal*(1.-smoothstep(.015,.12,abs(vDistance-uPhase)))*step(0.,uPhase);float reveal=smoothstep(vDistance-.08,vDistance+.08,uReveal);gl_FragColor=vec4(vec3(.1764706,.8784314,.4156863)*(.6+light*1.4+selected*.4+memory*.3),(.34+light*.65+selected*.3+memory*.15)*reveal);}`});
       const trees=new THREE.Mesh(tg,treeMaterial);scene.add(trees);
       Object.assign(stats,{unitDrawCalls:3,unitTreeTriangles:treePositions.length/9,unitPaths:paths.map((p,i)=>({id:aboutUnits[i].id,length:p.total,distances:p.distances})),unitAnchors:aboutUnits.map((u,i)=>({id:u.id,anchor:u.anchor,world:unitWorld[i].toArray(),seed:u.seed})),introDone:false});
       let introStarted=performance.now();
@@ -769,8 +775,8 @@
       const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
       let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:40},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:20},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
       function updateUnits(now){
-        const section=stats.activeCluster;treeMaterial.uniforms.uActive.value=section;
-        if(section!==previousSection){aboutUnits.forEach((u,i)=>{const on=Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+20,on?originalSomas[i+20]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=section}
+        const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
+        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+20,on?originalSomas[i+20]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
         if(previousVisited!==unitControl.visited.size){for(let i=0;i<treeUnits.length;i++)visitedAttribute.array[i]=!mobile&&!stats.performanceTier&&unitControl.visited.has(aboutUnits[treeUnits[i]].id)?1:0;visitedAttribute.needsUpdate=true;previousVisited=unitControl.visited.size;stats.visited=[...unitControl.visited]}
 
         if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}
@@ -794,7 +800,7 @@
         let visibleCount=0;leader.style.display='none';
         aboutUnits.forEach((unit,i)=>{
           projection.copy(unitWorld[i]).project(camera);viewPoint.copy(unitWorld[i]).applyMatrix4(camera.matrixWorldInverse);
-          const visible=Number(unit.id[0])-1===section&&viewPoint.z<0&&projection.z>=-1&&projection.z<=1&&Math.abs(projection.x)<=1&&Math.abs(projection.y)<=1;
+          const visible=!panorama&&Number(unit.id[0])-1===section&&viewPoint.z<0&&projection.z>=-1&&projection.z<=1&&Math.abs(projection.x)<=1&&Math.abs(projection.y)<=1;
           const button=unitControl.buttons.get(unit.id);button.hidden=!visible;
           if(!visible){if(unitControl.hover===unit.id)unitControl.clearHover();return}
           visibleCount++;const x=(projection.x*.5+.5)*innerWidth,y=(-projection.y*.5+.5)*innerHeight;button.style.left=`${x}px`;button.style.top=`${y}px`;
@@ -803,6 +809,67 @@
         });
         if(selected<0)leader.style.display='none';stats.unitsVisible=visibleCount;
       }
+      // M8b：真实结构拟合，微尘不决定取景，避免包围盒空角拉远镜头。
+      const panoramaBounds=new THREE.Box3(),boundPoint=new THREE.Vector3();
+      const panoramaArrays=[positions,linePositions,treePositions];
+      for(const array of panoramaArrays){
+        for(let i=0;i<array.length;i+=3)panoramaBounds.expandByPoint(boundPoint.set(array[i],array[i+1],array[i+2]));
+      }
+      for(const point of unitWorld)panoramaBounds.expandByPoint(point);
+      panoramaBounds.expandByScalar(2); // 胞体、细环与光晕余量。
+      const panoramaCenter=panoramaBounds.getCenter(new THREE.Vector3());
+      // 延续 hero 朝向 z 的层叠关系，水平展开五簇，取消俯视导致的上浮。
+      const panoramaDirection=new THREE.Vector3(.85,0,1).normalize();
+      const panoramaRight=new THREE.Vector3().crossVectors(new THREE.Vector3(0,1,0),panoramaDirection).normalize();
+      const panoramaUp=new THREE.Vector3().crossVectors(panoramaDirection,panoramaRight).normalize();
+      const panoramaVertices=[];
+      const recordPanoramaPoint=point=>{
+        boundPoint.copy(point).sub(panoramaCenter);
+        panoramaVertices.push(boundPoint.dot(panoramaRight),boundPoint.dot(panoramaUp),boundPoint.dot(panoramaDirection));
+      };
+      for(const array of panoramaArrays)for(let i=0;i<array.length;i+=3){boundPoint.set(array[i],array[i+1],array[i+2]);recordPanoramaPoint(boundPoint)}
+      for(const point of unitWorld)recordPanoramaPoint(point);
+      const panoramaProjection=new Float32Array(panoramaVertices);
+      let panoramaMinDepth=Infinity,panoramaMaxDepth=-Infinity;
+      for(let i=2;i<panoramaProjection.length;i+=3){panoramaMinDepth=Math.min(panoramaMinDepth,panoramaProjection[i]);panoramaMaxDepth=Math.max(panoramaMaxDepth,panoramaProjection[i])}
+      const panoramaFocusWidth=Math.max(NET_CONFIG.budget.focusWidth,(panoramaMaxDepth-panoramaMinDepth)*.6);
+      const panoramaPosition=new THREE.Vector3(),panoramaTarget=new THREE.Vector3();
+      const regularPosition=new THREE.Vector3(),regularTarget=new THREE.Vector3(),viewTarget=new THREE.Vector3();
+      const fitPanorama=()=>{
+        const tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+        const topbar=document.querySelector('.topbar').getBoundingClientRect();
+        const footer=document.querySelector('.footer').getBoundingClientRect();
+        const topSpace=Math.min(innerHeight*.3,Math.max(70,topbar.bottom+20));
+        const bottomSpace=Math.min(innerHeight*.35,Math.max(footer.height+20,100));
+        const top=1-2*topSpace/innerHeight,bottom=-1+2*bottomSpace/innerHeight;
+        const halfHeight=Math.min(top,-bottom),width=.72,margin=2;
+        const horizontal=tangent*camera.aspect*width,vertical=tangent*halfHeight;
+        let minX,maxX,minY,maxY;
+        // 顶点约束形成允许的平移区间，交集存在即完整入画；仅初始化/resize 执行。
+        const fits=distance=>{
+          minX=minY=-Infinity;maxX=maxY=Infinity;
+          for(let i=0;i<panoramaProjection.length;i+=3){
+            const px=panoramaProjection[i],py=panoramaProjection[i+1],depth=distance-panoramaProjection[i+2]-margin;
+            if(depth<=0)return false;
+            minX=Math.max(minX,px+margin-horizontal*depth);maxX=Math.min(maxX,px-margin+horizontal*depth);
+            minY=Math.max(minY,py+margin-vertical*depth);maxY=Math.min(maxY,py-margin+vertical*depth);
+            if(minX>maxX||minY>maxY)return false;
+          }
+          return true;
+        };
+        let near=panoramaMaxDepth+margin,far=Math.max(700,near+1);
+        while(!fits(far))far*=2;
+        for(let i=0;i<24;i++){const mid=(near+far)/2;if(fits(mid))far=mid;else near=mid}
+        const distance=far;fits(distance);
+        panoramaTarget.copy(panoramaCenter).addScaledVector(panoramaRight,(minX+maxX)/2).addScaledVector(panoramaUp,(minY+maxY)/2);
+        panoramaPosition.copy(panoramaTarget).addScaledVector(panoramaDirection,distance);
+        // 极窄/矮视口距离可能越过原 far；只更新投影，不改变几何与降级策略。
+        camera.far=Math.max(700,distance+panoramaBounds.min.distanceTo(panoramaBounds.max)+50);camera.updateProjectionMatrix();
+        Object.assign(stats,{panoramaDistance:distance,panoramaFocusWidth,panoramaBounds:{min:panoramaBounds.min.toArray(),max:panoramaBounds.max.toArray()},panoramaViewport:{top,bottom,width,halfHeight},panoramaTarget:panoramaTarget.toArray()});
+      };
+      fitPanorama();
+      addEventListener('resize',fitPanorama,{passive:true});
+      if('ResizeObserver' in window){const observer=new ResizeObserver(fitPanorama);observer.observe(document.querySelector('.topbar'));observer.observe(document.querySelector('.footer'))}
       const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);
       stats.performanceTier=0;let slowWindows=0;
       let last=performance.now(),elapsed=0,frameWindow=last,windowFrames=0;
@@ -810,16 +877,19 @@
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
         const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
         const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
           // 每区固定内容取景；滚动焦面仍沿五簇路径变化，鼠标只叠加小幅环视。
           const distance=Math.max(mobile?62:46,13/(Math.tan(THREE.MathUtils.degToRad(53/2))*camera.aspect));
-          camera.position.set(from[0],from[1]+4,from[2]+distance);camera.lookAt(from[0],from[1]+4,from[2]);
-          if(animate&&!mobile){gaze.x+=(gaze.targetX-gaze.x)*.05;gaze.y+=(gaze.targetY-gaze.y)*.05;gazeRig.rotation.set(0,0,0);camera.rotateY(gaze.x);camera.rotateX(-gaze.y)}else{gazeRig.rotation.set(0,0,0);gaze.x=0;gaze.y=0}
+          regularPosition.set(from[0],from[1]+4,from[2]+distance);regularTarget.set(from[0],from[1]+4,from[2]);
+          camera.position.copy(regularPosition).lerp(panoramaPosition,panoramaBlend);
+          viewTarget.copy(regularTarget).lerp(panoramaTarget,panoramaBlend);camera.lookAt(viewTarget);
+          stats.cameraTarget=viewTarget.toArray();
+          if(animate&&!mobile&&!stats.panoramaActive){gaze.x+=(gaze.targetX-gaze.x)*.05;gaze.y+=(gaze.targetY-gaze.y)*.05;gazeRig.rotation.set(0,0,0);camera.rotateY(gaze.x);camera.rotateX(-gaze.y)}else{gazeRig.rotation.set(0,0,0);gaze.x=0;gaze.y=0}
           stats.gaze=[+gaze.x.toFixed(4),+gaze.y.toFixed(4)];
-          const movingFocus=motionEnabled&&!mobile&&!stats.performanceTier;const depth=movingFocus?distance-12+local*24:distance;
-          for(const mat of [pmat,lmat]){mat.uniforms.uFocusDepth.value=depth;mat.uniforms.uFocusSize.value=movingFocus?1:0;mat.uniforms.uTime.value=motionEnabled?elapsed:0}
+          const movingFocus=motionEnabled&&!mobile&&!stats.performanceTier;const regularDepth=movingFocus?distance-12+local*24:distance;const depth=THREE.MathUtils.lerp(regularDepth,stats.panoramaDistance,panoramaBlend);
+          for(const mat of [pmat,lmat]){mat.uniforms.uFocusDepth.value=depth;mat.uniforms.uFocusWidth.value=THREE.MathUtils.lerp(NET_CONFIG.budget.focusWidth,panoramaFocusWidth,panoramaBlend);mat.uniforms.uFocusSize.value=movingFocus?1:0;mat.uniforms.uTime.value=motionEnabled?elapsed:0}
           stats.focusDepth=depth;stats.focusMode=movingFocus?'scroll':'fixed';stats.scrollProgress=progress;
         }
         // 无操作六秒后，仅一枚背景点与直接邻接轻响应；输入/弹窗/后台立即清零。
@@ -841,7 +911,7 @@
         if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;if(fps<45&&!document.hidden&&!modalOpen){slowWindows++}else{slowWindows=0}if(slowWindows>=3&&stats.performanceTier<3){stats.performanceTier++;if(stats.performanceTier===1){composer=null;stats.bloomOn=false}else if(stats.performanceTier===2){renderer.setPixelRatio(1);pmat.uniforms.uPixelRatio.value=1}else{pg.setDrawRange(0,Math.floor(N*.6));lg.setDrawRange(0,Math.floor(lg.attributes.position.count*NET_CONFIG.budget.meshFraction/3)*3);dg.setDrawRange(0,0);stats.backgroundVisible=Math.floor(N*.6)}previousVisited=-1;slowWindows=0}stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
       });
       function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
-      addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
+      addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;fitPanorama();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
       const observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting)setCluster(Number(e.target.closest('.cluster-section').dataset.cluster))},{rootMargin:'-42% 0px -42% 0px'});document.querySelectorAll('.cluster-anchor').forEach(x=>observer.observe(x));
       }catch(e){fallback()}
     if(motionEnabled){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
