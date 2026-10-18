@@ -61,7 +61,13 @@ class CheckerFaultTests(unittest.TestCase):
         self.mutation("index.html", lambda s: s.replace("const CONTENT_UNITS =", "const CONTENT_UNITS !", 1), "JavaScript syntax")
 
     def test_missing_qr_reference_is_rejected(self):
-        self.mutation("en/index.html", lambda s: s.replace("../assets/qr-anku.png", "../assets/missing.png"), "local resources")
+        self.mutation("index.html", lambda s: s.replace("assets/qr-anku.png", "assets/missing.png"), "local resources")
+
+    def test_retired_english_contact_is_rejected(self):
+        self.mutation("en/index.html", lambda s: s.replace('Contact Us', 'Follow Us'), "bilingual data")
+
+    def test_chinese_publication_button_is_required(self):
+        self.mutation("index.html", lambda s: s.replace('<button type="button" id="info-publications">查阅更多见公众号</button>', '<span id="info-publications">查阅更多见公众号</span>'), "language routes")
 
     def test_missing_anchor_is_rejected(self):
         self.mutation("index.html", lambda s: s.replace("</body>", '<a href="#missing-anchor">test</a></body>'), "anchors")

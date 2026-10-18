@@ -116,7 +116,7 @@ def check_project(root):
         def structure():
             require(not [key for key, count in Counter(page.ids).items() if count > 1], "duplicate HTML IDs")
             require(any(tag == "html" and attrs.get("lang") == language for tag, attrs in page.elements), "wrong html lang")
-            require({"network", "info-dialog", "info-qr", "language-toggle"} <= set(page.ids), "required interaction element missing")
+            require(({"network", "info-dialog", "language-toggle"} | ({"info-qr"} if language == "zh-Hans" else set())) <= set(page.ids), "required interaction element missing")
         check(prefix + "HTML / language / IDs", structure)
         check(prefix + "content units", lambda: units(page))
 
@@ -153,7 +153,7 @@ def check_project(root):
                 if not ref.startswith("data:"):
                     target, _ = local_target(page.path, ref)
                     require(target.is_file(), "asset is not a file: " + ref)
-            for name in ("qr-angecon.jpg", "qr-anku.png"):
+            for name in (("qr-angecon.jpg", "qr-anku.png") if language == "zh-Hans" else ()):
                 require(name in page.text and (root / "assets" / name).is_file(), "QR asset missing: " + name)
 
             maps = [json.loads(body).get("imports", {}) for attrs, body in page.scripts if attrs.get("type") == "importmap"]
@@ -193,7 +193,7 @@ def check_project(root):
             if language == "en":
                 require('<a id="info-publications" href="mailto:bd@angecon.com">For more details, please contact us: bd@angecon.com</a>' in page.text, "English contact mail link missing")
             else:
-                require('<span id="info-publications">查阅更多见公众号</span>' in page.text, "Chinese publication text missing")
+                require('<button type="button" id="info-publications">查阅更多见公众号</button>' in page.text, "Chinese publication text missing")
         check(prefix + "language routes / hreflang / contact", navigation)
 
     if len(pages) == 2:
@@ -214,11 +214,15 @@ def check_project(root):
             for unit in en.values():
                 require(not re.search(r"[\u4e00-\u9fff]", unit["body"]), "Chinese text in English body: " + unit["id"])
             require(not any(term in profile for term in ("High-Tech Enterprise", "Certifications & honors", "Postdoctoral")), "Retired local credentials in Company Profile")
-            require(pages[0].styles == pages[1].styles, "bilingual CSS differs")
+            def shared_styles(page):
+                return [re.sub(r"\s+", "", re.sub(r"#info-publications(?::hover)?\{[^}]*\}|\.qr-grid[^{}]*\{[^}]*\}", "", body)) for _, body in page.styles]
+            require(shared_styles(pages[0]) == shared_styles(pages[1]), "bilingual CSS differs outside publication control")
+            require(not re.search(r"WeChat|QR|公众号|Follow Us", pages[1].text, re.I), "retired English contact content")
+            require(en["5-1"]["title"] == "Contact Us" and all("bd@angecon.com" in en[id]["body"] for id in ("5-1", "5-2")), "English contact content missing")
             zh_tags = Counter(tag for tag, _ in pages[0].elements)
             en_tags = Counter(tag for tag, _ in pages[1].elements)
-            # Chinese publication hint is plain text; English keeps its mail link.
-            zh_tags.subtract({"span": 1})
+            # Chinese publication button and English mail link intentionally differ.
+            zh_tags.subtract({"button": 1, "div": 1})
             en_tags.subtract({"a": 1})
             require(zh_tags == en_tags, "bilingual tag counts differ")
         check("bilingual data / styles / structure", bilingual)
