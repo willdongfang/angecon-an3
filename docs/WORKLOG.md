@@ -61,3 +61,10 @@
 - 静态检查11/11通过；浏览器复验与截图见交付目录browser-retest.cjs、retest-results.json，最终结果在任务卡和报告复修段记录。本地提交，禁止push/发布。
 
 - 最终复验：四路通过，错误0；英文正文5-1/5-2四次实际点击捕获mailto，9个其它unit逐一正常无提示；中文1440×900双码卡纵向457/457、375px为392/392。截图已目视核对，静态11/11。未测边界及13项读数见报告复修段。
+
+## 2026-10-18 品牌 LOGO 接入
+
+- 执行 LOGO 任务卡，main 70cb4c3 → feat/logo-lockup；两页顶栏和footer改引用现有SVG，fallback保留。按Will定版覆盖验收第1项旧中文变体表述；英文使用../assets/实际相对路径，保留英文aria-label。
+- 顶栏原实测72px；仅直接加38px图片会撑高，故桌面固定原72px并居中。移动遵循原多行导航，图片32px、页脚30px。SVG前后逐字节相同；两页script与fallback逐字相同。
+- 静态检查11/11、git diff --check通过。Chrome无头WebGL/本地HTTP8048，中英1440×900及375×812四路通过；800/240节点正常，点击1-1打开及Esc关闭，图片均加载、无横向溢出、语言按钮完整可见、页脚30px。JS/console/HTTP错误0。Pages项目前缀通过本地HTTP路由映射模拟，互切往返通过。
+- 交付：D:/will/123Agent/交付物/AN3-LOGO-20261018/，含report.md、shots、browser-check.cjs、results.json及before备份；截图目视已核对。首次回执写入因PowerShell管道默认编码失败，改UTF-8后完成；浏览器首轮通过。非独立验收；实体触屏/真实GPU性能/线上未测。仅本地提交，禁止push。
