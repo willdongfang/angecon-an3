@@ -68,6 +68,10 @@
     .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:none}
     .footer-vision-title{margin:0;color:#c3d3c9;font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.4;text-shadow:0 0 18px rgba(117,220,159,.06)}
     @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
+    .brand img{display:block;height:38px;width:auto}
+    .footer .brand img{height:30px;width:auto}
+    @media(min-width:701px){.topbar{height:72px;padding-top:0;padding-bottom:0}}
+    @media(max-width:700px){.brand img{height:32px}.footer .brand img{height:30px}}
   </style>
 </head>
 <body class="static-network">
@@ -77,7 +81,7 @@
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">Assembling the network</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">Initializing</div></div></div>
   <button id="intro-skip" type="button" hidden>Skip intro</button><div id="unit-layer" aria-label="Content cell bodies across five sections"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
-  <header class="topbar"><a class="brand" href="#top" aria-label="ANGECON Home"><span>安集协康 / ANGECON</span></a><nav class="nav" aria-label="Section navigation"><a href="#company">About Us</a><a href="#technology">Technology Platforms</a><a href="#pipeline">Pipeline</a><a href="#science">Scientific Data</a><a href="#contact">Contact Us</a><button class="language-toggle" id="language-toggle" type="button" aria-label="Current language: English; switch to Chinese"><span lang="zh-Hans">中</span><span aria-hidden="true"> / </span><span class="language-current" lang="en">EN</span></button></nav></header>
+  <header class="topbar"><a class="brand" href="#top" aria-label="ANGECON Home"><img src="../assets/logo-en.svg" alt="ANGECON 安集协康" width="224" height="80"></a><nav class="nav" aria-label="Section navigation"><a href="#company">About Us</a><a href="#technology">Technology Platforms</a><a href="#pipeline">Pipeline</a><a href="#science">Scientific Data</a><a href="#contact">Contact Us</a><button class="language-toggle" id="language-toggle" type="button" aria-label="Current language: English; switch to Chinese"><span lang="zh-Hans">中</span><span aria-hidden="true"> / </span><span class="language-current" lang="en">EN</span></button></nav></header>
   <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
   <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
   <div class="scroll-cue">Scroll down · Explore the neural network</div>
@@ -93,7 +97,7 @@
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>Neural Stem Cell Research Network</h1><p>上海安集协康生物技术股份有限公司 engages in cell R&D, production, storage and services, focusing on human neural stem cell drug development and clinical translation.</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="Close information window">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><p class="info-foot"><a id="info-publications" href="mailto:bd@angecon.com">For more details, please contact us: bd@angecon.com</a></p></div></article></div>
   <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">Creating Miracles, Benefiting Humanity</p></div>
-  <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>Building 3, No. 588 Qingdai Road, Pudong New Area, Shanghai, China (安集大厦)<br>bd@angecon.com</p></div><div class="footer-mark">Neural Stem Cells · Research and Technology Platform</div></footer>
+  <footer class="footer"><div><div class="brand"><img src="../assets/logo-en.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>Building 3, No. 588 Qingdai Road, Pudong New Area, Shanghai, China (安集大厦)<br>bd@angecon.com</p></div><div class="footer-mark">Neural Stem Cells · Research and Technology Platform</div></footer>
 
   <script>
     const CONTENT_UNITS = [

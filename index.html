@@ -70,6 +70,10 @@
     .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:none}
     .footer-vision-title{margin:0;color:#c3d3c9;font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.4;text-shadow:0 0 18px rgba(117,220,159,.06)}
     @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
+    .brand img{display:block;height:38px;width:auto}
+    .footer .brand img{height:30px;width:auto}
+    @media(min-width:701px){.topbar{height:72px;padding-top:0;padding-bottom:0}}
+    @media(max-width:700px){.brand img{height:32px}.footer .brand img{height:30px}}
   </style>
 </head>
 <body class="static-network">
@@ -79,7 +83,7 @@
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">网络组装中</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">初始化</div></div></div>
   <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="五区内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
-  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康 / ANGECON 首页"><span>安集协康 / ANGECON</span></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，切换至英文"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
+  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康 / ANGECON 首页"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，切换至英文"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
   <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
   <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
   <div class="scroll-cue">向下滚动 · 穿行神经之网</div>
@@ -95,7 +99,7 @@
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><p class="info-foot"><button type="button" id="info-publications">查阅更多见公众号</button></p><div id="info-qr" hidden></div></div></article></div>
   <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">创造奇迹，造福人类</p></div>
-  <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+  <footer class="footer"><div><div class="brand"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
 
   <script>
     const CONTENT_UNITS = [
