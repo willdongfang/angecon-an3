@@ -18,8 +18,6 @@ GROUP_IDS = {
     "science": ["4-1"],
     "contact": ["5-1", "5-2"],
 }
-GROUPS = {section: len(ids) for section, ids in GROUP_IDS.items()}
-EXPECTED_IDS = [unit_id for ids in GROUP_IDS.values() for unit_id in ids]
 IMPORTS = re.compile(r'''(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)["']([^"']+)["']''')
 IMAGES = re.compile(r'''["']((?:\.\.?/)?assets/[^"'\s]+\.(?:png|jpe?g|svg|webp))["']''')
 
@@ -65,11 +63,15 @@ def units(page):
     match = re.search(r"\bconst\s+CONTENT_UNITS\s*=\s*", page.text)
     require(match is not None, "CONTENT_UNITS declaration missing")
     value, _ = json.JSONDecoder().raw_decode(page.text[match.end():])
-    require(isinstance(value, list) and len(value) == len(EXPECTED_IDS), f"expected {len(EXPECTED_IDS)} content units")
+    groups = dict(GROUP_IDS)
+    if page.path.parent.name == "en":
+        groups["about"] = ["1-1", "1-3", "1-5"]
+    expected_ids = [unit_id for ids in groups.values() for unit_id in ids]
+    require(isinstance(value, list) and len(value) == len(expected_ids), f"expected {len(expected_ids)} content units")
     require(all(isinstance(unit, dict) for unit in value), "content units must be objects")
-    require(Counter(unit.get("sectionId") for unit in value) == GROUPS, "section counts differ")
-    require([unit.get("id") for unit in value] == EXPECTED_IDS, "content IDs or order differ")
-    for section, ids in GROUP_IDS.items():
+    require(Counter(unit.get("sectionId") for unit in value) == {section: len(ids) for section, ids in groups.items()}, "section counts differ")
+    require([unit.get("id") for unit in value] == expected_ids, "content IDs or order differ")
+    for section, ids in groups.items():
         require([unit.get("id") for unit in value if unit.get("sectionId") == section] == ids, "section membership differs: " + section)
     for unit in value:
         require(set(("id", "sectionId", "title", "body", "sourceIds", "seed", "anchor")) <= unit.keys(), "unit fields missing")
@@ -116,7 +118,7 @@ def check_project(root):
             require(any(tag == "html" and attrs.get("lang") == language for tag, attrs in page.elements), "wrong html lang")
             require({"network", "info-dialog", "info-qr", "language-toggle"} <= set(page.ids), "required interaction element missing")
         check(prefix + "HTML / language / IDs", structure)
-        check(prefix + f"{len(EXPECTED_IDS)} content units", lambda: units(page))
+        check(prefix + "content units", lambda: units(page))
 
         def javascript():
             require(shutil.which("node") is not None, "Node.js 18+ required")
@@ -188,18 +190,33 @@ def check_project(root):
             for lang, expected in (("zh-Hans", root / "index.html"), ("en", root / "en" / "index.html")):
                 target, _ = local_target(page.path, alternates[lang])
                 require((target / "index.html" if target.is_dir() else target) == expected, "wrong hreflang destination")
-            require(any(tag == "a" and attrs.get("href") == "mailto:bd@angecon.com" for tag, attrs in page.elements), "contact mail link missing")
+            if language == "en":
+                require('<a id="info-publications" href="mailto:bd@angecon.com">For more details, please contact us: bd@angecon.com</a>' in page.text, "English contact mail link missing")
+            else:
+                require('<span id="info-publications">查阅更多见公众号</span>' in page.text, "Chinese publication text missing")
         check(prefix + "language routes / hreflang / contact", navigation)
 
     if len(pages) == 2:
         def bilingual():
-            zh, en = (sorted(units(page), key=lambda unit: unit["id"]) for page in pages)
-            for left, right in zip(zh, en):
+            zh, en = ({unit["id"]: unit for unit in units(page)} for page in pages)
+            for unit_id, right in en.items():
+                left = zh[unit_id]
                 require(left.keys() == right.keys(), "unit field sets differ: " + left["id"])
                 for key in ("id", "sectionId", "seed", "anchor", "sourceIds"):
+                    if unit_id == "1-1" and key == "sourceIds":
+                        expected = list(dict.fromkeys(source for old_id in ("1-1", "1-2", "1-4") for source in zh[old_id][key]))
+                        require(right[key] == expected, "Company Profile merged source IDs differ")
+                        continue
                     require(left[key] == right[key], f"bilingual {left['id']} {key} differs")
+            profile = en["1-1"]["body"]
+            require("Company milestones: " in profile and "Certifications & honors: " in profile, "Company Profile merged headings missing")
             require(pages[0].styles == pages[1].styles, "bilingual CSS differs")
-            require(Counter(tag for tag, _ in pages[0].elements) == Counter(tag for tag, _ in pages[1].elements), "bilingual tag counts differ")
+            zh_tags = Counter(tag for tag, _ in pages[0].elements)
+            en_tags = Counter(tag for tag, _ in pages[1].elements)
+            # Chinese publication hint is plain text; English keeps its mail link.
+            zh_tags.subtract({"span": 1})
+            en_tags.subtract({"a": 1})
+            require(zh_tags == en_tags, "bilingual tag counts differ")
         check("bilingual data / styles / structure", bilingual)
     return results
 
