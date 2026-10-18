@@ -54,3 +54,10 @@
 - 过程：首次 PowerShell 管道编码损坏中文路径，创建目录前即失败，无页面改动；改UTF-8后执行。首次静态发现保留的英文容器/CSS仍含QR，按卡可删除方案清除后通过；对应首轮测试1项失败，最终20项通过。
 - 验证：python scripts/check_project.py 11/11；python -B -m unittest discover -s scripts -p "test_check_project.py" -v 20/20；git diff --check 通过。Chrome无头WebGL + 本地HTTP 8036，1440×1000、375×812中英四路，按钮点击、键盘、复位、自动双码、英文导航/邮箱、布局全部通过，错误0。
 - 证据：D:/will/123Agent/交付物/AN3-联系我们改造-20261018/（report.md、browser-check.cjs、browser-results.json、before/、screenshots/）。非独立验收；邮件仅亲测浏览器mailto请求，未打开操作系统邮件客户端；实体手机/实扫/性能/线上未测。仅本地提交，未push/发布。
+
+## 2026-10-18 联系我们卡复修
+- 重读任务卡末尾HEBE复测：原mailto证据点击的是底部链接，不能证明正文可点；原完成记录未覆盖该差别。本次仅修改en/index.html，中文源码字节不变。
+- 5-1/5-2正文邮箱用createElement/createTextNode生成固定白名单mailto链接，保留原文；所有英文unit打开时隐藏底部重复提示；Tab循环纳入正文链接，避免键盘无法到达。
+- 静态检查11/11通过；浏览器复验与截图见交付目录browser-retest.cjs、retest-results.json，最终结果在任务卡和报告复修段记录。本地提交，禁止push/发布。
+
+- 最终复验：四路通过，错误0；英文正文5-1/5-2四次实际点击捕获mailto，9个其它unit逐一正常无提示；中文1440×900双码卡纵向457/457、375px为392/392。截图已目视核对，静态11/11。未测边界及13项读数见报告复修段。

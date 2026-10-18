@@ -357,8 +357,14 @@
       controller.open=(title,body,b,id=null)=>{
         if(controller.selected||dialog.classList.contains('open'))return;
         controller.clearHover();controller.selected=id;if(id){controller.visited.add(id);b.classList.add('visited');b.setAttribute('aria-label',`Read ${title}, already read`)}controller.idleNode=-1;trigger=b;scrollPosition=scrollY;
-        clearTimeout(contentTimer);content.classList.remove('switching');publications.parentElement.hidden=false;
-        document.querySelector('#info-title').textContent=title;document.querySelector('#info-body').textContent=body;
+        clearTimeout(contentTimer);content.classList.remove('switching');publications.parentElement.hidden=true;
+        document.querySelector('#info-title').textContent=title;
+        const bodyElement=document.querySelector('#info-body'),email='bd@angecon.com';
+        bodyElement.replaceChildren();
+        body.split(email).forEach((part,index)=>{
+          if(index){const link=document.createElement('a');link.href=`mailto:${email}`;link.textContent=email;bodyElement.append(link)}
+          bodyElement.append(document.createTextNode(part));
+        });
         const card=document.querySelector('.info-card');card.style.position='';card.style.left='';card.style.top='';
         priorOverflow=document.body.style.overflow;priorPadding=document.body.style.paddingRight;
         const gap=innerWidth-document.documentElement.clientWidth;document.body.style.paddingRight=`${gap}px`;document.body.style.overflow='hidden';
@@ -374,7 +380,7 @@
         trigger?.focus({preventScroll:true});if(scrollY!==scrollPosition)scrollTo({top:scrollPosition,behavior:'instant'});
       };
       close.addEventListener('click',controller.close);dialog.addEventListener('click',e=>{if(e.target===dialog)controller.close()});
-      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){const focusable=publications.parentElement.hidden?[close]:[close,publications];const index=focusable.indexOf(document.activeElement);e.preventDefault();focusable[(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus({preventScroll:true})}});
+      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){const focusable=[close,...document.querySelectorAll('#info-body a[href="mailto:bd@angecon.com"]')];const index=focusable.indexOf(document.activeElement);e.preventDefault();focusable[(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus({preventScroll:true})}});
       const input=()=>{controller.lastInput=performance.now();controller.idleNode=-1;controller.nextIdle=controller.lastInput+6000;window.__NET_STATS__.idlePulse=null;controller.skipIntro?.()};
       for(const event of ['pointermove','pointerdown','keydown','wheel','touchstart','scroll','focusin'])addEventListener(event,input,{passive:true});
       document.addEventListener('visibilitychange',()=>{input();if(document.hidden)controller.clearHover()});
