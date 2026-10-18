@@ -72,6 +72,19 @@ class CheckerFaultTests(unittest.TestCase):
     def test_bilingual_seed_drift_is_rejected(self):
         self.mutation("en/index.html", lambda s: re.sub(r'("seed":\s*)(\d+)', lambda m: m[1] + str(int(m[2]) + 1), s, count=1), "bilingual data")
 
+    def test_reordered_technology_ids_are_rejected(self):
+        self.mutation("index.html", lambda s: s.replace('"id": "2-3"', '"id": "swap"').replace('"id": "2-2"', '"id": "2-3"').replace('"id": "swap"', '"id": "2-2"'), "content units")
+
+    def test_reintroduced_removed_id_is_rejected(self):
+        self.mutation("index.html", lambda s: s.replace('"id": "2-3"', '"id": "2-4"'), "content units")
+
+    def test_wrong_section_with_same_counts_is_rejected(self):
+        def swap_sections(text):
+            text = text.replace('"sectionId": "technology"', '"sectionId": "swap"', 1)
+            text = text.replace('"sectionId": "pipeline"', '"sectionId": "technology"', 1)
+            return text.replace('"sectionId": "swap"', '"sectionId": "pipeline"', 1)
+        self.mutation("index.html", swap_sections, "content units")
+
     def test_broken_language_route_is_rejected(self):
         self.mutation("index.html", lambda s: s.replace("location.href='./en/'", "location.href='./missing/'"), "language routes")
 

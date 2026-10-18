@@ -11,7 +11,15 @@ import subprocess
 from urllib.parse import unquote, urlsplit
 
 
-GROUPS = {"about": 5, "technology": 4, "pipeline": 5, "science": 4, "contact": 2}
+GROUP_IDS = {
+    "about": ["1-1", "1-2", "1-3", "1-4", "1-5"],
+    "technology": ["2-1", "2-3", "2-2"],
+    "pipeline": ["3-1", "3-2"],
+    "science": ["4-1"],
+    "contact": ["5-1", "5-2"],
+}
+GROUPS = {section: len(ids) for section, ids in GROUP_IDS.items()}
+EXPECTED_IDS = [unit_id for ids in GROUP_IDS.values() for unit_id in ids]
 IMPORTS = re.compile(r'''(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)["']([^"']+)["']''')
 IMAGES = re.compile(r'''["']((?:\.\.?/)?assets/[^"'\s]+\.(?:png|jpe?g|svg|webp))["']''')
 
@@ -57,11 +65,12 @@ def units(page):
     match = re.search(r"\bconst\s+CONTENT_UNITS\s*=\s*", page.text)
     require(match is not None, "CONTENT_UNITS declaration missing")
     value, _ = json.JSONDecoder().raw_decode(page.text[match.end():])
-    require(isinstance(value, list) and len(value) == 20, "expected 20 content units")
+    require(isinstance(value, list) and len(value) == len(EXPECTED_IDS), f"expected {len(EXPECTED_IDS)} content units")
     require(all(isinstance(unit, dict) for unit in value), "content units must be objects")
     require(Counter(unit.get("sectionId") for unit in value) == GROUPS, "section counts differ")
-    expected_ids = {f"{i}-{n}" for i, count in enumerate(GROUPS.values(), 1) for n in range(1, count + 1)}
-    require({unit.get("id") for unit in value} == expected_ids, "missing/duplicate content IDs")
+    require([unit.get("id") for unit in value] == EXPECTED_IDS, "content IDs or order differ")
+    for section, ids in GROUP_IDS.items():
+        require([unit.get("id") for unit in value if unit.get("sectionId") == section] == ids, "section membership differs: " + section)
     for unit in value:
         require(set(("id", "sectionId", "title", "body", "sourceIds", "seed", "anchor")) <= unit.keys(), "unit fields missing")
         require(all(isinstance(unit[k], str) and unit[k].strip() for k in ("title", "body")), "empty title/body")
@@ -107,7 +116,7 @@ def check_project(root):
             require(any(tag == "html" and attrs.get("lang") == language for tag, attrs in page.elements), "wrong html lang")
             require({"network", "info-dialog", "info-qr", "language-toggle"} <= set(page.ids), "required interaction element missing")
         check(prefix + "HTML / language / IDs", structure)
-        check(prefix + "20 content units", lambda: units(page))
+        check(prefix + f"{len(EXPECTED_IDS)} content units", lambda: units(page))
 
         def javascript():
             require(shutil.which("node") is not None, "Node.js 18+ required")

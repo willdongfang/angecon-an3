@@ -34,9 +34,10 @@
     .unit-label{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);max-width:min(240px,calc(100vw - 24px));width:max-content;padding:7px 10px;border:1px solid rgba(45,224,106,.5);border-radius:5px;background:rgba(3,15,20,.95);font-size:14px;line-height:1.5;overflow-wrap:anywhere;visibility:hidden;opacity:0;pointer-events:none}
     .unit-button.active .unit-label,.unit-button.selected .unit-label{visibility:visible;opacity:1}
     #unit-leader{position:fixed;inset:0;width:100%;height:100%;z-index:21;pointer-events:none;overflow:hidden;display:none}#unit-leader line{stroke:#2de06a;stroke-width:1;opacity:.8}
-    .info-card{max-height:calc(100svh - 48px);overflow:auto}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
+    #info-body{white-space:pre-line}
+    .info-card{max-width:calc(100vw - 48px);max-height:calc(100svh - 48px);overflow:auto}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
     .intro-cover{display:none}#intro-skip{position:fixed;top:90px;right:6vw;z-index:11;padding:8px 12px;border:1px solid rgba(45,224,106,.35);background:#02060f;color:var(--green);cursor:pointer}#intro-skip[hidden]{display:none}
-    @media(max-width:700px){.brand{font-size:13px;letter-spacing:.04em}.nav{font-size:12px}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-height:calc(100svh - 32px)}}
+    @media(max-width:700px){.brand{font-size:13px;letter-spacing:.04em}.nav{font-size:12px}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-width:calc(100vw - 32px);max-height:calc(100svh - 32px)}}
     /* M4d：只展示数据副本；悬浮层低于交互文字与弹窗。 */
     .section-float{position:fixed;z-index:2;left:clamp(36px,5vw,72px);top:44%;width:min(400px,42vw);transform:translateY(-50%);opacity:.64;mix-blend-mode:screen;pointer-events:none;background:none;border:0;box-shadow:none}
     .section-float-drift{animation:sectionFloat 9s ease-in-out infinite}
@@ -100,7 +101,7 @@
   {
     "id": "1-1",
     "sectionId": "about",
-    "title": "公司概况",
+    "title": "安集概况",
     "body": "上海安集协康生物技术股份有限公司 2010 年 2 月创立，专注人源神经干细胞（hNSC）药物研发与临床转化；拥有符合 GMP 标准的细胞生产基地、研发中心与细胞检测中心。使命：做老百姓用得起的细胞药；愿景：世界一流的细胞公司。",
     "sourceIds": [
       "AN1:安集介绍"
@@ -130,7 +131,7 @@
   {
     "id": "1-3",
     "sectionId": "about",
-    "title": "科学家传承",
+    "title": "科学传承",
     "body": "三代师承：Sally Temple 博士首次发现神经干细胞（1989）；其学生沈沁发现神经干细胞微环境机制并创立安集；沈沁的学生孙希财深耕迁移调控与临床转化，现任公司 CTO。",
     "sourceIds": [
       "AN1:安集介绍"
@@ -177,13 +178,28 @@
     "id": "2-1",
     "sectionId": "technology",
     "title": "神经干细胞药品开发平台",
-    "body": "一体化神经干细胞创新药研发平台：覆盖从细胞库构建、CMC 生产到临床开发全链条；攻克持续扩增、定向分化、冻存复苏关键技术，适配中美申报质控标准。",
+    "body": "一体化神经干细胞创新药研发平台：覆盖从细胞库构建、CMC 生产到临床开发全链条；攻克持续扩增、定向分化、冻存复苏关键技术，适配中美申报质控标准。\n\n质量与标准：建立全流程质量追溯与放行质控体系；产品通过中检院质控与安全性检定；获 ISO 9001 认证；参与全国生物样本标准化技术委员会（TC559）标准制定。",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
     "seed": 2000,
     "anchor": [
       28,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-3",
+    "sectionId": "technology",
+    "title": "神经干细胞外泌体药品开发平台",
+    "body": "基于神经干细胞旁分泌机制，开发外泌体无细胞治疗新路径；2025 年获美国 FDA 药物主文件（DMF）Ⅱ型原料药备案，并获国际化妆品原料 INCI 名称。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 2274,
+    "anchor": [
+      36,
       16,
       -53
     ]
@@ -204,39 +220,9 @@
     ]
   },
   {
-    "id": "2-3",
-    "sectionId": "technology",
-    "title": "神经干细胞外泌体平台",
-    "body": "基于神经干细胞旁分泌机制，开发外泌体无细胞治疗新路径；2025 年获美国 FDA 药物主文件（DMF）Ⅱ型原料药备案，并获国际化妆品原料 INCI 名称。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 2274,
-    "anchor": [
-      36,
-      16,
-      -53
-    ]
-  },
-  {
-    "id": "2-4",
-    "sectionId": "technology",
-    "title": "质量与标准",
-    "body": "建立全流程质量追溯与放行质控体系；产品通过中检院质控与安全性检定；获 ISO 9001 认证；参与全国生物样本标准化技术委员会（TC559）标准制定。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 2411,
-    "anchor": [
-      40,
-      21,
-      -53
-    ]
-  },
-  {
     "id": "3-1",
     "sectionId": "pipeline",
-    "title": "研发管线总览",
+    "title": "药品研发管线",
     "body": "七大适应症方向：帕金森病、阿尔茨海默病、早发型帕金森、脊髓损伤、渐冻症、小儿脑瘫、缺血性脑卒中；覆盖药物发现至 FDA IND 六环节。",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
@@ -251,8 +237,8 @@
   {
     "id": "3-2",
     "sectionId": "pipeline",
-    "title": "帕金森病",
-    "body": "与北京协和医院合作；人源神经干细胞经鼻移植治疗帕金森病 Ⅰ 期研究结果于 2024 年发表（JNNP）；经鼻给药全程无创。研究性结论，以官方发布为准。",
+    "title": "临床研究",
+    "body": "帕金森病：与北京协和医院合作；人源神经干细胞经鼻移植治疗帕金森病 Ⅰ 期研究结果于 2024 年发表（JNNP）；经鼻给药全程无创。研究性结论，以官方发布为准。\n\n脊髓损伤：与同济大学附属同济医院合作（程黎明教授团队）；2026 年 6 月，人源神经干细胞治疗脊髓损伤研究完成国家卫健委生物医学新技术临床研究备案。\n\n脑卒中·小儿脑瘫：缺血性卒中研究由仁济医院管阳太教授团队牵头；小儿脑瘫研究与安徽医科大学第一附属医院合作；5 项干细胞临床研究项目均获评 B 级。\n\nAD 与外泌体管线：外泌体治疗中重度早发型阿尔茨海默病临床研究由上海市精神卫生中心牵头获批（2025）；外泌体管线三适应症处于临床前阶段。",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
@@ -264,55 +250,10 @@
     ]
   },
   {
-    "id": "3-3",
-    "sectionId": "pipeline",
-    "title": "脊髓损伤",
-    "body": "与同济大学附属同济医院合作（程黎明教授团队）；2026 年 6 月，人源神经干细胞治疗脊髓损伤研究完成国家卫健委生物医学新技术临床研究备案。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3274,
-    "anchor": [
-      4,
-      -18,
-      -98
-    ]
-  },
-  {
-    "id": "3-4",
-    "sectionId": "pipeline",
-    "title": "脑卒中·小儿脑瘫",
-    "body": "缺血性卒中研究由仁济医院管阳太教授团队牵头；小儿脑瘫研究与安徽医科大学第一附属医院合作；5 项干细胞临床研究项目均获评 B 级。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3411,
-    "anchor": [
-      8,
-      -13,
-      -98
-    ]
-  },
-  {
-    "id": "3-5",
-    "sectionId": "pipeline",
-    "title": "AD 与外泌体管线",
-    "body": "外泌体治疗中重度早发型阿尔茨海默病临床研究由上海市精神卫生中心牵头获批（2025）；外泌体管线三适应症处于临床前阶段。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3548,
-    "anchor": [
-      12,
-      -18,
-      -98
-    ]
-  },
-  {
     "id": "4-1",
     "sectionId": "science",
     "title": "发表文章",
-    "body": "团队与合作机构发表相关论文：含 JNNP 2024、J Immunother Cancer 2025、Neuron 2017、Science 2004、Nature 1989 等；均可查 DOI。",
+    "body": "团队与合作机构发表相关论文：含 JNNP 2024、J Immunother Cancer 2025、Neuron 2017、Science 2004、Nature 1989 等；均可查 DOI。\n\nANGE-S003 研究：18 例晚期帕金森患者的 12 个月 Ⅰ 期研究（经鼻移植、剂量递增）；提供安全性与初步疗效信号，非疗效定论。\n\n备案与监管进展：两项国家卫健委生物医学新技术临床研究备案（仁济/同济）；5 项研究获评 B 级；外泌体获 FDA DMF Ⅱ型原料药备案（备案号 MF 31537，公司披露）。\n\n研究积淀：2010 年创立至今十六年深耕；建成大规模细胞生产体系，积累真实世界研究数据；与多家顶尖三甲医院建立长期临床研究合作。",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
@@ -320,51 +261,6 @@
     "anchor": [
       -44,
       15,
-      -142
-    ]
-  },
-  {
-    "id": "4-2",
-    "sectionId": "science",
-    "title": "ANGE-S003 研究",
-    "body": "18 例晚期帕金森患者的 12 个月 Ⅰ 期研究（经鼻移植、剂量递增）；提供安全性与初步疗效信号，非疗效定论。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4137,
-    "anchor": [
-      -40,
-      20,
-      -142
-    ]
-  },
-  {
-    "id": "4-3",
-    "sectionId": "science",
-    "title": "备案与监管进展",
-    "body": "两项国家卫健委生物医学新技术临床研究备案（仁济/同济）；5 项研究获评 B 级；外泌体获 FDA DMF Ⅱ型原料药备案（备案号 MF 31537，公司披露）。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4274,
-    "anchor": [
-      -36,
-      15,
-      -142
-    ]
-  },
-  {
-    "id": "4-4",
-    "sectionId": "science",
-    "title": "研究积淀",
-    "body": "2010 年创立至今十六年深耕；建成大规模细胞生产体系，积累真实世界研究数据；与多家顶尖三甲医院建立长期临床研究合作。",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4411,
-    "anchor": [
-      -32,
-      20,
       -142
     ]
   },
@@ -491,7 +387,7 @@
         }
       }
       const qr=document.querySelector('#info-qr');qr.className='qr-grid';addQR(qr);
-      const fallbackQR=document.createElement('div');fallbackQR.className='qr-grid';addQR(fallbackQR);document.querySelector('#fallback-units').children[18].append(fallbackQR);
+      const fallbackQR=document.createElement('div');fallbackQR.className='qr-grid';addQR(fallbackQR);document.querySelector('#fallback-units [data-unit-id="5-1"]').append(fallbackQR);
       controller.visited=new Set();
       let trigger=null,scrollPosition=0,priorOverflow='',priorPadding='',contentTimer;
       const content=document.querySelector('#info-content'),publications=document.querySelector('#info-publications');
@@ -715,20 +611,20 @@
       const dmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:motionEnabled?1:0},uOpacity:{value:NET_CONFIG.atmosphere.dustOpacity}},vertexShader:`uniform float uTime,uMotion;void main(){vec3 p=position;p.xy+=vec2(sin(uTime*.13+p.z),cos(uTime*.11+p.x))*.22*uMotion;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(60./max(1.,-mv.z),1.,2.);}`,fragmentShader:`uniform float uOpacity;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(.1764706,.8784314,.4156863,a*uOpacity);}`});scene.add(new THREE.Points(dg,dmat));
       const bloomOn=!mobile;
       if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .52 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
-      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:20,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
+      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
 
 
       // 三次主场景绘制：胞体/内核实例、细环实例、合批树突带。
-      const aboutUnits=CONTENT_UNITS;
+      const aboutUnits=CONTENT_UNITS,unitCount=aboutUnits.length;
       const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]];
       const sectionIndices=[0,0,0,0,0];
       const unitWorld=aboutUnits.map(u=>{const c=Number(u.id[0])-1,index=sectionIndices[c]++;if(!mobile)return new THREE.Vector3(...u.anchor);const slot=mobileSlots[index];return new THREE.Vector3(centers[c][0]+slot[0],centers[c][1]+slot[1],centers[c][2])});
       function seeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
       const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false});
-      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,40);
-      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(1.18,.025,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),20);
+      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
+      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(1.18,.025,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),unitCount);
       const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.4);
-      aboutUnits.forEach((unit,i)=>{const rng=seeded(unit.seed);dummy.position.copy(unitWorld[i]);dummy.rotation.set(rng()*.4,rng()*.4,rng()*Math.PI);dummy.scale.set(.65+rng()*.16,.55+rng()*.2,.46);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+20,dummy.matrix);dummy.rotation.set(0,0,0);dummy.scale.setScalar(.9);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+20,green);rings.setColorAt(i,green)});
+      aboutUnits.forEach((unit,i)=>{const rng=seeded(unit.seed);dummy.position.copy(unitWorld[i]);dummy.rotation.set(rng()*.4,rng()*.4,rng()*Math.PI);dummy.scale.set(.65+rng()*.16,.55+rng()*.2,.46);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);dummy.rotation.set(0,0,0);dummy.scale.setScalar(.9);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green);rings.setColorAt(i,green)});
       somas.frustumCulled=false;rings.frustumCulled=false;scene.add(somas,rings);
       const treePositions=[],treeUnits=[],treeDistances=[],treeSignals=[],paths=[];
       function ribbon(points,width,id,signal){
@@ -767,10 +663,10 @@
       if(motionEnabled)startIntro();else unitControl.skipIntro();
       const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
       const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
-      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:40},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:20},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
+      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:unitCount},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
       function updateUnits(now){
         const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
-        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+20,on?originalSomas[i+20]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
+        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
         if(previousVisited!==unitControl.visited.size){for(let i=0;i<treeUnits.length;i++)visitedAttribute.array[i]=!mobile&&!stats.performanceTier&&unitControl.visited.has(aboutUnits[treeUnits[i]].id)?1:0;visitedAttribute.needsUpdate=true;previousVisited=unitControl.visited.size;stats.visited=[...unitControl.visited]}
 
         if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}

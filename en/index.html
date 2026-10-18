@@ -34,9 +34,10 @@
     .unit-label{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);max-width:min(240px,calc(100vw - 24px));width:max-content;padding:7px 10px;border:1px solid rgba(45,224,106,.5);border-radius:5px;background:rgba(3,15,20,.95);font-size:14px;line-height:1.5;overflow-wrap:anywhere;visibility:hidden;opacity:0;pointer-events:none}
     .unit-button.active .unit-label,.unit-button.selected .unit-label{visibility:visible;opacity:1}
     #unit-leader{position:fixed;inset:0;width:100%;height:100%;z-index:21;pointer-events:none;overflow:hidden;display:none}#unit-leader line{stroke:#2de06a;stroke-width:1;opacity:.8}
-    .info-card{max-height:calc(100svh - 48px);overflow:auto}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
+    #info-body{white-space:pre-line}
+    .info-card{max-width:calc(100vw - 48px);max-height:calc(100svh - 48px);overflow:auto}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
     .intro-cover{display:none}#intro-skip{position:fixed;top:90px;right:6vw;z-index:11;padding:8px 12px;border:1px solid rgba(45,224,106,.35);background:#02060f;color:var(--green);cursor:pointer}#intro-skip[hidden]{display:none}
-    @media(max-width:700px){.brand{font-size:13px;letter-spacing:.04em}.nav{font-size:12px}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-height:calc(100svh - 32px)}}
+    @media(max-width:700px){.brand{font-size:13px;letter-spacing:.04em}.nav{font-size:12px}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-width:calc(100vw - 32px);max-height:calc(100svh - 32px)}}
     /* M4d：只展示数据副本；悬浮层低于交互文字与弹窗。 */
     .section-float{position:fixed;z-index:2;left:clamp(36px,5vw,72px);top:44%;width:min(400px,42vw);transform:translateY(-50%);opacity:.64;mix-blend-mode:screen;pointer-events:none;background:none;border:0;box-shadow:none}
     .section-float-drift{animation:sectionFloat 9s ease-in-out infinite}
@@ -130,7 +131,7 @@
   {
     "id": "1-3",
     "sectionId": "about",
-    "title": "A Lineage of Scientists",
+    "title": "Scientific Heritage",
     "body": "Three generations of mentorship: Dr. Sally Temple first discovered neural stem cells (1989); her student Qin Shen discovered mechanisms of the neural stem cell niche and founded ANGECON; Shen's student Xicai Sun specializes in migration regulation and clinical translation and is now the company's CTO.",
     "sourceIds": [
       "AN1:安集介绍"
@@ -177,13 +178,28 @@
     "id": "2-1",
     "sectionId": "technology",
     "title": "NSC Drug Development Platform",
-    "body": "An integrated platform for innovative neural stem cell drug development: covering the full chain from cell bank establishment and CMC production to clinical development; addressing key technologies in sustained expansion, directed differentiation, cryopreservation and recovery, with quality control aligned to Chinese and US regulatory submission standards.",
+    "body": "An integrated platform for innovative neural stem cell drug development: covering the full chain from cell bank establishment and CMC production to clinical development; addressing key technologies in sustained expansion, directed differentiation, cryopreservation and recovery, with quality control aligned to Chinese and US regulatory submission standards.\n\nQuality & Standards: A full-process quality traceability and release quality control system has been established; products have passed quality control and safety testing by the National Institutes for Food and Drug Control (NIFDC); ISO 9001 certification has been obtained; the company participates in standard development by TC559, the national technical committee for biobank standardization.",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
     "seed": 2000,
     "anchor": [
       28,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-3",
+    "sectionId": "technology",
+    "title": "NSC Exosome Drug Development Platform",
+    "body": "Based on neural stem cell paracrine mechanisms, the platform develops new approaches to cell-free therapy using exosomes; in 2025, it obtained a US FDA Type II Drug Master File (DMF) filing for an active pharmaceutical ingredient and an INCI name for an international cosmetic ingredient.",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 2274,
+    "anchor": [
+      36,
       16,
       -53
     ]
@@ -204,39 +220,9 @@
     ]
   },
   {
-    "id": "2-3",
-    "sectionId": "technology",
-    "title": "NSC Exosome Platform",
-    "body": "Based on neural stem cell paracrine mechanisms, the platform develops new approaches to cell-free therapy using exosomes; in 2025, it obtained a US FDA Type II Drug Master File (DMF) filing for an active pharmaceutical ingredient and an INCI name for an international cosmetic ingredient.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 2274,
-    "anchor": [
-      36,
-      16,
-      -53
-    ]
-  },
-  {
-    "id": "2-4",
-    "sectionId": "technology",
-    "title": "Quality & Standards",
-    "body": "A full-process quality traceability and release quality control system has been established; products have passed quality control and safety testing by the National Institutes for Food and Drug Control (NIFDC); ISO 9001 certification has been obtained; the company participates in standard development by TC559, the national technical committee for biobank standardization.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 2411,
-    "anchor": [
-      40,
-      21,
-      -53
-    ]
-  },
-  {
     "id": "3-1",
     "sectionId": "pipeline",
-    "title": "Pipeline Overview",
+    "title": "Drug Development Pipeline",
     "body": "Seven indication areas: Parkinson's disease, Alzheimer's disease, early-onset Parkinson's disease, spinal cord injury, amyotrophic lateral sclerosis, pediatric cerebral palsy and ischemic stroke; spanning six stages from drug discovery to FDA IND.",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
@@ -251,8 +237,8 @@
   {
     "id": "3-2",
     "sectionId": "pipeline",
-    "title": "Parkinson's Disease",
-    "body": "In collaboration with Peking Union Medical College Hospital; results of a Phase I study of intranasal human neural stem cell transplantation for Parkinson's disease were published in 2024 (JNNP); intranasal delivery is non-invasive throughout. These are research findings, subject to official announcements.",
+    "title": "Clinical Research",
+    "body": "Parkinson’s Disease: In collaboration with Peking Union Medical College Hospital; results of a Phase I study of intranasal human neural stem cell transplantation for Parkinson's disease were published in 2024 (JNNP); intranasal delivery is non-invasive throughout. These are research findings, subject to official announcements.\n\nSpinal Cord Injury: In collaboration with Tongji Hospital affiliated with Tongji University (Prof. Liming Cheng's team); in June 2026, the study of human neural stem cells for spinal cord injury completed the biomedical new technology clinical research filing with China's National Health Commission (NHC).\n\nStroke & Pediatric Cerebral Palsy: The ischemic stroke study is led by Prof. Yangtai Guan's team at Renji Hospital; the pediatric cerebral palsy study is conducted in collaboration with the First Affiliated Hospital of Anhui Medical University; all 5 stem cell clinical research projects received a Grade B rating.\n\nAD & Exosome Pipeline: The clinical study of exosomes for moderate-to-severe early-onset Alzheimer's disease, led by Shanghai Mental Health Center, received clinical research approval (2025); the three indications in the exosome pipeline are at the preclinical stage.",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
@@ -264,55 +250,10 @@
     ]
   },
   {
-    "id": "3-3",
-    "sectionId": "pipeline",
-    "title": "Spinal Cord Injury",
-    "body": "In collaboration with Tongji Hospital affiliated with Tongji University (Prof. Liming Cheng's team); in June 2026, the study of human neural stem cells for spinal cord injury completed the biomedical new technology clinical research filing with China's National Health Commission (NHC).",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3274,
-    "anchor": [
-      4,
-      -18,
-      -98
-    ]
-  },
-  {
-    "id": "3-4",
-    "sectionId": "pipeline",
-    "title": "Stroke · Pediatric Cerebral Palsy",
-    "body": "The ischemic stroke study is led by Prof. Yangtai Guan's team at Renji Hospital; the pediatric cerebral palsy study is conducted in collaboration with the First Affiliated Hospital of Anhui Medical University; all 5 stem cell clinical research projects received a Grade B rating.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3411,
-    "anchor": [
-      8,
-      -13,
-      -98
-    ]
-  },
-  {
-    "id": "3-5",
-    "sectionId": "pipeline",
-    "title": "AD & Exosome Pipeline",
-    "body": "The clinical study of exosomes for moderate-to-severe early-onset Alzheimer's disease, led by Shanghai Mental Health Center, received clinical research approval (2025); the three indications in the exosome pipeline are at the preclinical stage.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 3548,
-    "anchor": [
-      12,
-      -18,
-      -98
-    ]
-  },
-  {
     "id": "4-1",
     "sectionId": "science",
     "title": "Publications",
-    "body": "The team and collaborating institutions have published related papers, including JNNP 2024, J Immunother Cancer 2025, Neuron 2017, Science 2004 and Nature 1989; all can be looked up by DOI.",
+    "body": "The team and collaborating institutions have published related papers, including JNNP 2024, J Immunother Cancer 2025, Neuron 2017, Science 2004 and Nature 1989; all can be looked up by DOI.\n\nANGE-S003 Research: A 12-month Phase I study in 18 patients with advanced Parkinson's disease (intranasal transplantation, dose escalation); it provides safety and preliminary efficacy signals, rather than definitive conclusions on efficacy.\n\nFiling & Regulatory Progress: Two biomedical new technology clinical research filings with China's National Health Commission (Renji / Tongji); 5 studies received a Grade B rating; exosomes obtained an FDA Type II DMF filing for an active pharmaceutical ingredient (filing number MF 31537, as disclosed by the company).\n\nResearch Foundation: 16 years of dedicated work since the company's founding in 2010; a large-scale cell production system has been established and real-world research data accumulated; long-term clinical research collaborations have been established with leading Grade III Class A hospitals.",
     "sourceIds": [
       "AN3:M4b:任务卡审定文案"
     ],
@@ -320,51 +261,6 @@
     "anchor": [
       -44,
       15,
-      -142
-    ]
-  },
-  {
-    "id": "4-2",
-    "sectionId": "science",
-    "title": "ANGE-S003 Study",
-    "body": "A 12-month Phase I study in 18 patients with advanced Parkinson's disease (intranasal transplantation, dose escalation); it provides safety and preliminary efficacy signals, rather than definitive conclusions on efficacy.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4137,
-    "anchor": [
-      -40,
-      20,
-      -142
-    ]
-  },
-  {
-    "id": "4-3",
-    "sectionId": "science",
-    "title": "Filings & Regulatory Progress",
-    "body": "Two biomedical new technology clinical research filings with China's National Health Commission (Renji / Tongji); 5 studies received a Grade B rating; exosomes obtained an FDA Type II DMF filing for an active pharmaceutical ingredient (filing number MF 31537, as disclosed by the company).",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4274,
-    "anchor": [
-      -36,
-      15,
-      -142
-    ]
-  },
-  {
-    "id": "4-4",
-    "sectionId": "science",
-    "title": "Research Foundations",
-    "body": "16 years of dedicated work since the company's founding in 2010; a large-scale cell production system has been established and real-world research data accumulated; long-term clinical research collaborations have been established with leading Grade III Class A hospitals.",
-    "sourceIds": [
-      "AN3:M4b:任务卡审定文案"
-    ],
-    "seed": 4411,
-    "anchor": [
-      -32,
-      20,
       -142
     ]
   },
@@ -491,7 +387,7 @@
         }
       }
       const qr=document.querySelector('#info-qr');qr.className='qr-grid';addQR(qr);
-      const fallbackQR=document.createElement('div');fallbackQR.className='qr-grid';addQR(fallbackQR);document.querySelector('#fallback-units').children[18].append(fallbackQR);
+      const fallbackQR=document.createElement('div');fallbackQR.className='qr-grid';addQR(fallbackQR);document.querySelector('#fallback-units [data-unit-id="5-1"]').append(fallbackQR);
       controller.visited=new Set();
       let trigger=null,scrollPosition=0,priorOverflow='',priorPadding='',contentTimer;
       const content=document.querySelector('#info-content'),publications=document.querySelector('#info-publications');
@@ -715,20 +611,20 @@
       const dmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:motionEnabled?1:0},uOpacity:{value:NET_CONFIG.atmosphere.dustOpacity}},vertexShader:`uniform float uTime,uMotion;void main(){vec3 p=position;p.xy+=vec2(sin(uTime*.13+p.z),cos(uTime*.11+p.x))*.22*uMotion;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(60./max(1.,-mv.z),1.,2.);}`,fragmentShader:`uniform float uOpacity;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(.1764706,.8784314,.4156863,a*uOpacity);}`});scene.add(new THREE.Points(dg,dmat));
       const bloomOn=!mobile;
       if(bloomOn){const {EffectComposer}=await import('../vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('../vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('../vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .52 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
-      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:20,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
+      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
 
 
       // 三次主场景绘制：胞体/内核实例、细环实例、合批树突带。
-      const aboutUnits=CONTENT_UNITS;
+      const aboutUnits=CONTENT_UNITS,unitCount=aboutUnits.length;
       const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]];
       const sectionIndices=[0,0,0,0,0];
       const unitWorld=aboutUnits.map(u=>{const c=Number(u.id[0])-1,index=sectionIndices[c]++;if(!mobile)return new THREE.Vector3(...u.anchor);const slot=mobileSlots[index];return new THREE.Vector3(centers[c][0]+slot[0],centers[c][1]+slot[1],centers[c][2])});
       function seeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
       const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false});
-      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,40);
-      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(1.18,.025,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),20);
+      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
+      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(1.18,.025,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),unitCount);
       const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.4);
-      aboutUnits.forEach((unit,i)=>{const rng=seeded(unit.seed);dummy.position.copy(unitWorld[i]);dummy.rotation.set(rng()*.4,rng()*.4,rng()*Math.PI);dummy.scale.set(.65+rng()*.16,.55+rng()*.2,.46);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+20,dummy.matrix);dummy.rotation.set(0,0,0);dummy.scale.setScalar(.9);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+20,green);rings.setColorAt(i,green)});
+      aboutUnits.forEach((unit,i)=>{const rng=seeded(unit.seed);dummy.position.copy(unitWorld[i]);dummy.rotation.set(rng()*.4,rng()*.4,rng()*Math.PI);dummy.scale.set(.65+rng()*.16,.55+rng()*.2,.46);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);dummy.rotation.set(0,0,0);dummy.scale.setScalar(.9);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green);rings.setColorAt(i,green)});
       somas.frustumCulled=false;rings.frustumCulled=false;scene.add(somas,rings);
       const treePositions=[],treeUnits=[],treeDistances=[],treeSignals=[],paths=[];
       function ribbon(points,width,id,signal){
@@ -767,10 +663,10 @@
       if(motionEnabled)startIntro();else unitControl.skipIntro();
       const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
       const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
-      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:40},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:20},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
+      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:unitCount},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
       function updateUnits(now){
         const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
-        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+20,on?originalSomas[i+20]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
+        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
         if(previousVisited!==unitControl.visited.size){for(let i=0;i<treeUnits.length;i++)visitedAttribute.array[i]=!mobile&&!stats.performanceTier&&unitControl.visited.has(aboutUnits[treeUnits[i]].id)?1:0;visitedAttribute.needsUpdate=true;previousVisited=unitControl.visited.size;stats.visited=[...unitControl.visited]}
 
         if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}
