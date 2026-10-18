@@ -59,7 +59,8 @@
     .nav{align-items:center}.nav a:focus-visible,.language-toggle:focus-visible,#info-publications:focus-visible{outline:2px solid var(--green);outline-offset:4px;border-radius:3px}
     .language-toggle{padding:3px 0;border:0;background:none;color:#aab9b4;font:inherit;white-space:nowrap;cursor:pointer}.language-current{color:var(--green)}
     .language-toast{position:fixed;z-index:13;top:92px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:10px 16px;border:1px solid rgba(117,220,159,.2);border-radius:8px;background:rgba(7,24,29,.92);color:#d0dad5;font-size:13px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,visibility 0s linear .2s}.language-toast.visible{opacity:1;visibility:visible;transition-delay:0s}
-    .info-content{opacity:1;transition:opacity .14s ease-out}.info-content.switching{opacity:0}#info-publications{text-decoration:underline;text-underline-offset:4px}
+    .info-content{opacity:1;transition:opacity .14s ease-out}.info-content.switching{opacity:0}#info-publications{padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+    #info-publications:hover{color:var(--green)}
     .readout,.scroll-cue,.section-float,.cluster-index{transition:opacity .3s ease-out}
     .footer-visible .readout,.footer-visible .scroll-cue,.footer-visible .section-float,.footer-visible .cluster-index{opacity:0;pointer-events:none}
     .footer-visible .cluster-index{visibility:hidden}
@@ -92,7 +93,7 @@
   </main>
   <nav class="cluster-index" aria-label="分区索引"><a href="#company" data-index="0">关于我们</a><a href="#technology" data-index="1">技术平台</a><a href="#pipeline" data-index="2">研发管线</a><a href="#science" data-index="3">科学数据</a><a href="#contact" data-index="4">关注我们</a></nav>
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
-  <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><div id="info-qr" hidden></div><p class="info-foot"><span id="info-publications">查阅更多见公众号</span></p></div></article></div>
+  <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><p class="info-foot"><button type="button" id="info-publications">查阅更多见公众号</button></p><div id="info-qr" hidden></div></div></article></div>
   <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">创造奇迹，造福人类</p></div>
   <footer class="footer"><div><div class="brand"><span>安集协康 / ANGECON</span></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
 
@@ -393,8 +394,9 @@
       const content=document.querySelector('#info-content'),publications=document.querySelector('#info-publications');
       const showQR=()=>{
         document.querySelector('#info-title').textContent='关注公众号';document.querySelector('#info-body').textContent='扫码关注，获取完整内容';
-        qr.hidden=false;publications.parentElement.hidden=true;
+        qr.hidden=false;publications.parentElement.hidden=false;
       };
+      publications.addEventListener('click',showQR);
       controller.open=(title,body,b,id=null)=>{
         if(controller.selected||dialog.classList.contains('open'))return;
         controller.clearHover();controller.selected=id;if(id){controller.visited.add(id);b.classList.add('visited');b.setAttribute('aria-label',`阅读${title}，已阅读`)}document.querySelector('#info-qr').hidden=id!=='5-1';controller.idleNode=-1;trigger=b;scrollPosition=scrollY;
@@ -408,7 +410,7 @@
       };
       controller.close=()=>{
         if(!dialog.classList.contains('open'))return;
-        clearTimeout(contentTimer);content.classList.remove('switching');controller.selected=null;dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');document.querySelector('#unit-leader').style.display='none';
+        clearTimeout(contentTimer);content.classList.remove('switching');controller.selected=null;qr.hidden=true;dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');document.querySelector('#unit-leader').style.display='none';
         document.body.style.overflow=priorOverflow;document.body.style.paddingRight=priorPadding;layer.inert=false;document.querySelector('main').inert=false;document.querySelector('.topbar').inert=false;document.querySelector('.cluster-index').inert=document.body.classList.contains('footer-visible');document.querySelector('.footer').inert=false;
         controller.buttons.forEach(b=>b.classList.remove('selected'));controller.lastInput=performance.now();controller.idleNode=-1;controller.sync();
         // 焦点回原触发点；preventScroll 避免浏览器定位按钮改变阅读位置。

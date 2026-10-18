@@ -44,3 +44,13 @@
 - 本轮Chrome无头WebGL亲测1440×1000/375×812中英五区滚动、无横向溢出、英文三段弹窗逐字读回与关闭、移动长文滚动、双向语言切换通过，JS/console错误0。截图已人工检查。
 - 中文提示与二维码分别可见，但同屏第7项未通过；原showQR隐藏提示，而本卡明确禁止改中文，已请求Will例外，整卡不关闭。交付含前后全文、10项结果、截图和可复现脚本：D:/will/123Agent/交付物/AN3-英文重写-20261018/。
 - 本地提交、不push、不发布；未测实体手机、二维码实扫、持续帧率、线上及独立验收。积分未知。
+
+
+## 2026-10-18 Cain｜联系我们改造
+
+- 按 `2026-10-18-AN3联系我们改造-Cain.md` 全文执行；起点 main cd18b96，分支 feat/contact-split，禁止 push。
+- 中文 span 改原生 button，保留 focus-visible，增加点击监听与按钮样式；showQR 不再隐藏提示，DOM 中提示在双码上方，关闭立即隐藏双码。中文13条数据与原二维码文件未变。
+- 英文3处导航及浮层标签改 Contact Us，5-1/5-2 按卡替换文案；清除英文双码渲染/函数/容器/样式，保留邮箱链接。同步检查器语言差异规则及故障注入测试。
+- 过程：首次 PowerShell 管道编码损坏中文路径，创建目录前即失败，无页面改动；改UTF-8后执行。首次静态发现保留的英文容器/CSS仍含QR，按卡可删除方案清除后通过；对应首轮测试1项失败，最终20项通过。
+- 验证：python scripts/check_project.py 11/11；python -B -m unittest discover -s scripts -p "test_check_project.py" -v 20/20；git diff --check 通过。Chrome无头WebGL + 本地HTTP 8036，1440×1000、375×812中英四路，按钮点击、键盘、复位、自动双码、英文导航/邮箱、布局全部通过，错误0。
+- 证据：D:/will/123Agent/交付物/AN3-联系我们改造-20261018/（report.md、browser-check.cjs、browser-results.json、before/、screenshots/）。非独立验收；邮件仅亲测浏览器mailto请求，未打开操作系统邮件客户端；实体手机/实扫/性能/线上未测。仅本地提交，未push/发布。
