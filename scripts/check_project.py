@@ -209,7 +209,11 @@ def check_project(root):
                         continue
                     require(left[key] == right[key], f"bilingual {left['id']} {key} differs")
             profile = en["1-1"]["body"]
-            require("Company milestones: " in profile and "Certifications & honors: " in profile, "Company Profile merged headings missing")
+            require("Milestones\n" in profile and "China's first qualified biobank certificate" in profile, "Company Profile milestones missing")
+            require("MF 31537" in en["1-5"]["body"], "Anku Biomed DMF number missing")
+            for unit in en.values():
+                require(not re.search(r"[\u4e00-\u9fff]", unit["body"]), "Chinese text in English body: " + unit["id"])
+            require(not any(term in profile for term in ("High-Tech Enterprise", "Certifications & honors", "Postdoctoral")), "Retired local credentials in Company Profile")
             require(pages[0].styles == pages[1].styles, "bilingual CSS differs")
             zh_tags = Counter(tag for tag, _ in pages[0].elements)
             en_tags = Counter(tag for tag, _ in pages[1].elements)

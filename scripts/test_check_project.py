@@ -81,6 +81,18 @@ class CheckerFaultTests(unittest.TestCase):
     def test_chinese_publication_hint_is_required(self):
         self.mutation("index.html", lambda s: s.replace('查阅更多见公众号', 'missing-hint'), "language routes")
 
+    def test_biobank_milestone_is_required(self):
+        self.mutation("en/index.html", lambda s: s.replace("China's first qualified biobank certificate", "missing-milestone"), "bilingual data")
+
+    def test_anku_dmf_number_is_required(self):
+        self.mutation("en/index.html", lambda s: s.replace("MF 31537", "missing-number"), "bilingual data")
+
+    def test_chinese_in_english_body_is_rejected(self):
+        self.mutation("en/index.html", lambda s: s.replace("Our science descends", "中文 Our science descends"), "bilingual data")
+
+    def test_retired_credentials_are_rejected(self):
+        self.mutation("en/index.html", lambda s: s.replace("Milestones\\n", "High-Tech Enterprise Milestones\\n"), "bilingual data")
+
     def test_reordered_technology_ids_are_rejected(self):
         self.mutation("index.html", lambda s: s.replace('"id": "2-3"', '"id": "swap"').replace('"id": "2-2"', '"id": "2-3"').replace('"id": "swap"', '"id": "2-2"'), "content units")
 
