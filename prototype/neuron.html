@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>神经元形态原型 · 节点向外延伸</title>
+<style>
+  html,body{margin:0;height:100%;background:#02060f;overflow:hidden}
+  canvas{display:block}
+  .tip{position:fixed;left:24px;bottom:22px;color:#7d9287;font:12px/1.6 ui-monospace,monospace;letter-spacing:.06em;pointer-events:none}
+  .tip b{color:#2de06a;font-weight:400}
+  .hud{position:fixed;right:24px;top:20px;color:#5d6f67;font:11px/1.8 ui-monospace,monospace;text-align:right;letter-spacing:.05em}
+</style>
+<script type="importmap">{"imports":{"three":"../vendor/three.module.js","three/addons/":"../vendor/jsm/"}}</script>
+</head>
+<body>
+<div class="tip"><b>拖动</b> 旋转 · <b>滚轮</b> 缩放 · 每根枝都是独立长出来的</div>
+<div class="hud">neuron prototype<br>5 somas · outward dendrites</div>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const GREEN = new THREE.Color('#2de06a');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#02060f');
+scene.fog = new THREE.FogExp2(0x02060f, 0.012);
+
+const camera = new THREE.PerspectiveCamera(52, innerWidth/innerHeight, 0.1, 400);
+camera.position.set(0, 6, 42);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.05, 0.72, 0.12);
+composer.addPass(bloom);
+
+/* ── 伪随机（固定种子，形态可复现）── */
+let seed = 20261019;
+function rnd(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+const rr = (a,b)=>a+rnd()*(b-a);
+
+/* ── 细胞体（soma）位置 ── */
+const SOMAS = [
+  { p:[-11,  3,   2], r:1.05 },
+  { p:[  9,  6,  -5], r:0.86 },
+  { p:[  3, -6, -13], r:0.94 },
+  { p:[-13, -3, -15], r:0.78 },
+  { p:[ 13, -2,  -1], r:0.90 }
+];
+
+/* ── 渐变粗细的管：沿曲线半径由 r0 收到 r1 ── */
+function taperedTube(curve, segments, radial, r0, r1){
+  const frames = curve.computeFrenetFrames(segments, false);
+  const pos = [], idx = [];
+  for (let i=0;i<=segments;i++){
+    const t = i/segments;
+    const p = curve.getPointAt(t);
+    const N = frames.normals[i], B = frames.binormals[i];
+    const r = r0 + (r1-r0)*t;
+    for (let j=0;j<=radial;j++){
+      const a = j/radial*Math.PI*2, s = Math.sin(a), c = Math.cos(a);
+      pos.push(p.x + r*(c*N.x + s*B.x), p.y + r*(c*N.y + s*B.y), p.z + r*(c*N.z + s*B.z));
+    }
+  }
+  for (let i=0;i<segments;i++) for (let j=0;j<radial;j++){
+    const a = i*(radial+1)+j, b = a+radial+1;
+    idx.push(a,b,a+1, b,b+1,a+1);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+/* ── 均匀球面方向 ── */
+function sphereDir(){
+  const u = rr(-1,1), th = rr(0, Math.PI*2), s = Math.sqrt(1-u*u);
+  return new THREE.Vector3(s*Math.cos(th), u, s*Math.sin(th));
+}
+
+const dendriteMat = new THREE.MeshBasicMaterial({ color: GREEN, transparent:true, opacity:0.82 });
+const tipMat = new THREE.MeshBasicMaterial({ color: new THREE.Color('#8affc0'), transparent:true, opacity:0.95 });
+const somaMat = new THREE.MeshBasicMaterial({ color: new THREE.Color('#b9ffd6') });
+const haloMat = new THREE.MeshBasicMaterial({ color: GREEN, transparent:true, opacity:0.12, side: THREE.BackSide });
+
+const network = new THREE.Group();
+scene.add(network);
+
+const tips = [];   // 末端脉动
+const somaMeshes = [];
+
+for (const soma of SOMAS){
+  const center = new THREE.Vector3(...soma.p);
+
+  // 细胞体
+  const core = new THREE.Mesh(new THREE.SphereGeometry(soma.r, 24, 20), somaMat);
+  core.position.copy(center);
+  network.add(core);
+  somaMeshes.push(core);
+
+  const halo = new THREE.Mesh(new THREE.SphereGeometry(soma.r*2.6, 20, 16), haloMat);
+  halo.position.copy(center);
+  network.add(halo);
+
+  // 每个细胞体长出 5~7 条树突
+  const count = 5 + Math.floor(rnd()*3);
+  for (let i=0;i<count;i++){
+    // 方向：球面均匀 + 轻微偏向上/外侧，避免全部扎进画面深处
+    const dir = sphereDir();
+    dir.z *= 0.72; dir.normalize();
+
+    const len = rr(11, 19);
+    const phase = rr(0, Math.PI*2);          // 每根枝独立的起弯相位
+    const bend  = rr(0.16, 0.34);            // 单侧弯幅度
+    const curl  = rr(0.35, 0.75);            // 弯曲何时发生
+
+    // 用 4 个点构造一条“单侧缓弧”，不是对称 S
+    const p0 = center.clone().addScaledVector(dir, soma.r*0.9);
+    const sideA = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0));
+    if (sideA.lengthSq() < 1e-4) sideA.set(1,0,0);
+    sideA.normalize().applyAxisAngle(dir, phase);
+    const sideB = sideA.clone().applyAxisAngle(dir, bend*3.2);
+
+    const p1 = center.clone().addScaledVector(dir, len*0.30)
+      .addScaledVector(sideA, len*bend*0.85);
+    const p2 = center.clone().addScaledVector(dir, len*0.66)
+      .addScaledVector(sideA, len*bend*0.25)
+      .addScaledVector(sideB, len*bend*0.30*curl);
+    const p3 = center.clone().addScaledVector(dir, len)
+      .addScaledVector(sideB, len*bend*0.55);
+    p3.y += rr(-1.2, 1.2);
+
+    const curve = new THREE.CatmullRomCurve3([p0,p1,p2,p3], false, 'centripetal');
+    const geo = taperedTube(curve, 40, 7, soma.r*0.34, 0.028);
+    network.add(new THREE.Mesh(geo, dendriteMat));
+
+    // 末端小颗粒
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(rr(0.09,0.19), 10, 8), tipMat);
+    tip.position.copy(p3);
+    tip.userData.base = rr(0.75, 1.25);
+    tip.userData.phase = rr(0, Math.PI*2);
+    network.add(tip);
+    tips.push(tip);
+
+    // 偶发二阶短枝（让形态更像树突而不是触手）
+    if (rnd() > 0.45){
+      const t = rr(0.45, 0.72);
+      const base = curve.getPointAt(t);
+      const tangent = curve.getTangentAt(t).normalize();
+      const sub = tangent.clone().applyAxisAngle(new THREE.Vector3(0,1,0), rr(-0.9,0.9)).normalize();
+      const subLen = len*rr(0.22,0.38);
+      const q1 = base.clone().addScaledVector(sub, subLen*0.55).addScaledVector(sideA, subLen*bend*0.4);
+      const q2 = base.clone().addScaledVector(sub, subLen);
+      const subCurve = new THREE.CatmullRomCurve3([base, q1, q2], false, 'centripetal');
+      network.add(new THREE.Mesh(taperedTube(subCurve, 20, 6, soma.r*0.14, 0.02), dendriteMat));
+      const st = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), tipMat);
+      st.position.copy(q2);
+      network.add(st); tips.push(st);
+    }
+  }
+}
+
+/* ── 极淡的空间尘埃，撑住纵深 ── */
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 900, dustPos = new Float32Array(dustCount*3);
+for (let i=0;i<dustCount;i++){
+  dustPos[i*3]   = rr(-55,55);
+  dustPos[i*3+1] = rr(-32,32);
+  dustPos[i*3+2] = rr(-60,25);
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
+scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({
+  color: GREEN, size:0.09, transparent:true, opacity:0.34, sizeAttenuation:true
+})));
+
+/* ── 交互：拖拽旋转 / 滚轮缩放 ── */
+let dragging = false, px = 0, py = 0, rotX = 0, rotY = 0, tRotX = 0.06, tRotY = 0, zoom = 42, tZoom = 42;
+renderer.domElement.addEventListener('pointerdown', e=>{ dragging = true; px = e.clientX; py = e.clientY; });
+addEventListener('pointerup', ()=> dragging = false);
+addEventListener('pointermove', e=>{
+  if (!dragging) return;
+  tRotY += (e.clientX - px) * 0.004;
+  tRotX += (e.clientY - py) * 0.003;
+  px = e.clientX; py = e.clientY;
+});
+addEventListener('wheel', e=>{
+  tZoom = Math.min(90, Math.max(18, tZoom + Math.sign(e.deltaY)*2.4));
+}, { passive:true });
+
+const clock = new THREE.Clock();
+function tick(){
+  const t = clock.getElapsedTime();
+  if (!dragging) tRotY += 0.0009;               // 极慢自转，方便看结构
+  rotX += (tRotX - rotX) * 0.06;
+  rotY += (tRotY - rotY) * 0.06;
+  zoom += (tZoom - zoom) * 0.08;
+
+  network.rotation.x = rotX;
+  network.rotation.y = rotY;
+  camera.position.z = zoom;
+  camera.lookAt(0, 0, -6);
+
+  for (const tip of tips){
+    const s = tip.userData.base * (0.78 + 0.22*Math.sin(t*1.6 + tip.userData.phase));
+    tip.scale.setScalar(s);
+  }
+  for (let i=0;i<somaMeshes.length;i++){
+    const s = 1 + 0.05*Math.sin(t*1.1 + i*1.7);
+    somaMeshes[i].scale.setScalar(s);
+  }
+
+  composer.render();
+  requestAnimationFrame(tick);
+}
+tick();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

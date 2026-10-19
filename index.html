@@ -454,10 +454,11 @@
     function netSeeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
     // M5：唯一调优表。生长、时序与着色共用；内容/交互系统保持原有接口。
     const NET_CONFIG={
-      seed:20261014, desktopNodes:800, mobileNodes:240,
-      form:{desktopRoots:2,mobileRoots:1,rootSeparation:9,desktopArms:3,mobileArms:3,desktopDepth:4,mobileDepth:1,
-        length:6,lengthDecay:.59,width:.17,widthDecay:.56,spread:.48,bend:.28,depthRange:7,relaxPasses:6,clearance:1.3,
-        desktopSamples:14,sampleDecay:.68,minSamples:5,mobileSamples:8,terminalSize:1.15,terminalLight:.22,tipTaper:.72,levelLightDecay:.73},
+      seed:20261019, desktopNodes:40, mobileNodes:40,
+      form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
+        minArms:5,maxArms:7,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
+        branchChance:.55,rootRadius:.34,tipRadius:.028,opacity:.66,levelLightDecay:.73,
+        desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
         breathAmplitude:.03,breathPeriod:8,hoverGain:.12,hoverRadius:.16},
@@ -475,60 +476,97 @@
     document.querySelectorAll('.cluster-index a').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',link.getAttribute('href'))}));
     const growthRandom=netSeeded(NET_CONFIG.seed),form=NET_CONFIG.form;
     const networkPaths=[],rootPositions=[],linePositions=[],lineDistances=[],lineRoots=[],lineClusters=[],lineRoutes=[],lineBridges=[],lineLevels=[];
-    const rootCount=mobile?form.mobileRoots:form.desktopRoots,maxDepth=mobile?form.mobileDepth:form.desktopDepth,arms=mobile?form.mobileArms:form.desktopArms;
-    // 受约束的二叉 L-system：子枝继承父枝端点切线，层级缩短/变细；二次曲线采样合批为带状网格。
-    function growBranch(start,direction,length,level,cluster,root,offset,route,incoming=direction){
-      const side=new THREE.Vector3(-direction.y,direction.x,.12).normalize();
-      const end=start.clone().addScaledVector(direction,length).addScaledVector(side,(growthRandom()-.5)*length*form.bend);
-      const curve=new THREE.QuadraticBezierCurve3(start,start.clone().addScaledVector(incoming,length*.5),end);
-      const samples=mobile?form.mobileSamples:Math.max(form.minSamples,Math.round(form.desktopSamples*Math.pow(form.sampleDecay,level))),points=curve.getPoints(samples),cumulative=[offset];
+    const rootCount=1,maxDepth=1;
+    const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]],sectionIndices=[0,0,0,0,0];
+    const unitWorld=CONTENT_UNITS.map(u=>{const c=Number(u.id[0])-1,index=sectionIndices[c]++;return mobile?new THREE.Vector3(centers[c][0]+mobileSlots[index][0],centers[c][1]+mobileSlots[index][1],centers[c][2]):new THREE.Vector3(...u.anchor)});
+    const unitAttachments=[],terminalStars=[];
+    const rr=(a,b)=>a+growthRandom()*(b-a);
+    // Prototype's independent single-sided arcs. Each cluster has one soma, no connecting trunk.
+    function dendrite(center,radius){
+      const u=rr(-1,1),theta=rr(0,Math.PI*2),v=(1-u*u)**.5;
+      const dir=new THREE.Vector3(v*Math.cos(theta),u,v*Math.sin(theta)*.72).normalize();
+      const length=rr(form.minLength,form.maxLength),phase=rr(0,Math.PI*2),bend=rr(form.bendMin,form.bendMax),curl=rr(.35,.75);
+      const sideA=new THREE.Vector3().crossVectors(dir,new THREE.Vector3(0,1,0));if(sideA.lengthSq()<1e-4)sideA.set(1,0,0);
+      sideA.normalize().applyAxisAngle(dir,phase);const sideB=sideA.clone().applyAxisAngle(dir,bend*3.2);
+      const controls=[center.clone().addScaledVector(dir,radius*.9),
+        center.clone().addScaledVector(dir,length*.30).addScaledVector(sideA,length*bend*.85),
+        center.clone().addScaledVector(dir,length*.66).addScaledVector(sideA,length*bend*.25).addScaledVector(sideB,length*bend*.30*curl),
+        center.clone().addScaledVector(dir,length).addScaledVector(sideB,length*bend*.55)];
+      controls[3].y+=rr(-1.2,1.2);
+      return {controls,length,sideA,bend,sub:rr(0,1)<form.branchChance,subT:rr(.45,.72),subAngle:rr(-.9,.9),subRatio:rr(.22,.38)};
+    }
+    function addPath(curve,c,level,r0,r1,route,offset=0,unit=-1){
+      const segments=(mobile?form.mobileSamples:form.desktopSamples)/(level+1),points=curve.getSpacedPoints(segments),cumulative=[offset];
       for(let j=1;j<points.length;j++)cumulative.push(cumulative[j-1]+points[j].distanceTo(points[j-1]));
-      const path={points,cumulative,level,cluster,root,route,bridge:false};networkPaths.push(path);
-      if(level<maxDepth){
-        const tangent=curve.getTangent(1).normalize();
-        for(const sign of [-1,1]){const angle=sign*(form.spread+growthRandom()*.12),next=tangent.clone().applyAxisAngle(new THREE.Vector3(0,0,1),angle);
-          next.z+=(growthRandom()-.5)*.24;next.normalize();growBranch(end,next,length*form.lengthDecay,level+1,cluster,root,cumulative.at(-1),route*.5+(sign+1)*.25,tangent)}
-      }
+      const path={curve,points,cumulative,level,cluster:c,root:0,route,bridge:false,r0,r1,unit};networkPaths.push(path);
+      terminalStars.push({point:points.at(-1),size:rr(.09,.19),path});return path;
     }
+    // Generate before binding content so translated subsets do not alter the seeded shape.
+    const somaBranches=Array.from({length:K},(_,c)=>{
+      const center=new THREE.Vector3(...centers[c]);center.z+=form.somaDepth[c];rootPositions.push(center);
+      return Array.from({length:Math.floor(rr(form.minArms,form.maxArms+1))},()=>dendrite(center,form.somaRadii[c]));
+    });
     for(let c=0;c<K;c++){
-      const roots=Array.from({length:rootCount},(_,r)=>new THREE.Vector3(centers[c][0]+(r-(rootCount-1)/2)*form.rootSeparation,
-        centers[c][1]+(r===0?1.6:-1.6),centers[c][2]+(r===0?form.depthRange:-form.depthRange)));
-      // 固定主胞体数量；局部排斥松弛保证主核间隙，枝末端作为小卫星而非随机全连接噪声。
-      for(let pass=0;pass<form.relaxPasses;pass++)for(let a=0;a<roots.length;a++)for(let b=a+1;b<roots.length;b++){
-        const delta=roots[b].clone().sub(roots[a]),d=delta.length(),minimum=form.rootSeparation+form.clearance;
-        if(d<minimum&&d>0){delta.multiplyScalar((minimum-d)/d*.25);roots[a].sub(delta);roots[b].add(delta)}
-      }
-      roots.forEach((origin,r)=>{rootPositions.push(origin);for(let arm=0;arm<arms;arm++){
-        const angle=arm/arms*Math.PI*2+(r?Math.PI/3:0)+c*.27;
-        growBranch(origin,new THREE.Vector3(Math.cos(angle),Math.sin(angle),(growthRandom()-.5)*.35).normalize(),form.length,0,c,r,0,arm/arms)
-      }});
-      const branches=networkPaths.filter(p=>p.cluster===c),slots=per-rootCount;
+      const branches=somaBranches[c],candidates=branches.slice().sort((a,b)=>b.length-a.length).slice(0,Math.max(CONTENT_UNITS.filter(u=>Number(u.id[0])-1===c).length,Math.ceil(branches.length*.75)));
+      CONTENT_UNITS.forEach((unit,id)=>{
+        if(Number(unit.id[0])-1!==c)return;
+        const available=candidates.filter(b=>b.unit===undefined);
+        available.sort((a,b)=>a.controls[3].distanceToSquared(unitWorld[id])-b.controls[3].distanceToSquared(unitWorld[id]));
+        const branch=available[0],center=rootPositions[c],original=branch.controls[3].clone().sub(center),target=unitWorld[id].clone().sub(center);
+        const rotation=new THREE.Quaternion().setFromUnitVectors(original.clone().normalize(),target.clone().normalize()),scale=target.length()/original.length();
+        // Rotate the entire arc toward its anchor; changing only the end would create a hairpin.
+        branch.controls.forEach((p,j)=>p.sub(center).applyQuaternion(rotation).multiplyScalar(j===0?1:scale).add(center));
+        branch.sideA.applyQuaternion(rotation);branch.controls[3].copy(unitWorld[id]);branch.unit=id;
+      });
+      branches.forEach((b,i)=>{
+        const curve=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
+        const path=addPath(curve,c,0,form.somaRadii[c]*form.rootRadius,form.tipRadius,i/branches.length,0,b.unit??-1);
+        if(b.unit!==undefined)unitAttachments[b.unit]=path;
+        if(b.sub){const base=curve.getPointAt(b.subT),tangent=curve.getTangentAt(b.subT).normalize(),dir=tangent.applyAxisAngle(new THREE.Vector3(0,1,0),b.subAngle).normalize(),len=b.length*b.subRatio;
+          const q1=base.clone().addScaledVector(dir,len*.55).addScaledVector(b.sideA,len*b.bend*.4),q2=base.clone().addScaledVector(dir,len);
+          addPath(new THREE.CatmullRomCurve3([base,q1,q2],false,'centripetal'),c,1,form.somaRadii[c]*.14,.02,i/branches.length,path.cumulative.at(-1)*b.subT);
+        }
+      });
+      // Only the soma and branch terminals are particles; no sampled chains along branches.
+      const main=networkPaths.filter(p=>p.cluster===c&&p.level===0);
       for(let i=0;i<per;i++){
-        const idx=c*per+i,root=i<rootCount?i:branches[(i-rootCount)%branches.length].root;
-        let point,distance=0,level=0;
-        if(i<rootCount){point=roots[i];sizes[idx]=9.5}
-        else{const n=i-rootCount,path=branches[n%branches.length],row=Math.floor(n/branches.length),rows=Math.ceil((slots-n%branches.length)/branches.length),t=path.level===maxDepth&&row===rows-1?1:(row+1)/(rows+1);
-          const sample=t*(path.points.length-1),a=Math.min(path.points.length-2,Math.floor(sample)),f=sample-a;
-          point=path.points[a].clone().lerp(path.points[a+1],f);distance=THREE.MathUtils.lerp(path.cumulative[a],path.cumulative[a+1],f);level=path.level;sizes[idx]=level===maxDepth&&row===rows-1?form.terminalSize:1.2+.8*(1-level/(maxDepth+1))}
-        positions.set(point.toArray(),idx*3);clusterIds[idx]=c;nodeRoots[idx]=root;nodeDistances[idx]=distance;seeds[idx]=growthRandom();phases[idx]=growthRandom()*Math.PI*2;
-        const color=colors[c].clone().multiplyScalar(i<rootCount?1:level===maxDepth?form.terminalLight:.65*Math.pow(form.levelLightDecay,level));nodeColors.set([color.r,color.g,color.b],idx*3)
+        const idx=c*per+i,path=main[(i-1+main.length)%main.length],point=i===0?rootPositions[c]:path.points.at(-1);
+        positions.set(point.toArray(),idx*3);clusterIds[idx]=c;nodeRoots[idx]=0;nodeDistances[idx]=i===0?0:path.cumulative.at(-1);
+        sizes[idx]=i===0?8:0;seeds[idx]=growthRandom();phases[idx]=growthRandom()*Math.PI*2;nodeColors.set(colors[c].toArray(),idx*3);
       }
     }
-    for(let c=0;c<K-1;c++){
-      const a=rootPositions[c*rootCount],b=rootPositions[(c+1)*rootCount],delta=b.clone().sub(a),side=new THREE.Vector3(-delta.y,delta.x,0).normalize();
-      const curve=new THREE.CatmullRomCurve3([a,a.clone().lerp(b,.32).addScaledVector(side,5),a.clone().lerp(b,.68).addScaledVector(side,-3),b],false,'centripetal');
-      const points=curve.getPoints(mobile?20:32),cumulative=[0];for(let j=1;j<points.length;j++)cumulative.push(cumulative[j-1]+points[j].distanceTo(points[j-1]));
-      networkPaths.push({points,cumulative,level:1,cluster:c,root:0,route:0,bridge:true})
+    // Prototype taperedTube, expanded once into the existing batched signal shader.
+    function taperedTube(path){
+      const {curve,points,cumulative,r0,r1}=path,segments=points.length-1,radial=mobile?form.mobileRadial:form.desktopRadial;
+      const frames=curve.computeFrenetFrames(segments,false),vertices=[];
+      for(let i=0;i<=segments;i++)for(let j=0;j<=radial;j++){
+        const angle=j/radial*Math.PI*2,r=r0+(r1-r0)*i/segments;
+        vertices.push(points[i].clone().addScaledVector(frames.normals[i],r*Math.cos(angle)).addScaledVector(frames.binormals[i],r*Math.sin(angle)));
+      }
+      for(let i=0;i<segments;i++)for(let j=0;j<radial;j++){
+        const a=i*(radial+1)+j,b=a+radial+1;
+        for(const n of [a,b,a+1,b,b+1,a+1]){
+          const v=vertices[n],sample=Math.floor(n/(radial+1));linePositions.push(v.x,v.y,v.z);lineDistances.push(cumulative[sample]);
+          lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(path.level);
+        }
+      }
     }
-    // 主干与桥接优先排列，减密时先裁掉高层末梢。
-    networkPaths.sort((a,b)=>(a.bridge?0:a.level)-(b.bridge?0:b.level));
-    for(const path of networkPaths){
-      const {points,cumulative,level,cluster,root,route,bridge}=path,width=form.width*Math.pow(form.widthDecay,level);
-      const normals=points.map((p,j)=>{const tangent=points[Math.min(j+1,points.length-1)].clone().sub(points[Math.max(j-1,0)]).normalize();return new THREE.Vector3(-tangent.y,tangent.x,0).normalize()});
-      for(let j=0;j<points.length-1;j++)for(const [index,sign] of [[j,1],[j,-1],[j+1,1],[j+1,1],[j,-1],[j+1,-1]]){
-        const taper=1-(level===maxDepth&&!bridge?form.tipTaper:1-form.widthDecay)*index/(points.length-1),v=points[index].clone().addScaledVector(normals[index],width*taper*sign);
-        linePositions.push(v.x,v.y,v.z);lineDistances.push(bridge?cumulative[index]/cumulative.at(-1):cumulative[index]);
-        lineRoots.push(root);lineClusters.push(cluster);lineRoutes.push(route);lineBridges.push(bridge?1:0);lineLevels.push(level)
+    // Five full-size soma cores, batched with the same optical and pulse material.
+    rootPositions.forEach((center,c)=>{
+      const sphere=new THREE.SphereGeometry(form.somaRadii[c],mobile?12:20,mobile?8:14).toNonIndexed();
+      const vertices=sphere.getAttribute('position');
+      for(let i=0;i<vertices.count;i++){
+        linePositions.push(vertices.getX(i)+center.x,vertices.getY(i)+center.y,vertices.getZ(i)+center.z);
+        lineDistances.push(0);lineRoots.push(0);lineClusters.push(c);lineRoutes.push(0);lineBridges.push(0);lineLevels.push(0);
+      }
+      sphere.dispose();
+    });
+    networkPaths.forEach(taperedTube);
+    // Small three-ray terminals share the same pulse/breath material as the tapered tubes.
+    for(const {point,size,path} of terminalStars)for(let arm=0;arm<3;arm++){
+      const angle=arm*Math.PI*2/3,dir=new THREE.Vector3(Math.cos(angle),Math.sin(angle),0),side=new THREE.Vector3(-dir.y,dir.x,0);
+      for(const v of [point.clone().addScaledVector(side,size*.2),point.clone().addScaledVector(side,-size*.2),point.clone().addScaledVector(dir,size)]){
+        linePositions.push(...v.toArray());lineDistances.push(path.cumulative.at(-1));lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(path.level);
       }
     }
     const L=networkPaths.length;
@@ -561,7 +599,7 @@
     const lightGLSL=`uniform vec4 uEvent[5];uniform float uStorm,uMotion;
       float eventSignal(float distance,float root,float cluster,float route,float bridge){
         vec4 e=uEvent[0];for(int i=0;i<5;i++){if(abs(cluster-float(i))<.1)e=uEvent[i];}
-        float selected=1.-step(.1,abs(root-e.w));float q=distance/${(form.length*Array.from({length:maxDepth+1},(_,i)=>form.lengthDecay**i).reduce((a,b)=>a+b,0)).toFixed(4)};
+        float selected=1.-step(.1,abs(root-e.w));float q=distance/${Math.max(...networkPaths.map(p=>p.cumulative.at(-1))).toFixed(4)};
         float wave=0.;
         if(e.x<1.5&&e.x>.5){float t=e.y/${NET_CONFIG.light.spikeTravel};for(int i=0;i<${NET_CONFIG.light.spikeTailSamples};i++){float lag=float(i)*${NET_CONFIG.light.spikeTailStep};wave=max(wave,(1.-smoothstep(.008,.025,abs(q-(t-lag))))*exp(-float(i)*.34));}wave*= ${NET_CONFIG.light.spikeGain}*step(0.,t)*step(t,1.15);}
         else if(e.x<2.5&&e.x>1.5){float t=e.y/${NET_CONFIG.light.converge};wave=(1.-smoothstep(.03,.21,abs(q-(1.-t))))*step(t,1.15);}
@@ -608,7 +646,7 @@
           varying float vLevel,vDistance,vRoot,vCluster,vRoute,vBridge,vOptical,vNear;varying vec2 vScreen;
           void main(){float signal=eventSignal(vDistance,vRoot,vCluster,vRoute,vBridge);float hover=(1.-smoothstep(0.,uHoverRadius,length(vScreen-uPointer)))*uHoverGain*uMotion;
             float focal=${NET_CONFIG.budget.farOpacity}+.84*vOptical;float focus=1.+uFocus*(1.-step(.1,abs(vCluster-uActive)))*.25;
-            float hierarchy=pow(${form.levelLightDecay},vLevel);float alpha=(.32*hierarchy+signal*.65+hover)*focal*vNear*uIntro*focus*uBreath*clusterPulse(vCluster);
+            float hierarchy=pow(${form.levelLightDecay},vLevel);float alpha=(${form.opacity}*hierarchy+signal*.65+hover)*focal*vNear*uIntro*focus*uBreath*clusterPulse(vCluster);
             vec3 color=mix(vec3(.1764706,.8784314,.4156863),vec3(.9,1.,.93),clamp(signal*.42,0.,.8));
             gl_FragColor=vec4(color*(.8*hierarchy+signal*1.8+hover),alpha);}`});const lines=new THREE.Mesh(lg,lmat);scene.add(lines);
       // 微尘仅一批 Points，局部漂移在 GPU；reduce 完全固定。
@@ -616,15 +654,12 @@
       const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.Float32BufferAttribute(dustPositions,3));
       const dmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:motionEnabled?1:0},uOpacity:{value:NET_CONFIG.atmosphere.dustOpacity}},vertexShader:`uniform float uTime,uMotion;void main(){vec3 p=position;p.xy+=vec2(sin(uTime*.13+p.z),cos(uTime*.11+p.x))*.22*uMotion;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(60./max(1.,-mv.z),1.,2.);}`,fragmentShader:`uniform float uOpacity;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(.1764706,.8784314,.4156863,a*uOpacity);}`});scene.add(new THREE.Points(dg,dmat));
       const bloomOn=!mobile;
-      if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .52 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
-      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
+      if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .72 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
+      const state={nodes:N,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:rootCount*K,networkDepth:maxDepth+1,somaCenters:rootPositions.map(p=>p.toArray()),dendrites:somaBranches.map(b=>b.length),terminalCount:terminalStars.length,attachments:unitAttachments.map((p,i)=>({id:CONTENT_UNITS[i].id,end:p.points.at(-1).toArray(),world:unitWorld[i].toArray()})),lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
 
 
       // 三次主场景绘制：胞体/内核实例、细环实例、合批树突带。
       const aboutUnits=CONTENT_UNITS,unitCount=aboutUnits.length;
-      const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]];
-      const sectionIndices=[0,0,0,0,0];
-      const unitWorld=aboutUnits.map(u=>{const c=Number(u.id[0])-1,index=sectionIndices[c]++;if(!mobile)return new THREE.Vector3(...u.anchor);const slot=mobileSlots[index];return new THREE.Vector3(centers[c][0]+slot[0],centers[c][1]+slot[1],centers[c][2])});
       function seeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
       const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72,depthWrite:false});
       const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
@@ -644,19 +679,8 @@
         }
       }
       aboutUnits.forEach((unit,id)=>{
-        const rng=seeded(unit.seed),origin=unitWorld[id],segments=mobile?4:8,roots=mobile?3:4,variant=Number(unit.id[0])-1;
-        function branch(start,angle,length,depth,signal=false){
-          const end=start.clone().add(new THREE.Vector3(Math.cos(angle)*length,Math.sin(angle)*length,(rng()-.5)*.6));
-          const bend=(rng()-.5)*length*.35,points=[];
-          for(let j=0;j<=segments;j++){const t=j/segments;points.push(start.clone().lerp(end,t).add(new THREE.Vector3(-Math.sin(angle)*Math.sin(t*Math.PI)*bend,Math.cos(angle)*Math.sin(t*Math.PI)*bend,0)))}
-          ribbon(points,.065*Math.pow(.6,depth),id,signal);
-          if(depth<1){branch(end,angle+.35+rng()*.32,length*.58,depth+1);branch(end,angle-.35-rng()*.32,length*.58,depth+1)}
-        }
-        for(let r=0;r<roots;r++){const angle=variant===1?(r%2)*Math.PI+(r<2?-.35:.35):variant===4?(r%2)*Math.PI+(r<2?-.4:.4):(r/roots)*Math.PI*2;branch(origin,angle+rng()*.3,(variant===3?1.1:2.1)+rng()*.9,0,r===0)}
-        // 较长轴突独立于三层树突分叉。
-        const angle=Math.PI*1.45+rng()*.5,axon=[];
-        for(let j=0;j<=segments;j++){const t=j/segments;axon.push(origin.clone().add(new THREE.Vector3(Math.cos(angle)*t*(variant===2?9:variant===3?3:7)+Math.sin(t*5)*.25,Math.sin(angle)*t*(variant===2?9:variant===3?3:7),t*.5)))}
-        ribbon(axon,.045,id,false);
+        // Highlight/transmission follows the actual attached dendrite, ending at the content sphere.
+        ribbon(unitAttachments[id].points,.035,id,true);
       });
       const visitedAttribute=new THREE.Float32BufferAttribute(new Float32Array(treeUnits.length),1);
       const tg=new THREE.BufferGeometry();tg.setAttribute('aVisited',visitedAttribute);tg.setAttribute('aSection',new THREE.Float32BufferAttribute(treeUnits.map(i=>Number(aboutUnits[i].id[0])-1),1));tg.setAttribute('position',new THREE.Float32BufferAttribute(treePositions,3));tg.setAttribute('aUnit',new THREE.Float32BufferAttribute(treeUnits,1));tg.setAttribute('aDistance',new THREE.Float32BufferAttribute(treeDistances,1));tg.setAttribute('aSignal',new THREE.Float32BufferAttribute(treeSignals,1));
@@ -769,7 +793,7 @@
       const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);
       stats.performanceTier=0;let slowWindows=0;
       let last=performance.now(),elapsed=0,frameWindow=last,windowFrames=0;
-      chooseMotion=choice=>{motionChoice=choice;try{sessionStorage.setItem(motionChoiceKey,choice)}catch{}motionEnabled=choice==='enable';notice.hidden=true;quietGlow.style.opacity=motionEnabled?'0':'1';syncMotionStats();if(motionEnabled){pmat.uniforms.uMotion.value=1;lmat.uniforms.uMotion.value=1;if(bloom&&!stats.performanceTier)bloom.strength=.52;if(!introDone)startIntro();else{pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1}}else{pulses=[];lastBurst=elapsed;pmat.uniforms.uMotion.value=0;lmat.uniforms.uMotion.value=0;if(bloom)bloom.strength=0;unitControl.skipIntro();}};
+      chooseMotion=choice=>{motionChoice=choice;try{sessionStorage.setItem(motionChoiceKey,choice)}catch{}motionEnabled=choice==='enable';notice.hidden=true;quietGlow.style.opacity=motionEnabled?'0':'1';syncMotionStats();if(motionEnabled){pmat.uniforms.uMotion.value=1;lmat.uniforms.uMotion.value=1;if(bloom&&!stats.performanceTier)bloom.strength=.72;if(!introDone)startIntro();else{pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1}}else{pulses=[];lastBurst=elapsed;pmat.uniforms.uMotion.value=0;lmat.uniforms.uMotion.value=0;if(bloom)bloom.strength=0;unitControl.skipIntro();}};
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
@@ -804,7 +828,7 @@
         dmat.uniforms.uTime.value=motionEnabled?elapsed:0;
         stats.lightActive=lightState.active;stats.lightPaused=!animate;stats.pulses=pulses.length+lightState.active;stats.cam=[+camera.position.x.toFixed(2),+camera.position.y.toFixed(2),+camera.position.z.toFixed(2)];document.querySelector('#readout-nodes').textContent=`${N}`;document.querySelector('#readout-lines').textContent=`${L.toLocaleString('zh-CN')}`;
         gazeRig.updateMatrixWorld(true);updateUnits(now);if(document.hidden)return;
-        if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;if(fps<45&&!document.hidden&&!modalOpen){slowWindows++}else{slowWindows=0}if(slowWindows>=3&&stats.performanceTier<3){stats.performanceTier++;if(stats.performanceTier===1){composer=null;stats.bloomOn=false}else if(stats.performanceTier===2){renderer.setPixelRatio(1);pmat.uniforms.uPixelRatio.value=1}else{pg.setDrawRange(0,Math.floor(N*.6));lg.setDrawRange(0,Math.floor(lg.attributes.position.count*NET_CONFIG.budget.meshFraction/3)*3);dg.setDrawRange(0,0);stats.backgroundVisible=Math.floor(N*.6)}previousVisited=-1;slowWindows=0}stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
+        if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;if(fps<45&&!document.hidden&&!modalOpen){slowWindows++}else{slowWindows=0}if(slowWindows>=3&&stats.performanceTier<3){stats.performanceTier++;if(stats.performanceTier===1){composer=null;stats.bloomOn=false}else if(stats.performanceTier===2){renderer.setPixelRatio(1);pmat.uniforms.uPixelRatio.value=1}else{pg.setDrawRange(0,Math.floor(N*.6));dg.setDrawRange(0,0);stats.backgroundVisible=Math.floor(N*.6)}previousVisited=-1;slowWindows=0}stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
       });
       function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
       addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;fitPanorama();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
