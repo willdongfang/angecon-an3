@@ -215,8 +215,8 @@ def replace_once(old,new):
     assert html.count(old)==1,(old[:100],html.count(old))
     html=html.replace(old,new,1)
 # v4: the angle belongs to the membrane opening, not the trunk profile.
-replace_once("num('angle',90),35,145", "num('angle',45),20,120")
-html=html.replace('接触角度','根部张角（环上开口）').replace('接触平滑度','过渡圆润度').replace('min="35" max="145"','min="20" max="120"')
+replace_once("num('angle',90),35,145", "num('angle',45),20,150")
+html=html.replace('接触角度','根部张角（环上开口）').replace('接触平滑度','过渡圆润度').replace('min="35" max="145"','min="20" max="150"')
 replace_once("tangent=frame.out.clone().applyAxisAngle(frame.z,THREE.MathUtils.degToRad(form.contactAngle-90))", "tangent=frame.out.clone()")
 replace_once("lead=THREE.MathUtils.lerp(.06,.42,form.contactSmooth)", "lead=.18")
 replace_once("handle=root.distanceTo(end)*THREE.MathUtils.lerp(.18,.62,form.contactSmooth)", "handle=root.distanceTo(end)*.4")
@@ -227,18 +227,36 @@ replace_once("const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;\n   
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
       const gaps=branches.map((b,i)=>branches[(i+1)%branches.length].angle-b.angle+(i===branches.length-1?Math.PI*2:0));
       const minGap=Math.min(...gaps),requested=THREE.MathUtils.degToRad(form.contactAngle);
-      const delta=Math.min(requested,minGap*.9)/2;
+      const delta=requested/2;
       soma.contactOpening={requested:form.contactAngle,effective:THREE.MathUtils.radToDeg(2*delta),minGap:THREE.MathUtils.radToDeg(minGap),gaps:gaps.map(a=>THREE.MathUtils.radToDeg(a))};""")
 replace_once("derivatives.push(d.multiplyScalar(.04))", "derivatives.push(d.multiplyScalar(THREE.MathUtils.lerp(.01,.10,form.contactSmooth)))")
 html=html.replace('clusterSomas,membraneRanges,linePositions', 'clusterSomas,membraneJunctions,membraneRanges,linePositions')
 html=html.replace('<div class="hint">拖动即重建', '<div class="hint" id="contact-effective"></div><div class="hint">拖动即重建')
 html=html.replace('    var pending={},frame=0;', '''    function showOpening(){
-      var values=window.__DBG__.network.clusterSomas.flat().filter(function(s){return s.isContent}).map(function(s){return s.contactOpening.effective});
-      document.getElementById('contact-effective').textContent='实际环上开口 '+Math.min(...values).toFixed(1)+'°–'+Math.max(...values).toFixed(1)+'°；按邻根间隔的90%自动限幅。';
+      document.getElementById('contact-effective').textContent='设定值（无限幅） '+T.angle+'°';
     }
     showOpening();
     var pending={},frame=0;''')
 html=html.replace('window.__REBUILD__(changes);', 'window.__REBUILD__(changes);showOpening();')
 html=html.replace('if (!T || !window.__REBUILD__)', 'if (!T || !window.__REBUILD__ || !window.__DBG__)')
+# v5: overlapping openings are independent patches. Only emit forward ellipse
+# gaps; a covered gap must not become a reversed or zero-area strip.
+replace_once('const samples=Math.ceil((end-a)*R/t/2);', 'if(end<=a)continue;\n        const samples=Math.max(1,Math.ceil((end-a)*R/t/2));')
+# Wide collars can bend across a cell diagonal. Orient each face toward the
+# outside of its local cross section instead of inheriting a folded grid winding.
+replace_once('}strip(collar,path);', '''}
+        const centers=collar.map(row=>row.slice(0,n).reduce((c,v)=>c.add(v),new THREE.Vector3()).multiplyScalar(1/n));
+        let correctedFaces=0;
+        for(let i=0;i<collar.length-1;i++)for(let j=0;j<n;j++){
+          for(const ids of [[[i,j],[i+1,j],[i,j+1]],[[i+1,j],[i+1,j+1],[i,j+1]]]){
+            const vertices=ids.map(([r,c])=>collar[r][c]),out=new THREE.Vector3();
+            const gpu=vertices.map(v=>new THREE.Vector3(Math.fround(v.x),Math.fround(v.y),Math.fround(v.z)));
+            ids.forEach(([r,c],k)=>out.add(gpu[k].clone().sub(centers[r])));
+            const normal=gpu[1].clone().sub(gpu[0]).cross(gpu[2].clone().sub(gpu[0]));
+            if(normal.dot(out)<0){[vertices[1],vertices[2]]=[vertices[2],vertices[1]];correctedFaces++;}
+            emit(...vertices,path);
+          }
+        }
+        b.collarCorrectedFaces=correctedFaces;''')
 OUT.write_text(html, encoding='utf-8')
 print("written:", OUT, len(html))

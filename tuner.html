@@ -513,7 +513,7 @@ window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
       const num = function(k, fb){ const v = parseFloat(H.get(k)); return Number.isFinite(v) ? v : fb; };
       form.ringTubeRadius = num('tube', form.ringTubeRadius);
       form.rootRingRatio = 5.5;
-      form.contactAngle = THREE.MathUtils.clamp(num('angle',45),20,120);
+      form.contactAngle = THREE.MathUtils.clamp(num('angle',45),20,150);
       form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),0,1);
       form.tipRadius      = num('tip', form.tipRadius);
       form.ringScale      = num('scale', form.ringScale);
@@ -738,7 +738,7 @@ function generateNetwork(){
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
       const gaps=branches.map((b,i)=>branches[(i+1)%branches.length].angle-b.angle+(i===branches.length-1?Math.PI*2:0));
       const minGap=Math.min(...gaps),requested=THREE.MathUtils.degToRad(form.contactAngle);
-      const delta=Math.min(requested,minGap*.9)/2;
+      const delta=requested/2;
       soma.contactOpening={requested:form.contactAngle,effective:THREE.MathUtils.radToDeg(2*delta),minGap:THREE.MathUtils.radToDeg(minGap),gaps:gaps.map(a=>THREE.MathUtils.radToDeg(a))};
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
       function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
@@ -774,7 +774,20 @@ function generateNetwork(){
             const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth));
             row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
           }row.push(row[0]);collar.push(row);
-        }strip(collar,path);
+        }
+        const centers=collar.map(row=>row.slice(0,n).reduce((c,v)=>c.add(v),new THREE.Vector3()).multiplyScalar(1/n));
+        let correctedFaces=0;
+        for(let i=0;i<collar.length-1;i++)for(let j=0;j<n;j++){
+          for(const ids of [[[i,j],[i+1,j],[i,j+1]],[[i+1,j],[i+1,j+1],[i,j+1]]]){
+            const vertices=ids.map(([r,c])=>collar[r][c]),out=new THREE.Vector3();
+            const gpu=vertices.map(v=>new THREE.Vector3(Math.fround(v.x),Math.fround(v.y),Math.fround(v.z)));
+            ids.forEach(([r,c],k)=>out.add(gpu[k].clone().sub(centers[r])));
+            const normal=gpu[1].clone().sub(gpu[0]).cross(gpu[2].clone().sub(gpu[0]));
+            if(normal.dot(out)<0){[vertices[1],vertices[2]]=[vertices[2],vertices[1]];correctedFaces++;}
+            emit(...vertices,path);
+          }
+        }
+        b.collarCorrectedFaces=correctedFaces;
         const plus=Array.from({length:radial+1},(_,j)=>outer[j% n]);
         plus[radial]=outer[radial];
         const minus=Array.from({length:radial+1},(_,j)=>outer[(radial+along+radial-j)%n]);
@@ -783,7 +796,8 @@ function generateNetwork(){
       }
       for(let k=0;k<branches.length;k++){
         const b=branches[k],next=branches[(k+1)%branches.length],a=b.angle+delta,end=next.angle-delta+(k===branches.length-1?Math.PI*2:0),rows=[];
-        const samples=Math.ceil((end-a)*R/t/2);
+        if(end<=a)continue;
+        const samples=Math.max(1,Math.ceil((end-a)*R/t/2));
         for(let i=0;i<=samples;i++)rows.push(i===0?boundaries[k].plus:i===samples?boundaries[(k+1)%branches.length].minus:Array.from({length:radial+1},(_,j)=>surface(a+(end-a)*i/samples,-Math.PI+j/radial*2*Math.PI)));
         strip(rows,b.path);
       }
@@ -1116,7 +1130,7 @@ window.__REBUILD__=buildNetwork;
   <div class="row"><label>环粗细 ringTubeRadius <b id="v-tube"></b></label>
     <input id="s-tube" type="range" min="0.008" max="0.045" step="0.001"></div>
   <div class="row"><label>根部张角（环上开口） contactAngle <b id="v-angle"></b></label>
-    <input id="s-angle" aria-label="根部张角（环上开口）" type="range" min="20" max="120" step="1"></div>
+    <input id="s-angle" aria-label="根部张角（环上开口）" type="range" min="20" max="150" step="1"></div>
   <div class="row"><label>过渡圆润度 contactSmooth <b id="v-smooth"></b></label>
     <input id="s-smooth" aria-label="过渡圆润度" type="range" min="0" max="1" step="0.01"></div>
   <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
@@ -1145,8 +1159,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
     var sliders = {tube:'s-tube', angle:'s-angle', smooth:'s-smooth', tip:'s-tip', scale:'s-scale'};
     var fmt = function(v){ return v < 1 ? v.toFixed(3) : v.toFixed(2); };
     function showOpening(){
-      var values=window.__DBG__.network.clusterSomas.flat().filter(function(s){return s.isContent}).map(function(s){return s.contactOpening.effective});
-      document.getElementById('contact-effective').textContent='实际环上开口 '+Math.min(...values).toFixed(1)+'°–'+Math.max(...values).toFixed(1)+'°；按邻根间隔的90%自动限幅。';
+      document.getElementById('contact-effective').textContent='设定值（无限幅） '+T.angle+'°';
     }
     showOpening();
     var pending={},frame=0;
