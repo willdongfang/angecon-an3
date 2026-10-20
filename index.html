@@ -457,7 +457,7 @@
       seed:20261019, desktopNodes:40, mobileNodes:40,
       form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
         minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
-        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:2.499,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:3.3,tipRadius:.02,opacity:.66,levelLightDecay:.73,
         desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
@@ -498,6 +498,7 @@
         center.clone().addScaledVector(dir,length*.66).addScaledVector(sideA,length*bend*.25).addScaledVector(sideB,length*bend*.30*curl),
         center.clone().addScaledVector(dir,length).addScaledVector(sideB,length*bend*.55)];
       controls[3].y+=rr(-1.2,1.2);
+      if(onRing)controls[1].copy(root).addScaledVector(ringDir,length*.30).addScaledVector(new THREE.Vector3(-ringDir.y,ringDir.x,dir.z),length*bend*.20);
       return {controls,length,sideA,bend,ringDir,onRing,center,radius,sub:rr(0,1)<form.branchChance,subT:rr(.45,.72),subAngle:rr(-.9,.9),subRatio:rr(.22,.38)};
     }
     function addPath(curve,c,level,r0,r1,route,offset=0,unit=-1){
@@ -528,12 +529,13 @@
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const root=b.controls[0],tangent=new THREE.Vector3(-b.ringDir.y,b.ringDir.x,0);
+          const root=b.controls[0].clone().addScaledVector(b.ringDir,b.radius*form.ringTubeRadius*form.rootRingRatio),tangent=b.ringDir.clone();
           const ringR=b.radius*form.ringScale,angle=Math.atan2(b.ringDir.y,b.ringDir.x),lead=.08,delta=lead/ringR;
-          const start=b.center.clone().add(new THREE.Vector3(Math.cos(angle-delta)*ringR,Math.sin(angle-delta)*ringR,0));
-          const startTangent=new THREE.Vector3(-Math.sin(angle-delta),Math.cos(angle-delta),0);
-          const join=.08,end=original.getPoint(join),handle=root.distanceTo(end)*.34;
-          // Begin inside the torus, follow its tangent, then peel outward with C1 continuity.
+          const start=b.center.clone().add(new THREE.Vector3(Math.cos(angle-delta)*(ringR-b.radius*form.ringTubeRadius*.9),Math.sin(angle-delta)*(ringR-b.radius*form.ringTubeRadius*.9),0));
+          const startTangent=new THREE.Vector3(Math.cos(angle-delta),Math.sin(angle-delta),0);
+          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(b.ringDir)<b.radius*form.ringTubeRadius*form.rootRingRatio*2)join+=.01;
+          const end=original.getPoint(join),handle=root.distanceTo(end)*.34;
+          // Bury the inlet, then exit radially before widening; never lay the collar along the ring.
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(startTangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
@@ -544,7 +546,7 @@
         const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
-        const path=addPath(trunk,c,soma.isContent?0:4,ringTube*form.rootRingRatio,ringTube*1.1,route,0,soma.unit??-1);
+        const path=addPath(trunk,c,soma.isContent?0:4,ringTube*form.rootRingRatio,ringTube*form.rootRingRatio*(1.1/2.499),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
         if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
@@ -586,7 +588,7 @@
     function rootProfile(path,t){
       if(path.bridge)return path.r1;
       const lead=path.rootLead?path.rootLead/path.curve.getLength():0;
-      if(lead&&t<lead){const x=t/lead,s=x*x*(3-2*x);return path.ringTube*.8+(path.r0-path.ringTube*.8)*s;}
+      if(lead&&t<lead){const x=t/lead,s=x*x*(3-2*x);return path.ringTube*.45+(path.r0-path.ringTube*.45)*s;}
       const x=Math.min(1,Math.max(0,(t-lead)/(1-lead))),s=x*x*(3-2*x);
       return path.r0+(path.r1-path.r0)*s;
     }
