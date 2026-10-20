@@ -258,22 +258,31 @@ replace_once('}strip(collar,path);', '''}
           }
         }
         b.collarCorrectedFaces=correctedFaces;''')
-# v6: bounded monotone easing; preserve the exact v5 baseline at s=.5.
-replace_once("num('smooth',.5),0,1", "num('smooth',.5),-.5,2.5")
-replace_once('min="0" max="1" step="0.01"', 'min="-0.5" max="2.5" step="0.01"')
+# v7: extended monotone easing; preserve the exact baseline at s=.5.
+replace_once("num('smooth',.5),0,1", "num('smooth',.5),-4,5")
+replace_once('min="0" max="1" step="0.01"', 'min="-4" max="5" step="0.01"')
 easing = """
     function contactEase(t,s=form.contactSmooth){
-      t=THREE.MathUtils.clamp(t,0,1);s=THREE.MathUtils.clamp(s,-.5,2.5);
+      t=THREE.MathUtils.clamp(t,0,1);s=THREE.MathUtils.clamp(s,-4,5);
       const smooth=t*t*(3-2*t),quintic=t*t*t*(6*t*t-15*t+10);
+      if(s<-.5)return Math.pow(t,2+(-s-.5)*2);
       if(s<0)return THREE.MathUtils.lerp(t,t*t,-2*s);
       if(s<=1)return THREE.MathUtils.lerp(t,smooth,s);
       if(s<=2)return THREE.MathUtils.lerp(smooth,quintic,s-1);
       return quintic;
     }
-    function contactLengthScale(){return 1+Math.max(0,form.contactSmooth-2)*1.2;}
+    function contactLengthScale(s=form.contactSmooth){
+      s=THREE.MathUtils.clamp(s,-4,5);
+      if(s<-.5)return THREE.MathUtils.lerp(.15,1,(s+4)/3.5);
+      if(s<=2)return 1;
+      if(s<=2.5)return 1+(s-2)*1.2;
+      return THREE.MathUtils.lerp(1.6,3,(s-2.5)/2.5);
+    }
     function contactHandle(low,base,high){
-      const s=form.contactSmooth;
-      return (s<=.5?THREE.MathUtils.lerp(low,base,s+.5):THREE.MathUtils.lerp(base,high,(s-.5)/2))*contactLengthScale();
+      const s=THREE.MathUtils.clamp(form.contactSmooth,-.5,2.5);
+      // Length extends the collar endpoint; keep tangent handles bounded so
+      // the wide-end setting cannot overshoot back through the ring surface.
+      return (s<=.5?THREE.MathUtils.lerp(low,base,s+.5):THREE.MathUtils.lerp(base,high,(s-.5)/2))*Math.min(1,contactLengthScale());
     }
     function contactParameter(t){
       if(form.contactSmooth===.5||t===0||t===1)return t;
@@ -284,14 +293,31 @@ easing = """
       return (t+(lo+hi)/2)/2;
     }
     window.__TUNER_EASE__=contactEase;
+    window.__TUNER_LENGTH_SCALE__=contactLengthScale;
 """
 replace_once('    function membraneFrame(soma,angle){', easing+'    function membraneFrame(soma,angle){')
-replace_once('start=frame.point.clone().addScaledVector(frame.out,.12)', 'start=frame.point.clone().addScaledVector(frame.out,.12*contactLengthScale())')
+# The retained original tail (join <= .31, or .61 above s=2) bounds the whole
+# curve, and the shortest trunk split is .25. Thus this cap is <= 60% of
+# every resulting trunk, even before the neck/collar lengths are added.
+replace_once('start=frame.point.clone().addScaledVector(frame.out,.12)', 'contactLength=Math.min(.12*contactLengthScale(),(original.getLength()-original.getLengths(200)[62])*.25*.60),start=frame.point.clone().addScaledVector(frame.out,contactLength)')
 replace_once('derivatives.push(d.multiplyScalar(THREE.MathUtils.lerp(.01,.10,form.contactSmooth)))', 'derivatives.push(d.multiplyScalar(contactHandle(.01,.055,.10)))')
 replace_once('b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth))', 'b.contactDirection.clone().multiplyScalar(contactHandle(.06,.24,.42))')
 # Monotone parameter remapping preserves the default exactly. Positive handles
 # also change the actual curve shape: acute at -.5, broad at 2.5.
 replace_once('const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];', 'const u=contactParameter((1-Math.cos(Math.PI*i/steps))/2),row=[];')
-html=html.replace('拖动即重建，参数写进地址栏，可直接分享。', '圆润度 −0.50～2.50，默认0.50；2.50过渡长1.6倍。拖动即重建，参数写进地址栏，可直接分享。')
+# At the sharp extreme a ruled collar avoids a tangent bulge into the annulus.
+# Blend continuously from the v6 -.5 profile, keeping the .5 baseline untouched.
+replace_once('row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));', '''const vertex=inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u);
+            if(form.contactSmooth<-.5)vertex.lerp(inner[j].clone().lerp(end,u),(-form.contactSmooth-.5)/3.5);
+            row.push(i===0?inner[j]:i===steps?end:vertex);''')
+replace_once('while(join<.3&&original.getPoint(join)', 'while(join<(form.contactSmooth>2?.6:.3)&&original.getPoint(join)')
+replace_once('let join=.08;', 'let join=.08+.12*THREE.MathUtils.clamp((form.contactSmooth-2)/3,0,1);')
+# Use the shorter guaranteed retained tail when the soft extreme joins later.
+replace_once('original.getLengths(200)[62]', 'original.getLengths(200)[form.contactSmooth>2?122:62]')
+# Widen only the inner cut within the existing requested opening at the
+# extended ends, leaving enough clearance between collar and torus annulus.
+html=html.replace('delta*.66', 'delta*(.66+.068*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))')
+html=html.replace('beta*Math.sin(alpha)', 'beta*(1+.2*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.sin(alpha)')
+html=html.replace('拖动即重建，参数写进地址栏，可直接分享。', '圆润度 −4.00～5.00，默认0.50；过渡长度0.15～3.00倍，上限为路径60%。拖动即重建，参数写进地址栏，可直接分享。')
 OUT.write_text(html, encoding='utf-8')
 print("written:", OUT, len(html))
