@@ -486,18 +486,31 @@
       }
       return [...content,...ambient].map(soma=>{const count=Math.floor(rr(form.minArms,form.maxArms+1));return {...soma,branches:Array.from({length:count},(_,i)=>dendrite(soma.center,soma.radius,soma.isContent?1:.36,soma.isContent,i,count)),paths:[]}});
     });
+    // ID-only shape stream: never consumes the seeded branch/ambient stream.
+    function membraneShape(soma){
+      let hash=2166136261;for(const ch of CONTENT_UNITS[soma.unit].id)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
+      return {ratio:1.04+(hash%1009)/1008*.12,phase:((hash>>>10)%4096)/4096*Math.PI*2,rotation:((hash>>>5)%1024)/1024*Math.PI};
+    }
+    function membranePoint(soma,angle){
+      const q=soma.membrane,R=soma.radius*form.ringScale,w=1+.06*Math.sin(3*angle+q.phase);
+      return new THREE.Vector3(R*(q.ratio**.5)*w*Math.cos(angle-q.rotation),R/(q.ratio**.5)*w*Math.sin(angle-q.rotation),0).applyAxisAngle(new THREE.Vector3(0,0,1),q.rotation).add(soma.center);
+    }
+    function membraneFrame(soma,angle){
+      const point=membranePoint(soma,angle),tangent=membranePoint(soma,angle+1e-5).sub(membranePoint(soma,angle-1e-5)).normalize();
+      return {point,tangent,out:new THREE.Vector3(tangent.y,-tangent.x,0),z:new THREE.Vector3(0,0,1)};
+    }
+    for(const soma of clusterSomas.flat().filter(s=>s.isContent))soma.membrane=membraneShape(soma);
     const somaBranches=clusterSomas.map(somas=>somas.flatMap(s=>s.branches)),connections=[];
     for(let c=0;c<K;c++){
       clusterSomas[c].forEach((soma,si)=>soma.branches.forEach((b,i)=>{
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const ringR=b.radius*form.ringScale,ringTube=b.radius*form.ringTubeRadius,lead=.18;
-          const start=b.center.clone().addScaledVector(b.ringDir,ringR+ringTube);
-          const root=start.clone().addScaledVector(b.ringDir,lead),tangent=b.ringDir.clone();
-          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(b.ringDir)<b.radius*form.ringTubeRadius*form.rootRingRatio*2)join+=.01;
+          const ringTube=b.radius*form.ringTubeRadius,lead=.18;
+          b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
+          const frame=b.membraneFrame,start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(frame.out,lead),tangent=frame.out;
+          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
           const end=original.getPoint(join),handle=root.distanceTo(end)*.34;
-          // Start on the outer rim and widen along a radial neck without crossing the torus.
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
@@ -510,7 +523,8 @@
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
         const path=addPath(trunk,c,soma.isContent?0:4,ringTube*form.rootRingRatio,ringTube*form.rootRingRatio*(1.1/2.499),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
-        if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;}
+        if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
+          path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
         const normal=new THREE.Vector3().crossVectors(T,reference).normalize(),binormal=new THREE.Vector3().crossVectors(T,normal);
         const span=path.r1*10,childRadius=path.r1*.55,restLength=whole.getLength()*(1-split),angle=rr(.32,.58);
@@ -558,7 +572,7 @@
     function taperedTube(path){
       const {curve}=path;
       if(path.rootLead){
-        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06])].sort((a,b)=>a-b);
+        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06])].sort((a,b)=>a-b);
         path.points=path.samples.map(t=>curve.getPointAt(t));path.cumulative=[0];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
@@ -567,7 +581,7 @@
         path.points=path.samples.map(t=>curve.getPointAt(t));const offset=path.cumulative[0];path.cumulative=[offset];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
-      const {points,cumulative,samples}=path,segments=points.length-1,radial=(path.trunk||path.child)?(path.level===4?8:12):(mobile?form.mobileRadial:form.desktopRadial);
+      const {points,cumulative,samples}=path,segments=points.length-1,radial=(path.trunk||path.child)?(path.level===4?8:24):(mobile?form.mobileRadial:form.desktopRadial);
       // Parallel transport at the actual nonuniform sample positions.
       const tangents=samples.map(t=>curve.getTangentAt(t)),normals=[],binormals=[],axis=new THREE.Vector3(),vertices=[];
       const reference=Math.abs(tangents[0].z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
@@ -629,6 +643,64 @@
       }
     }
     networkPaths.filter(p=>p.trunk).forEach(forkSurface);
+    // A punctured membrane strip and its side outlet form a single surface.
+    // The strip's two cross sections are shared with adjacent ellipse arcs;
+    // the outlet is the actual first trunk ring, not an intersecting tube.
+    const membraneJunctions=[],membraneRanges=[];
+    function membraneSurface(soma){
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
+      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=1.28;
+      const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
+      function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
+      function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
+      function strip(rows,path){for(let i=0;i<rows.length-1;i++)for(let j=0;j<rows[i].length-1;j++){emit(rows[i][j],rows[i+1][j],rows[i][j+1],path);emit(rows[i+1][j],rows[i+1][j+1],rows[i][j+1],path);}}
+      const boundaries=[];
+      for(const b of branches){
+        const path=b.path,coords=[];
+        for(let j=0;j<radial;j++)coords.push([delta,-Math.PI+j/radial*2*Math.PI]);
+        for(let j=0;j<along;j++)coords.push([delta-2*delta*j/along,Math.PI]);
+        for(let j=0;j<radial;j++)coords.push([-delta,Math.PI-j/radial*2*Math.PI]);
+        for(let j=0;j<along;j++)coords.push([-delta+2*delta*j/along,-Math.PI]);
+        const n=coords.length,outer=coords.map(([a,p])=>surface(b.angle+a,p)),inner=[],derivatives=[],rows=[];
+        for(const [a,p] of coords){
+          const alpha=Math.atan2(p/Math.PI,a/delta),da=delta*.66*Math.cos(alpha),dp=beta*Math.sin(alpha),angle=b.angle+da;
+          inner.push(surface(angle,dp));
+          const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
+          const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
+          const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.12));
+        }
+        // Parameter-space annulus leaves a real hole, with no internal face/cap.
+        for(let i=0;i<=6;i++){
+          const u=i/6,row=[];
+          for(let j=0;j<n;j++){
+            const [a,p]=coords[j],alpha=Math.atan2(p/Math.PI,a/delta);
+            row.push(i===0?inner[j]:i===6?outer[j]:surface(b.angle+(1-u)*delta*.66*Math.cos(alpha)+u*a,(1-u)*beta*Math.sin(alpha)+u*p));
+          }row.push(row[0]);rows.push(row);
+        }strip(rows,path);
+        const outlet=path.meshRings[0],collar=[];
+        for(let i=0;i<=steps;i++){
+          const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
+          for(let j=0;j<n;j++){
+            const end=outlet[j],d1=b.membraneFrame.out.clone().multiplyScalar(.12);
+            row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
+          }row.push(row[0]);collar.push(row);
+        }strip(collar,path);
+        const plus=Array.from({length:radial+1},(_,j)=>outer[j% n]);
+        plus[radial]=outer[radial];
+        const minus=Array.from({length:radial+1},(_,j)=>outer[(radial+along+radial-j)%n]);
+        boundaries.push({plus,minus});
+        membraneJunctions.push({unit:soma.unit,angle:b.angle,path,inner,outer,derivatives,collar,surface:(a,p)=>surface(a,p),coords,delta,beta});
+      }
+      for(let k=0;k<branches.length;k++){
+        const b=branches[k],next=branches[(k+1)%branches.length],a=b.angle+delta,end=next.angle-delta+(k===branches.length-1?Math.PI*2:0),rows=[];
+        const samples=Math.ceil((end-a)*R/t/2);
+        for(let i=0;i<=samples;i++)rows.push(i===0?boundaries[k].plus:i===samples?boundaries[(k+1)%branches.length].minus:Array.from({length:radial+1},(_,j)=>surface(a+(end-a)*i/samples,-Math.PI+j/radial*2*Math.PI)));
+        strip(rows,b.path);
+      }
+      membraneRanges.push({unit:soma.unit,start:vertexStart,end:linePositions.length/3});
+    }
+    clusterSomas.flat().filter(s=>s.isContent).forEach(membraneSurface);
     // Small three-ray terminals share the same pulse/breath material as the tapered tubes.
     for(const {point,size,path} of terminalStars)for(let arm=0;arm<3;arm++){
       const angle=arm*Math.PI*2/3,dir=new THREE.Vector3(Math.cos(angle),Math.sin(angle),0),side=new THREE.Vector3(-dir.y,dir.x,0);
@@ -706,6 +778,16 @@
         fragmentShader:`varying vec3 vColor;varying float vLight,vHot;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;float core=1.-smoothstep(.02,.24,d);float halo=exp(-d*12.);vec3 color=mix(vColor,vec3(.9,1.,.93),clamp(vHot*.55,0.,.88)*core);gl_FragColor=vec4(color*(.72+core*1.6+halo*.45)*vLight,core*.9+halo*.24);}`});points=new THREE.Points(pg,pmat);scene.add(points);
       const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
       for(const [name,array] of Object.entries({aDistance:lineDistances,aRoot:lineRoots,aCluster:lineClusters,aRoute:lineRoutes,aBridge:lineBridges,aLevel:lineLevels}))lg.setAttribute(name,new THREE.Float32BufferAttribute(array,1));
+      // Weld at construction precision before Float32 packing: close but distinct
+      // surface vertices must keep separate indices even when GPU coordinates coincide.
+      const welded=new Map(),indices=[],unique=Object.fromEntries(Object.keys(lg.attributes).map(k=>[k,[]]));
+      for(let i=0;i<lg.attributes.position.count;i++){
+        const key=linePositions.slice(i*3,i*3+3).map(v=>Math.round(v*1e10)).join(",");let index=welded.get(key);
+        if(index===undefined){index=welded.size;welded.set(key,index);for(const [name,attr] of Object.entries(lg.attributes))for(let j=0;j<attr.itemSize;j++)unique[name].push(attr.array[i*attr.itemSize+j]);}
+        indices.push(index);
+      }
+      for(const [name,array] of Object.entries(unique))lg.setAttribute(name,new THREE.Float32BufferAttribute(array,lg.attributes[name].itemSize));
+      lg.setIndex(indices);
       const lmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{...sharedLightUniforms,uFocusDepth:{value:45},uFocusWidth:{value:NET_CONFIG.budget.focusWidth},uFocusSize:{value:1},uTime:{value:0},uMotion:{value:motionEnabled?1:0},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uIntro:{value:0},uActive:{value:0},uFocus:{value:0}},
         vertexShader:`attribute float aDistance,aRoot,aCluster,aRoute,aBridge,aLevel;varying float vLevel,vDistance,vRoot,vCluster,vRoute,vBridge,vOptical,vNear;varying vec2 vScreen;
           uniform float uFocusDepth,uFocusWidth;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;vScreen=gl_Position.xy/max(.001,gl_Position.w);vDistance=aDistance;vRoot=aRoot;vCluster=aCluster;vRoute=aRoute;vBridge=aBridge;vLevel=aLevel;vOptical=exp(-abs(-mv.z-uFocusDepth)/uFocusWidth);vNear=clamp(55./max(1.,-mv.z),.18,1.);}`,
@@ -725,14 +807,13 @@
       const state={nodes:clusterSomas.flat().length,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:clusterSomas.flat().length,networkDepth:maxDepth+1,somaCenters:clusterSomas.flat().map(s=>s.center.toArray()),contentCounts:contentSomas.map(s=>s.length),backgroundCounts:clusterSomas.map(s=>s.filter(a=>!a.isContent).length),somaDetails:clusterSomas.flatMap((somas,c)=>somas.map(s=>({cluster:c,id:s.isContent?CONTENT_UNITS[s.unit].id:null,center:s.center.toArray(),radius:s.radius,opacity:s.isContent?.66:s.opacity,isContent:s.isContent}))),connections,dendrites:somaBranches.map(b=>b.length),terminalCount:terminalStars.length,attachments:unitAttachments.map((p,i)=>({id:CONTENT_UNITS[i].id,end:p.points.at(-1).toArray(),world:unitWorld[i].toArray()})),lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
 
 
-      // Four batches: content/core, rings, ambient somas, interaction ribbons.
+      // Membranes are part of lg/lmat; only soma cores are instanced here.
       const aboutUnits=CONTENT_UNITS,unitCount=aboutUnits.length;
       const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.66,depthWrite:false});
       const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
-      const rings=new THREE.InstancedMesh(new THREE.TorusGeometry(form.ringScale,form.ringTubeRadius,4,mobile?24:40),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,depthWrite:false}),unitCount);
       const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.7);
-      aboutUnits.forEach((unit,i)=>{const radius=form.somaRadii[Number(unit.id[0])-1];dummy.position.copy(unitWorld[i]);dummy.rotation.set(0,0,0);dummy.scale.setScalar(radius);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);dummy.scale.setScalar(radius);dummy.updateMatrix();rings.setMatrixAt(i,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green);rings.setColorAt(i,green)});
-      somas.frustumCulled=false;rings.frustumCulled=false;scene.add(somas,rings);
+      aboutUnits.forEach((unit,i)=>{const radius=form.somaRadii[Number(unit.id[0])-1];dummy.position.copy(unitWorld[i]);dummy.rotation.set(0,0,0);dummy.scale.setScalar(radius);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green)});
+      somas.frustumCulled=false;scene.add(somas);
       const backgroundSomas=clusterSomas.flat().filter(s=>!s.isContent);
       const background=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?10:14,mobile?7:10),new THREE.MeshBasicMaterial({color:green,transparent:true,opacity:.22,depthWrite:false}),backgroundSomas.length);
       backgroundSomas.forEach((s,i)=>{dummy.position.copy(s.center);dummy.scale.setScalar(s.radius);dummy.updateMatrix();background.setMatrixAt(i,dummy.matrix)});background.frustumCulled=false;scene.add(background);
@@ -762,10 +843,10 @@
       if(motionEnabled)startIntro();else unitControl.skipIntro();
       const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
       const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
-      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),originalRings=Array.from({length:unitCount},(_,i)=>{const m=new THREE.Matrix4();rings.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
+      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
       function updateUnits(now){
         const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
-        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix);rings.setMatrixAt(i,on?originalRings[i]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;rings.instanceMatrix.needsUpdate=true;previousSection=displaySection}
+        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;previousSection=displaySection}
         if(previousVisited!==unitControl.visited.size){for(let i=0;i<treeUnits.length;i++)visitedAttribute.array[i]=!mobile&&!stats.performanceTier&&unitControl.visited.has(aboutUnits[treeUnits[i]].id)?1:0;visitedAttribute.needsUpdate=true;previousVisited=unitControl.visited.size;stats.visited=[...unitControl.visited]}
 
         if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}
@@ -774,7 +855,7 @@
         const age=now-unitControl.hoverAt,phase=motionEnabled&&!document.hidden&&selected<0&&hover>=0&&age>=80&&age<=240?1-(age-80)/160:-1;
         treeMaterial.uniforms.uPhase.value=phase;stats.transmission=phase>=0?{id:aboutUnits[hover].id,phase,distance:phase*paths[hover].total}:null;
         stats.unitHover=unitControl.hover;stats.unitSelected=unitControl.selected;
-        if(highlight!==previousHighlight){aboutUnits.forEach((u,i)=>{somas.setColorAt(i,i===highlight?green:dimGreen);rings.setColorAt(i,i===highlight?green:dimGreen)});somas.instanceColor.needsUpdate=true;rings.instanceColor.needsUpdate=true;previousHighlight=highlight}
+        if(highlight!==previousHighlight){aboutUnits.forEach((u,i)=>{somas.setColorAt(i,i===highlight?green:dimGreen)});somas.instanceColor.needsUpdate=true;previousHighlight=highlight}
         camera.updateMatrixWorld(true);camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
         let cardRect=null;
         if(selected>=0){
