@@ -457,7 +457,7 @@
       seed:20261019, desktopNodes:40, mobileNodes:40,
       form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
         minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
-        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:3.3,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:4.0,tipRadius:.02,opacity:.66,levelLightDecay:.73,
         desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
@@ -558,7 +558,8 @@
         const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
-        const path=addPath(trunk,c,soma.isContent?0:4,ringTube*form.rootRingRatio,ringTube*form.rootRingRatio*(1.1/2.499),route,0,soma.unit??-1);
+        // Keep child starts above .02, including small ambient somas.
+        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*1.6,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
         if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
           path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
@@ -597,13 +598,11 @@
     }
     const contentSomas=clusterSomas.map(somas=>somas.filter(s=>s.isContent));
     contentSomas.forEach((somas,c)=>{for(let i=1;i<somas.length;i++)connectSomas(somas[i-1],somas[i],c);if(c<K-1)connectSomas(somas.at(-1),contentSomas[c+1][0],c)});
-    // Open radial inlet matches the ring tube radius, then widens into the trunk.
+    // The contact is widest; neither trunks nor children may widen outward.
     function rootProfile(path,t){
       if(path.bridge)return path.r1;
-      const lead=path.rootLead?path.rootLead/path.curve.getLength():0;
-      if(lead&&t<lead){const x=t/lead,s=x*x*(3-2*x);return path.ringTube+(path.r0-path.ringTube)*s;}
-      const x=Math.min(1,Math.max(0,(t-lead)/(1-lead))),s=x*x*(3-2*x);
-      return path.r0+(path.r1-path.r0)*s;
+      const u=THREE.MathUtils.clamp(t,0,1),ease=u*u*(3-2*u);
+      return path.r0+(path.r1-path.r0)*ease;
     }
     // Prototype taperedTube, expanded once into the existing batched signal shader.
     function taperedTube(path){
@@ -614,7 +613,8 @@
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
       if(path.child){
-        path.samples=[...new Set([...path.samples,.002,.005,.01,.02,.04,.08])].sort((a,b)=>a-b);
+        // Avoid redundant near-identical rings whose Float32 rounding exceeds the taper.
+        path.samples=[...new Set([...path.samples,.04,.08])].sort((a,b)=>a-b);
         path.points=path.samples.map(t=>curve.getPointAt(t));const offset=path.cumulative[0];path.cumulative=[offset];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
@@ -685,8 +685,8 @@
     // the outlet is the actual first trunk ring, not an intersecting tube.
     const membraneJunctions=[],membraneRanges=[];
     function membraneSurface(soma){
-      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
-      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=1.28;
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius*form.rootRingRatio,R=soma.radius*form.ringScale;
+      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
       function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
@@ -705,7 +705,7 @@
           const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
           const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
           const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
-          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.12));
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.04));
         }
         // Parameter-space annulus leaves a real hole, with no internal face/cap.
         for(let i=0;i<=6;i++){
