@@ -78,3 +78,14 @@
 - 静态11/11；内容数组/界面控制器前缀逐字相同、中英生成代码一致，见integrity.json。浏览器四路、逐项弹窗、分区/脉冲/键盘/375/reduce/前缀语言往返与帧率见交付report.md、results.json、browser-check.cjs、shots/。仅本地提交，禁止push/发布；真实硬件验收边界如实记录。
 
 - 最终亲测：Chrome/Intel UHD630 D3D11，中英1440×900和375×812共48次点击/Esc、四路五区0→4、脉冲增长、键盘与双码/邮箱通过；JS/console/HTTP错误0。四路稳定段60fps、降级0，桌面Bloom开；移动为桌面GPU触屏模拟，非实体手机。reduce不崩且无活动脉冲；Pages前缀双向切换通过。最终shots已目视核对。
+
+
+## 2026-10-20 内容胞体架构与艺术化（Cain）
+
+- 完整读取本卡与Will确认结构图。从main b238baf建立feat/neuron-architecture独立工作树 D:/will/cache/scratch/an3-architecture-work；纳入47ad99f形态基线为8e48125。原目录8个未跟踪prototype保留，没有清理或覆盖。
+- 内容胞体直接位于原unitWorld：中文5/3/2/1/2共13，英文按现有审定3/3/2/1/2共11。每区8个背景胞体，半径.45～.65倍，opacity .22，前后各4个、局部z±8～18，无环无热区；内容opacity .66、有核有细环。
+- 统一自由轴突，根半径沿用somaRadii×.34，tip .02，连续五次曲线快速收细；背景枝短细.6倍。相邻内容胞体通过双方轴突末端细接头连接，整段.02。原悬停传导转为向胞体内传；实际节点读数53/51。
+- 全部CONTENT_UNITS与shader逐字不变，light配置/时钟/sharedLightUniforms/bloom/雾保留；滚动相机帧循环仅节点读数变动，其余逐字比对相同。代码核对及几何/深度/anchor读回通过，见交付integrity.json。
+- 最终静态11/11、diff检查通过。Chrome headless WebGL、Intel UHD630 D3D11，中英1440×900/375×812共48次实点弹窗/Esc、五区0→4、脉冲增长、Tab/Enter、中文双码/提示、英文Contact Us正文邮箱、LOGO显示、语言双向切换、Pages前缀往返、reduce通过，无横向溢出，JS/console/HTTP错误0。稳定桌面56～61fps，末值均60；桌面Bloom开、降级0。启动低值与原始采样保留于results.json。
+- 全景2张、集群/375和48张节点交互截图已交付并抽查目视。完整报告：D:/will/123Agent/交付物/AN3-架构改造-20261020/report.md。非独立验收，实体手机、实扫、邮件客户端、其他GPU、线上未测。未push/发布。
+- 卡片英文13项与禁止改文案冲突已向Will确认，当前保留审定11项，不能记为整卡无差异通过。共享架构完成，英文内容口径待确认。
