@@ -420,7 +420,7 @@
       seed:20261019, desktopNodes:40, mobileNodes:40,
       form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
         minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
-        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:5.5,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        branchChance:.55,ringScale:1.45,ringTubeRadius:.008,rootRingRatio:5.5,tipRadius:.01,contactAngle:150,contactSmooth:5,opacity:.66,levelLightDecay:.73,
         desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
@@ -438,6 +438,7 @@
     const infoDialog=document.querySelector('#info-dialog'),infoTitle=document.querySelector('#info-title'),infoBody=document.querySelector('#info-body');
     document.querySelectorAll('.cluster-index a').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',link.getAttribute('href'))}));
     const growthRandom=netSeeded(NET_CONFIG.seed),form=NET_CONFIG.form;
+
     const networkPaths=[],linePositions=[],lineDistances=[],lineRoots=[],lineClusters=[],lineRoutes=[],lineBridges=[],lineLevels=[];
     const rootCount=1,maxDepth=1;
     const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]],sectionIndices=[0,0,0,0,0];
@@ -495,6 +496,37 @@
       const q=soma.membrane,R=soma.radius*form.ringScale,w=1+.06*Math.sin(3*angle+q.phase);
       return new THREE.Vector3(R*(q.ratio**.5)*w*Math.cos(angle-q.rotation),R/(q.ratio**.5)*w*Math.sin(angle-q.rotation),0).applyAxisAngle(new THREE.Vector3(0,0,1),q.rotation).add(soma.center);
     }
+
+    function contactEase(t,s=form.contactSmooth){
+      t=THREE.MathUtils.clamp(t,0,1);s=THREE.MathUtils.clamp(s,-4,5);
+      const smooth=t*t*(3-2*t),quintic=t*t*t*(6*t*t-15*t+10);
+      if(s<-.5)return Math.pow(t,2+(-s-.5)*2);
+      if(s<0)return THREE.MathUtils.lerp(t,t*t,-2*s);
+      if(s<=1)return THREE.MathUtils.lerp(t,smooth,s);
+      if(s<=2)return THREE.MathUtils.lerp(smooth,quintic,s-1);
+      return quintic;
+    }
+    function contactLengthScale(s=form.contactSmooth){
+      s=THREE.MathUtils.clamp(s,-4,5);
+      if(s<-.5)return THREE.MathUtils.lerp(.15,1,(s+4)/3.5);
+      if(s<=2)return 1;
+      if(s<=2.5)return 1+(s-2)*1.2;
+      return THREE.MathUtils.lerp(1.6,3,(s-2.5)/2.5);
+    }
+    function contactHandle(low,base,high){
+      const s=THREE.MathUtils.clamp(form.contactSmooth,-.5,2.5);
+      // Length extends the collar endpoint; keep tangent handles bounded so
+      // the wide-end setting cannot overshoot back through the ring surface.
+      return (s<=.5?THREE.MathUtils.lerp(low,base,s+.5):THREE.MathUtils.lerp(base,high,(s-.5)/2))*Math.min(1,contactLengthScale());
+    }
+    function contactParameter(t){
+      if(form.contactSmooth===.5||t===0||t===1)return t;
+      const target=contactEase(t);let lo=0,hi=1;
+      for(let i=0;i<48;i++){const mid=(lo+hi)/2;if(contactEase(mid,.5)<target)lo=mid;else hi=mid;}
+      // Keep half the original spacing so flat quintic ends do not collapse
+      // neighbouring rings after Float32 packing (world coordinates ~40).
+      return (t+(lo+hi)/2)/2;
+    }
     function membraneFrame(soma,angle){
       const point=membranePoint(soma,angle),tangent=membranePoint(soma,angle+1e-5).sub(membranePoint(soma,angle-1e-5)).normalize();
       return {point,tangent,out:new THREE.Vector3(tangent.y,-tangent.x,0),z:new THREE.Vector3(0,0,1)};
@@ -508,14 +540,14 @@
         if(b.onRing){
           const ringTube=b.radius*form.ringTubeRadius,lead=.18;
           b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
-          const frame=b.membraneFrame,start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(frame.out,lead),tangent=frame.out;
-          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
-          const end=original.getPoint(join),handle=root.distanceTo(end)*.34;
+          const frame=b.membraneFrame,tangent=frame.out.clone(),contactLength=Math.min(.12*contactLengthScale(),(original.getLength()-original.getLengths(200)[form.contactSmooth>2?122:62])*.25*.60),start=frame.point.clone().addScaledVector(frame.out,contactLength),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
+          let join=.08+.12*THREE.MathUtils.clamp((form.contactSmooth-2)/3,0,1);while(join<(form.contactSmooth>2?.6:.3)&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
+          const end=original.getPoint(join),handle=root.distanceTo(end)*.4;
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
           curve=new THREE.CurvePath();curve.add(neck);curve.add(collar);curve.add(rest);
-          b.lead=neck.getLength();b.root=root;
+          b.lead=neck.getLength();b.root=root;b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:.4,landing:frame.point.toArray(),direction:tangent.toArray()};
         }
         // A single shared trunk ends at 25–40% of the original arc length.
         const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
@@ -525,7 +557,7 @@
         const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
         if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
-          path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
+          path.frame={normal:b.membraneFrame.tangent.clone()};}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
         const normal=new THREE.Vector3().crossVectors(T,reference).normalize(),binormal=new THREE.Vector3().crossVectors(T,normal);
         const span=path.r1*10,childRadius=path.r1*.55,restLength=whole.getLength()*(1-split),angle=rr(.32,.58);
@@ -571,7 +603,7 @@
     function taperedTube(path){
       const {curve}=path;
       if(path.rootLead){
-        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06])].sort((a,b)=>a-b);
+        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06,...Array.from({length:65},(_,i)=>i/64)])].sort((a,b)=>a-b);
         path.points=path.samples.map(t=>curve.getPointAt(t));path.cumulative=[0];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
@@ -585,7 +617,7 @@
       // Parallel transport at the actual nonuniform sample positions.
       const tangents=samples.map(t=>curve.getTangentAt(t)),normals=[],binormals=[],axis=new THREE.Vector3(),vertices=[];
       const reference=Math.abs(tangents[0].z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
-      normals[0]=path.frame?path.frame.normal.clone():new THREE.Vector3().crossVectors(tangents[0],reference).normalize();
+      normals[0]=path.frame?path.frame.normal.clone().addScaledVector(tangents[0],-path.frame.normal.dot(tangents[0])).normalize():new THREE.Vector3().crossVectors(tangents[0],reference).normalize();
       binormals[0]=new THREE.Vector3().crossVectors(tangents[0],normals[0]);
       for(let i=1;i<=segments;i++){
         normals[i]=normals[i-1].clone();axis.crossVectors(tangents[i-1],tangents[i]);
@@ -648,9 +680,13 @@
     // the outlet is the actual first trunk ring, not an intersecting tube.
     const membraneJunctions=[],membraneRanges=[];
     function membraneSurface(soma){
-      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius*form.rootRingRatio,R=soma.radius*form.ringScale;
-      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
+      const radial=8,along=4,steps=12,beta=Math.PI/2;
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
+      const gaps=branches.map((b,i)=>branches[(i+1)%branches.length].angle-b.angle+(i===branches.length-1?Math.PI*2:0));
+      const minGap=Math.min(...gaps),requested=THREE.MathUtils.degToRad(form.contactAngle);
+      const delta=requested/2;
+      soma.contactOpening={requested:form.contactAngle,effective:THREE.MathUtils.radToDeg(2*delta),minGap:THREE.MathUtils.radToDeg(minGap),gaps:gaps.map(a=>THREE.MathUtils.radToDeg(a))};
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
       function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
       function strip(rows,path){for(let i=0;i<rows.length-1;i++)for(let j=0;j<rows[i].length-1;j++){emit(rows[i][j],rows[i+1][j],rows[i][j+1],path);emit(rows[i+1][j],rows[i+1][j+1],rows[i][j+1],path);}}
@@ -663,29 +699,44 @@
         for(let j=0;j<along;j++)coords.push([delta-2*delta*(along-j)/along,-Math.PI]);
         const n=coords.length,outer=coords.map(([a,p])=>surface(b.angle+a,p)),inner=[],derivatives=[],rows=[];
         for(const [a,p] of coords){
-          const alpha=Math.atan2(p/Math.PI,a/delta),da=delta*.66*Math.cos(alpha),dp=beta*Math.sin(alpha),angle=b.angle+da;
+          const alpha=Math.atan2(p/Math.PI,a/delta),da=delta*(.66+.068*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.cos(alpha),dp=beta*(1+.2*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.sin(alpha),angle=b.angle+da;
           inner.push(surface(angle,dp));
           const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
-          const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
+          const edge=A.clone().multiplyScalar(-delta*(.66+.068*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
           const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
-          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.04));
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(contactHandle(.01,.055,.10)));
         }
         // Parameter-space annulus leaves a real hole, with no internal face/cap.
         for(let i=0;i<=6;i++){
           const u=i/6,row=[];
           for(let j=0;j<n;j++){
             const [a,p]=coords[j],alpha=Math.atan2(p/Math.PI,a/delta);
-            row.push(i===0?inner[j]:i===6?outer[j]:surface(b.angle+(1-u)*delta*.66*Math.cos(alpha)+u*a,(1-u)*beta*Math.sin(alpha)+u*p));
+            row.push(i===0?inner[j]:i===6?outer[j]:surface(b.angle+(1-u)*delta*(.66+.068*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.cos(alpha)+u*a,(1-u)*beta*(1+.2*THREE.MathUtils.clamp(Math.max(-form.contactSmooth-.5,form.contactSmooth-2)/3,0,1))*Math.sin(alpha)+u*p));
           }row.push(row[0]);rows.push(row);
         }strip(rows,path);
         const outlet=path.meshRings[0],collar=[];
         for(let i=0;i<=steps;i++){
-          const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
+          const u=contactParameter((1-Math.cos(Math.PI*i/steps))/2),row=[];
           for(let j=0;j<n;j++){
-            const end=outlet[j],d1=b.membraneFrame.out.clone().multiplyScalar(.12);
-            row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
+            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(contactHandle(.06,.24,.42));
+            const vertex=inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u);
+            if(form.contactSmooth<-.5)vertex.lerp(inner[j].clone().lerp(end,u),(-form.contactSmooth-.5)/3.5);
+            row.push(i===0?inner[j]:i===steps?end:vertex);
           }row.push(row[0]);collar.push(row);
-        }strip(collar,path);
+        }
+        const centers=collar.map(row=>row.slice(0,n).reduce((c,v)=>c.add(v),new THREE.Vector3()).multiplyScalar(1/n));
+        let correctedFaces=0;
+        for(let i=0;i<collar.length-1;i++)for(let j=0;j<n;j++){
+          for(const ids of [[[i,j],[i+1,j],[i,j+1]],[[i+1,j],[i+1,j+1],[i,j+1]]]){
+            const vertices=ids.map(([r,c])=>collar[r][c]),out=new THREE.Vector3();
+            const gpu=vertices.map(v=>new THREE.Vector3(Math.fround(v.x),Math.fround(v.y),Math.fround(v.z)));
+            ids.forEach(([r,c],k)=>out.add(gpu[k].clone().sub(centers[r])));
+            const normal=gpu[1].clone().sub(gpu[0]).cross(gpu[2].clone().sub(gpu[0]));
+            if(normal.dot(out)<0){[vertices[1],vertices[2]]=[vertices[2],vertices[1]];correctedFaces++;}
+            emit(...vertices,path);
+          }
+        }
+        b.collarCorrectedFaces=correctedFaces;
         const plus=Array.from({length:radial+1},(_,j)=>outer[j% n]);
         plus[radial]=outer[radial];
         const minus=Array.from({length:radial+1},(_,j)=>outer[(radial+along+radial-j)%n]);
@@ -694,7 +745,8 @@
       }
       for(let k=0;k<branches.length;k++){
         const b=branches[k],next=branches[(k+1)%branches.length],a=b.angle+delta,end=next.angle-delta+(k===branches.length-1?Math.PI*2:0),rows=[];
-        const samples=Math.ceil((end-a)*R/t/2);
+        if(end<=a)continue;
+        const samples=Math.max(1,Math.ceil((end-a)*R/t/2));
         for(let i=0;i<=samples;i++)rows.push(i===0?boundaries[k].plus:i===samples?boundaries[(k+1)%branches.length].minus:Array.from({length:radial+1},(_,j)=>surface(a+(end-a)*i/samples,-Math.PI+j/radial*2*Math.PI)));
         strip(rows,b.path);
       }
@@ -709,6 +761,7 @@
       }
     }
     const L=networkPaths.length;
+
     // 编排状态按簇固定分配；每帧仅更新 5 个 vec4，无几何重建、CPU 顶点扫描或计时器。
     function createLightClock(){
       const random=netSeeded(NET_CONFIG.seed+73),cfg=NET_CONFIG.light;
