@@ -513,7 +513,7 @@ window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
       const num = function(k, fb){ const v = parseFloat(H.get(k)); return Number.isFinite(v) ? v : fb; };
       form.ringTubeRadius = num('tube', form.ringTubeRadius);
       form.rootRingRatio = 5.5;
-      form.contactAngle = THREE.MathUtils.clamp(num('angle',90),90,165);
+      form.contactAngle = THREE.MathUtils.clamp(num('angle',45),20,120);
       form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),0,1);
       form.tipRadius      = num('tip', form.tipRadius);
       form.ringScale      = num('scale', form.ringScale);
@@ -591,10 +591,10 @@ function generateNetwork(){
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const ringTube=b.radius*form.ringTubeRadius,lead=(Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2)-ringTube)/Math.tan(THREE.MathUtils.degToRad(8))+.08;
+          const ringTube=b.radius*form.ringTubeRadius,lead=.18;
           b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
           const frame=b.membraneFrame,tangent=frame.out.clone(),start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
-          let join=.08;while(join<.8&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
+          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
           const end=original.getPoint(join),handle=root.distanceTo(end)*.4;
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
@@ -607,9 +607,9 @@ function generateNetwork(){
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
         // Keep child starts above .02, including small ambient somas.
-        const path=addPath(trunk,c,soma.isContent?0:4,soma.isContent?ringTube*form.rootRingRatio:Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
+        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
-        if(b.onRing){path.rootLeadRaw=form.contactAngle===90?0:(path.r0-ringTube)/Math.tan(THREE.MathUtils.degToRad(180-form.contactAngle));path.rootLead=Math.min(path.rootLeadRaw,path.curve.getLength()*.45);path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
+        if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
           path.frame={normal:b.membraneFrame.tangent.clone()};}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
         const normal=new THREE.Vector3().crossVectors(T,reference).normalize(),binormal=new THREE.Vector3().crossVectors(T,normal);
@@ -649,27 +649,14 @@ function generateNetwork(){
     // The contact is widest; neither trunks nor children may widen outward.
     function rootProfile(path,t){
       if(path.bridge)return path.r1;
-      if(path.rootLead!==undefined){
-        const distance=THREE.MathUtils.clamp(t,0,1)*path.curve.getLength();
-        // At 90 degrees keep the v3 tube-sized contact and immediate shoulder.
-        if(distance===0)return path.ringTube;
-        if(path.rootLead>0&&distance<=path.rootLead){
-          const u=THREE.MathUtils.clamp(distance/path.rootLead,0,1);
-          // Initial slope stays fixed; smoothing rounds the end of the widening.
-          const ease=u+form.contactSmooth*u*u*(1-u);
-          return path.ringTube+(path.r0-path.ringTube)*ease;
-        }
-        const u=THREE.MathUtils.clamp((distance-path.rootLead)/(path.curve.getLength()-path.rootLead),0,1);
-        return path.r0+(path.r1-path.r0)*u*u*(3-2*u);
-      }
       const u=THREE.MathUtils.clamp(t,0,1),ease=u*u*(3-2*u);
       return path.r0+(path.r1-path.r0)*ease;
     }
     // Prototype taperedTube, expanded once into the existing batched signal shader.
     function taperedTube(path){
       const {curve}=path;
-      if(path.rootLead!==undefined){
-        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,...Array.from({length:65},(_,i)=>lead*i/64),(lead>0?lead*.0001:1e-8),lead+.001,lead+.01,lead+.03,lead+.05,lead+.06,...Array.from({length:65},(_,i)=>i/64)])].sort((a,b)=>a-b);
+      if(path.rootLead){
+        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06,...Array.from({length:65},(_,i)=>i/64)])].sort((a,b)=>a-b);
         path.points=path.samples.map(t=>curve.getPointAt(t));path.cumulative=[0];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
@@ -747,8 +734,12 @@ function generateNetwork(){
     const membraneJunctions=[],membraneRanges=[];
     function membraneSurface(soma){
       const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
-      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;
+      const radial=8,along=4,steps=12,beta=Math.PI/2;
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
+      const gaps=branches.map((b,i)=>branches[(i+1)%branches.length].angle-b.angle+(i===branches.length-1?Math.PI*2:0));
+      const minGap=Math.min(...gaps),requested=THREE.MathUtils.degToRad(form.contactAngle);
+      const delta=Math.min(requested,minGap*.9)/2;
+      soma.contactOpening={requested:form.contactAngle,effective:THREE.MathUtils.radToDeg(2*delta),minGap:THREE.MathUtils.radToDeg(minGap),gaps:gaps.map(a=>THREE.MathUtils.radToDeg(a))};
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
       function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
       function strip(rows,path){for(let i=0;i<rows.length-1;i++)for(let j=0;j<rows[i].length-1;j++){emit(rows[i][j],rows[i+1][j],rows[i][j+1],path);emit(rows[i+1][j],rows[i+1][j+1],rows[i][j+1],path);}}
@@ -766,7 +757,7 @@ function generateNetwork(){
           const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
           const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
           const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
-          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.04));
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(THREE.MathUtils.lerp(.01,.10,form.contactSmooth)));
         }
         // Parameter-space annulus leaves a real hole, with no internal face/cap.
         for(let i=0;i<=6;i++){
@@ -780,7 +771,7 @@ function generateNetwork(){
         for(let i=0;i<=steps;i++){
           const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
           for(let j=0;j<n;j++){
-            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(.24);
+            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth));
             row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
           }row.push(row[0]);collar.push(row);
         }strip(collar,path);
@@ -1077,7 +1068,7 @@ window.__REBUILD__=buildNetwork;
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      window.__DBG__={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get composer(){return composer},get lines(){return lines},get network(){return {networkPaths,clusterSomas,membraneRanges,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels}}};
+      window.__DBG__={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get composer(){return composer},get lines(){return lines},get network(){return {networkPaths,clusterSomas,membraneJunctions,membraneRanges,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels}}};
       renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
         const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
         const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
@@ -1124,8 +1115,8 @@ window.__REBUILD__=buildNetwork;
   <h3>NEURON TUNER</h3>
   <div class="row"><label>环粗细 ringTubeRadius <b id="v-tube"></b></label>
     <input id="s-tube" type="range" min="0.008" max="0.045" step="0.001"></div>
-  <div class="row"><label>根部张角 contactAngle <b id="v-angle"></b></label>
-    <input id="s-angle" aria-label="根部张角" type="range" min="90" max="165" step="1"></div>
+  <div class="row"><label>根部张角（环上开口） contactAngle <b id="v-angle"></b></label>
+    <input id="s-angle" aria-label="根部张角（环上开口）" type="range" min="20" max="120" step="1"></div>
   <div class="row"><label>过渡圆润度 contactSmooth <b id="v-smooth"></b></label>
     <input id="s-smooth" aria-label="过渡圆润度" type="range" min="0" max="1" step="0.01"></div>
   <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
@@ -1133,14 +1124,14 @@ window.__REBUILD__=buildNetwork;
   <div class="row"><label>环大小 ringScale <b id="v-scale"></b></label>
     <input id="s-scale" type="range" min="1.00" max="1.45" step="0.01"></div>
   <button id="t-copy">复制当前参数</button>
-  <div class="hint">拖动即重建，参数写进地址栏，可直接分享。</div>
+  <div class="hint" id="contact-effective"></div><div class="hint">拖动即重建，参数写进地址栏，可直接分享。</div>
 </div>
 <script>
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo({top: 480, behavior:'instant'}); }, 900); });
 (function(){
   function init(){
     var T = window.__TUNER__;
-    if (!T || !window.__REBUILD__) { setTimeout(init, 120); return; }
+    if (!T || !window.__REBUILD__ || !window.__DBG__) { setTimeout(init, 120); return; }
     // 自驱动渲染：正式页的 setAnimationLoop 在剥离滚动后会停，这里手动跑
     setInterval(function(){
       var d = window.__DBG__;
@@ -1153,6 +1144,11 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
     var map = {tube:'v-tube', angle:'v-angle', smooth:'v-smooth', tip:'v-tip', scale:'v-scale'};
     var sliders = {tube:'s-tube', angle:'s-angle', smooth:'s-smooth', tip:'s-tip', scale:'s-scale'};
     var fmt = function(v){ return v < 1 ? v.toFixed(3) : v.toFixed(2); };
+    function showOpening(){
+      var values=window.__DBG__.network.clusterSomas.flat().filter(function(s){return s.isContent}).map(function(s){return s.contactOpening.effective});
+      document.getElementById('contact-effective').textContent='实际环上开口 '+Math.min(...values).toFixed(1)+'°–'+Math.max(...values).toFixed(1)+'°；按邻根间隔的90%自动限幅。';
+    }
+    showOpening();
     var pending={},frame=0;
     var fields={tube:'ringTubeRadius',angle:'contactAngle',smooth:'contactSmooth',tip:'tipRadius',scale:'ringScale'};
     Object.keys(map).forEach(function(k){
@@ -1167,7 +1163,7 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
         H.delete('ratio');Object.keys(fields).forEach(function(key){ H.set(key,T[key]); });
         history.replaceState(null,'','#'+H.toString());
         if(!frame)frame=requestAnimationFrame(function(){
-          frame=0;var changes=pending;pending={};window.__REBUILD__(changes);
+          frame=0;var changes=pending;pending={};window.__REBUILD__(changes);showOpening();
         });
       });
     });
