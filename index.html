@@ -457,7 +457,7 @@
       seed:20261019, desktopNodes:40, mobileNodes:40,
       form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
         minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
-        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:4.0,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:5.5,tipRadius:.02,opacity:.66,levelLightDecay:.73,
         desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
@@ -559,7 +559,7 @@
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
         // Keep child starts above .02, including small ambient somas.
-        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*1.6,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
+        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
         if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
           path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
@@ -697,7 +697,7 @@
         for(let j=0;j<radial;j++)coords.push([delta,-Math.PI+j/radial*2*Math.PI]);
         for(let j=0;j<along;j++)coords.push([delta-2*delta*j/along,Math.PI]);
         for(let j=0;j<radial;j++)coords.push([-delta,Math.PI-j/radial*2*Math.PI]);
-        for(let j=0;j<along;j++)coords.push([-delta+2*delta*j/along,-Math.PI]);
+        for(let j=0;j<along;j++)coords.push([delta-2*delta*(along-j)/along,-Math.PI]);
         const n=coords.length,outer=coords.map(([a,p])=>surface(b.angle+a,p)),inner=[],derivatives=[],rows=[];
         for(const [a,p] of coords){
           const alpha=Math.atan2(p/Math.PI,a/delta),da=delta*.66*Math.cos(alpha),dp=beta*Math.sin(alpha),angle=b.angle+da;
