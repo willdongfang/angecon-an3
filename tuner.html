@@ -513,7 +513,7 @@ window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
       const num = function(k, fb){ const v = parseFloat(H.get(k)); return Number.isFinite(v) ? v : fb; };
       form.ringTubeRadius = num('tube', form.ringTubeRadius);
       form.rootRingRatio = 5.5;
-      form.contactAngle = THREE.MathUtils.clamp(num('angle',90),35,145);
+      form.contactAngle = THREE.MathUtils.clamp(num('angle',30),8,85);
       form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),0,1);
       form.tipRadius      = num('tip', form.tipRadius);
       form.ringScale      = num('scale', form.ringScale);
@@ -591,26 +591,26 @@ function generateNetwork(){
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const ringTube=b.radius*form.ringTubeRadius,lead=THREE.MathUtils.lerp(.06,.42,form.contactSmooth);
+          const ringTube=b.radius*form.ringTubeRadius,lead=(Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2)-ringTube)/Math.tan(THREE.MathUtils.degToRad(8))+.08;
           b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
-          const frame=b.membraneFrame,tangent=frame.out.clone().applyAxisAngle(frame.z,THREE.MathUtils.degToRad(form.contactAngle-90)),start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
-          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
-          const end=original.getPoint(join),handle=root.distanceTo(end)*THREE.MathUtils.lerp(.18,.62,form.contactSmooth);
+          const frame=b.membraneFrame,tangent=frame.out.clone(),start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
+          let join=.08;while(join<.8&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
+          const end=original.getPoint(join),handle=root.distanceTo(end)*.4;
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
           curve=new THREE.CurvePath();curve.add(neck);curve.add(collar);curve.add(rest);
-          b.lead=neck.getLength();b.root=root;b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:THREE.MathUtils.lerp(.18,.62,form.contactSmooth),landing:frame.point.toArray(),direction:tangent.toArray()};
+          b.lead=neck.getLength();b.root=root;b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:.4,landing:frame.point.toArray(),direction:tangent.toArray()};
         }
         // A single shared trunk ends at 25–40% of the original arc length.
         const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
         const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
         // Keep child starts above .02, including small ambient somas.
-        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
+        const path=addPath(trunk,c,soma.isContent?0:4,soma.isContent?ringTube*form.rootRingRatio:Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
         path.trunk=true;path.split=split;path.children=[];
-        if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
-          path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
+        if(b.onRing){path.rootLead=(path.r0-ringTube)/Math.tan(THREE.MathUtils.degToRad(form.contactAngle));path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
+          path.frame={normal:b.membraneFrame.tangent.clone()};}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
         const normal=new THREE.Vector3().crossVectors(T,reference).normalize(),binormal=new THREE.Vector3().crossVectors(T,normal);
         const span=path.r1*10,childRadius=path.r1*.55,restLength=whole.getLength()*(1-split),angle=rr(.32,.58);
@@ -649,6 +649,17 @@ function generateNetwork(){
     // The contact is widest; neither trunks nor children may widen outward.
     function rootProfile(path,t){
       if(path.bridge)return path.r1;
+      if(path.rootLead){
+        const distance=THREE.MathUtils.clamp(t,0,1)*path.curve.getLength();
+        if(distance<=path.rootLead){
+          const u=THREE.MathUtils.clamp(distance/path.rootLead,0,1);
+          // Initial slope stays fixed; smoothing rounds the end of the widening.
+          const ease=u+form.contactSmooth*u*u*(1-u);
+          return path.ringTube+(path.r0-path.ringTube)*ease;
+        }
+        const u=THREE.MathUtils.clamp((distance-path.rootLead)/(path.curve.getLength()-path.rootLead),0,1);
+        return path.r0+(path.r1-path.r0)*u*u*(3-2*u);
+      }
       const u=THREE.MathUtils.clamp(t,0,1),ease=u*u*(3-2*u);
       return path.r0+(path.r1-path.r0)*ease;
     }
@@ -656,7 +667,7 @@ function generateNetwork(){
     function taperedTube(path){
       const {curve}=path;
       if(path.rootLead){
-        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06,...Array.from({length:65},(_,i)=>i/64)])].sort((a,b)=>a-b);
+        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,...Array.from({length:65},(_,i)=>lead*i/64),lead*.0001,lead+.001,lead+.01,lead+.03,lead+.05,lead+.06,...Array.from({length:65},(_,i)=>i/64)])].sort((a,b)=>a-b);
         path.points=path.samples.map(t=>curve.getPointAt(t));path.cumulative=[0];
         for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
       }
@@ -733,7 +744,7 @@ function generateNetwork(){
     // the outlet is the actual first trunk ring, not an intersecting tube.
     const membraneJunctions=[],membraneRanges=[];
     function membraneSurface(soma){
-      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius*form.rootRingRatio,R=soma.radius*form.ringScale;
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
       const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
@@ -767,7 +778,7 @@ function generateNetwork(){
         for(let i=0;i<=steps;i++){
           const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
           for(let j=0;j<n;j++){
-            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth));
+            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(.24);
             row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
           }row.push(row[0]);collar.push(row);
         }strip(collar,path);
@@ -1111,10 +1122,10 @@ window.__REBUILD__=buildNetwork;
   <h3>NEURON TUNER</h3>
   <div class="row"><label>环粗细 ringTubeRadius <b id="v-tube"></b></label>
     <input id="s-tube" type="range" min="0.008" max="0.045" step="0.001"></div>
-  <div class="row"><label>接触角度 contactAngle <b id="v-angle"></b></label>
-    <input id="s-angle" aria-label="接触角度" type="range" min="35" max="145" step="1"></div>
-  <div class="row"><label>接触平滑度 contactSmooth <b id="v-smooth"></b></label>
-    <input id="s-smooth" aria-label="接触平滑度" type="range" min="0" max="1" step="0.01"></div>
+  <div class="row"><label>根部张角 contactAngle <b id="v-angle"></b></label>
+    <input id="s-angle" aria-label="根部张角" type="range" min="8" max="85" step="1"></div>
+  <div class="row"><label>过渡圆润度 contactSmooth <b id="v-smooth"></b></label>
+    <input id="s-smooth" aria-label="过渡圆润度" type="range" min="0" max="1" step="0.01"></div>
   <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
     <input id="s-tip" type="range" min="0.010" max="0.045" step="0.001"></div>
   <div class="row"><label>环大小 ringScale <b id="v-scale"></b></label>
