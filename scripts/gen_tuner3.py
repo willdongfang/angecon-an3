@@ -258,5 +258,40 @@ replace_once('}strip(collar,path);', '''}
           }
         }
         b.collarCorrectedFaces=correctedFaces;''')
+# v6: bounded monotone easing; preserve the exact v5 baseline at s=.5.
+replace_once("num('smooth',.5),0,1", "num('smooth',.5),-.5,2.5")
+replace_once('min="0" max="1" step="0.01"', 'min="-0.5" max="2.5" step="0.01"')
+easing = """
+    function contactEase(t,s=form.contactSmooth){
+      t=THREE.MathUtils.clamp(t,0,1);s=THREE.MathUtils.clamp(s,-.5,2.5);
+      const smooth=t*t*(3-2*t),quintic=t*t*t*(6*t*t-15*t+10);
+      if(s<0)return THREE.MathUtils.lerp(t,t*t,-2*s);
+      if(s<=1)return THREE.MathUtils.lerp(t,smooth,s);
+      if(s<=2)return THREE.MathUtils.lerp(smooth,quintic,s-1);
+      return quintic;
+    }
+    function contactLengthScale(){return 1+Math.max(0,form.contactSmooth-2)*1.2;}
+    function contactHandle(low,base,high){
+      const s=form.contactSmooth;
+      return (s<=.5?THREE.MathUtils.lerp(low,base,s+.5):THREE.MathUtils.lerp(base,high,(s-.5)/2))*contactLengthScale();
+    }
+    function contactParameter(t){
+      if(form.contactSmooth===.5||t===0||t===1)return t;
+      const target=contactEase(t);let lo=0,hi=1;
+      for(let i=0;i<48;i++){const mid=(lo+hi)/2;if(contactEase(mid,.5)<target)lo=mid;else hi=mid;}
+      // Keep half the original spacing so flat quintic ends do not collapse
+      // neighbouring rings after Float32 packing (world coordinates ~40).
+      return (t+(lo+hi)/2)/2;
+    }
+    window.__TUNER_EASE__=contactEase;
+"""
+replace_once('    function membraneFrame(soma,angle){', easing+'    function membraneFrame(soma,angle){')
+replace_once('start=frame.point.clone().addScaledVector(frame.out,.12)', 'start=frame.point.clone().addScaledVector(frame.out,.12*contactLengthScale())')
+replace_once('derivatives.push(d.multiplyScalar(THREE.MathUtils.lerp(.01,.10,form.contactSmooth)))', 'derivatives.push(d.multiplyScalar(contactHandle(.01,.055,.10)))')
+replace_once('b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth))', 'b.contactDirection.clone().multiplyScalar(contactHandle(.06,.24,.42))')
+# Monotone parameter remapping preserves the default exactly. Positive handles
+# also change the actual curve shape: acute at -.5, broad at 2.5.
+replace_once('const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];', 'const u=contactParameter((1-Math.cos(Math.PI*i/steps))/2),row=[];')
+html=html.replace('拖动即重建，参数写进地址栏，可直接分享。', '圆润度 −0.50～2.50，默认0.50；2.50过渡长1.6倍。拖动即重建，参数写进地址栏，可直接分享。')
 OUT.write_text(html, encoding='utf-8')
 print("written:", OUT, len(html))

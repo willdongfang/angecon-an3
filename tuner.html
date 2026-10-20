@@ -514,7 +514,7 @@ window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
       form.ringTubeRadius = num('tube', form.ringTubeRadius);
       form.rootRingRatio = 5.5;
       form.contactAngle = THREE.MathUtils.clamp(num('angle',45),20,150);
-      form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),0,1);
+      form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),-.5,2.5);
       form.tipRadius      = num('tip', form.tipRadius);
       form.ringScale      = num('scale', form.ringScale);
       window.__TUNER__ = { tube: form.ringTubeRadius, angle: form.contactAngle, smooth: form.contactSmooth, tip: form.tipRadius, scale: form.ringScale };
@@ -580,6 +580,29 @@ function generateNetwork(){
       const q=soma.membrane,R=soma.radius*form.ringScale,w=1+.06*Math.sin(3*angle+q.phase);
       return new THREE.Vector3(R*(q.ratio**.5)*w*Math.cos(angle-q.rotation),R/(q.ratio**.5)*w*Math.sin(angle-q.rotation),0).applyAxisAngle(new THREE.Vector3(0,0,1),q.rotation).add(soma.center);
     }
+
+    function contactEase(t,s=form.contactSmooth){
+      t=THREE.MathUtils.clamp(t,0,1);s=THREE.MathUtils.clamp(s,-.5,2.5);
+      const smooth=t*t*(3-2*t),quintic=t*t*t*(6*t*t-15*t+10);
+      if(s<0)return THREE.MathUtils.lerp(t,t*t,-2*s);
+      if(s<=1)return THREE.MathUtils.lerp(t,smooth,s);
+      if(s<=2)return THREE.MathUtils.lerp(smooth,quintic,s-1);
+      return quintic;
+    }
+    function contactLengthScale(){return 1+Math.max(0,form.contactSmooth-2)*1.2;}
+    function contactHandle(low,base,high){
+      const s=form.contactSmooth;
+      return (s<=.5?THREE.MathUtils.lerp(low,base,s+.5):THREE.MathUtils.lerp(base,high,(s-.5)/2))*contactLengthScale();
+    }
+    function contactParameter(t){
+      if(form.contactSmooth===.5||t===0||t===1)return t;
+      const target=contactEase(t);let lo=0,hi=1;
+      for(let i=0;i<48;i++){const mid=(lo+hi)/2;if(contactEase(mid,.5)<target)lo=mid;else hi=mid;}
+      // Keep half the original spacing so flat quintic ends do not collapse
+      // neighbouring rings after Float32 packing (world coordinates ~40).
+      return (t+(lo+hi)/2)/2;
+    }
+    window.__TUNER_EASE__=contactEase;
     function membraneFrame(soma,angle){
       const point=membranePoint(soma,angle),tangent=membranePoint(soma,angle+1e-5).sub(membranePoint(soma,angle-1e-5)).normalize();
       return {point,tangent,out:new THREE.Vector3(tangent.y,-tangent.x,0),z:new THREE.Vector3(0,0,1)};
@@ -593,7 +616,7 @@ function generateNetwork(){
         if(b.onRing){
           const ringTube=b.radius*form.ringTubeRadius,lead=.18;
           b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
-          const frame=b.membraneFrame,tangent=frame.out.clone(),start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
+          const frame=b.membraneFrame,tangent=frame.out.clone(),start=frame.point.clone().addScaledVector(frame.out,.12*contactLengthScale()),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
           let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
           const end=original.getPoint(join),handle=root.distanceTo(end)*.4;
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
@@ -757,7 +780,7 @@ function generateNetwork(){
           const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
           const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
           const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
-          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(THREE.MathUtils.lerp(.01,.10,form.contactSmooth)));
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(contactHandle(.01,.055,.10)));
         }
         // Parameter-space annulus leaves a real hole, with no internal face/cap.
         for(let i=0;i<=6;i++){
@@ -769,9 +792,9 @@ function generateNetwork(){
         }strip(rows,path);
         const outlet=path.meshRings[0],collar=[];
         for(let i=0;i<=steps;i++){
-          const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
+          const u=contactParameter((1-Math.cos(Math.PI*i/steps))/2),row=[];
           for(let j=0;j<n;j++){
-            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(THREE.MathUtils.lerp(.06,.42,form.contactSmooth));
+            const end=outlet[j],d1=b.contactDirection.clone().multiplyScalar(contactHandle(.06,.24,.42));
             row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
           }row.push(row[0]);collar.push(row);
         }
@@ -1132,13 +1155,13 @@ window.__REBUILD__=buildNetwork;
   <div class="row"><label>根部张角（环上开口） contactAngle <b id="v-angle"></b></label>
     <input id="s-angle" aria-label="根部张角（环上开口）" type="range" min="20" max="150" step="1"></div>
   <div class="row"><label>过渡圆润度 contactSmooth <b id="v-smooth"></b></label>
-    <input id="s-smooth" aria-label="过渡圆润度" type="range" min="0" max="1" step="0.01"></div>
+    <input id="s-smooth" aria-label="过渡圆润度" type="range" min="-0.5" max="2.5" step="0.01"></div>
   <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
     <input id="s-tip" type="range" min="0.010" max="0.045" step="0.001"></div>
   <div class="row"><label>环大小 ringScale <b id="v-scale"></b></label>
     <input id="s-scale" type="range" min="1.00" max="1.45" step="0.01"></div>
   <button id="t-copy">复制当前参数</button>
-  <div class="hint" id="contact-effective"></div><div class="hint">拖动即重建，参数写进地址栏，可直接分享。</div>
+  <div class="hint" id="contact-effective"></div><div class="hint">圆润度 −0.50～2.50，默认0.50；2.50过渡长1.6倍。拖动即重建，参数写进地址栏，可直接分享。</div>
 </div>
 <script>
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo({top: 480, behavior:'instant'}); }, 900); });
