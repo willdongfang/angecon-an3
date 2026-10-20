@@ -529,14 +529,13 @@
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const root=b.controls[0].clone().addScaledVector(b.ringDir,b.radius*form.ringTubeRadius*form.rootRingRatio),tangent=b.ringDir.clone();
-          const ringR=b.radius*form.ringScale,angle=Math.atan2(b.ringDir.y,b.ringDir.x),lead=.08,delta=lead/ringR;
-          const start=b.center.clone().add(new THREE.Vector3(Math.cos(angle-delta)*(ringR-b.radius*form.ringTubeRadius*.9),Math.sin(angle-delta)*(ringR-b.radius*form.ringTubeRadius*.9),0));
-          const startTangent=new THREE.Vector3(Math.cos(angle-delta),Math.sin(angle-delta),0);
+          const ringR=b.radius*form.ringScale,ringTube=b.radius*form.ringTubeRadius,lead=.18;
+          const start=b.center.clone().addScaledVector(b.ringDir,ringR+ringTube);
+          const root=start.clone().addScaledVector(b.ringDir,lead),tangent=b.ringDir.clone();
           let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(b.ringDir)<b.radius*form.ringTubeRadius*form.rootRingRatio*2)join+=.01;
           const end=original.getPoint(join),handle=root.distanceTo(end)*.34;
-          // Bury the inlet, then exit radially before widening; never lay the collar along the ring.
-          const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(startTangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
+          // Start on the outer rim and widen along a radial neck without crossing the torus.
+          const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
           curve=new THREE.CurvePath();curve.add(neck);curve.add(collar);curve.add(rest);
@@ -584,11 +583,11 @@
     }
     const contentSomas=clusterSomas.map(somas=>somas.filter(s=>s.isContent));
     contentSomas.forEach((somas,c)=>{for(let i=1;i<somas.length;i++)connectSomas(somas[i-1],somas[i],c);if(c<K-1)connectSomas(somas.at(-1),contentSomas[c+1][0],c)});
-    // Smooth collar and trunk taper; the open first slice is buried inside the torus.
+    // Open radial inlet matches the ring tube radius, then widens into the trunk.
     function rootProfile(path,t){
       if(path.bridge)return path.r1;
       const lead=path.rootLead?path.rootLead/path.curve.getLength():0;
-      if(lead&&t<lead){const x=t/lead,s=x*x*(3-2*x);return path.ringTube*.45+(path.r0-path.ringTube*.45)*s;}
+      if(lead&&t<lead){const x=t/lead,s=x*x*(3-2*x);return path.ringTube+(path.r0-path.ringTube)*s;}
       const x=Math.min(1,Math.max(0,(t-lead)/(1-lead))),s=x*x*(3-2*x);
       return path.r0+(path.r1-path.r0)*s;
     }
