@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><script>window.__ERRS__=[];window.addEventListener("error",function(e){window.__ERRS__.push((e.message||"")+" @"+(e.filename||"")+":"+(e.lineno||0));});</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#02060f">
+  <meta name="description" content="安集协康神经干细胞研发与技术平台">
+  <title>安集协康 · 研究网络</title>
+  <link rel="icon" href="data:,">
+  <link rel="alternate" hreflang="zh-Hans" href="./">
+  <link rel="alternate" hreflang="en" href="./en/">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
+  <style>
+    :root{color-scheme:dark;--bg:#02060f;--green:#2de06a;--ink:#e9f1ed;--muted:#aab9b4;--mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-family:Inter,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--ink);font-synthesis:none}*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;min-width:320px;background:var(--bg)}a{color:inherit;text-decoration:none}.scene{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#02060f}#network{display:block;width:100%;height:100%}.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,6,15,.76),rgba(2,6,15,.24) 54%,rgba(2,6,15,.58)),linear-gradient(0deg,#02060f 0%,transparent 38%,rgba(2,6,15,.13));pointer-events:none}.fallback{display:none;position:absolute;inset:0;padding:30vh 8vw;z-index:2;background:radial-gradient(ellipse at 68% 45%,rgba(22,73,54,.34),transparent 50%),#02060f}.fallback h1{max-width:850px;font-size:clamp(42px,8vw,104px)}.topbar{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px 5.8vw;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(2,6,15,.42);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:12px;font-size:14px;letter-spacing:.14em;font-weight:650}.nav{display:flex;gap:27px;font:14px/1.5 var(--mono);letter-spacing:.035em;color:#c2ceca}.nav a:hover,.nav a:focus-visible{color:var(--green)}.fallback-head{display:flex;justify-content:space-between;align-items:center;color:var(--green);font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase}.readout{position:fixed;z-index:3;right:5.8vw;bottom:34px;display:flex;gap:18px;color:#95a59e;font:12px/1.4 var(--mono);letter-spacing:.04em}.readout b{display:block;margin-bottom:5px;color:var(--green);font-weight:400}.scroll-cue{position:fixed;z-index:3;left:5.8vw;bottom:34px;max-width:calc(100vw - 11.6vw);color:#a3b0aa;font:11px/1.3 var(--mono);letter-spacing:.12em;pointer-events:none}.scroll-cue:after{content:"";display:inline-block;vertical-align:middle;width:38px;height:1px;margin-left:12px;background:linear-gradient(90deg,var(--green),transparent)}main{position:relative;z-index:1}.cluster-section{height:112svh;min-height:760px;position:relative;scroll-margin-top:0;pointer-events:none}.cluster-section:first-child{height:125svh;min-height:850px}.cluster-section:last-child{height:112svh}.cluster-anchor{position:absolute;top:42%;left:0;width:1px;height:1px}.progress{position:fixed;z-index:4;left:0;top:0;height:2px;width:0;background:var(--green);box-shadow:0 0 10px var(--green)}.fallback-panel{display:none;position:relative;z-index:1;min-height:100svh;padding:120px 8vw 80px;background:radial-gradient(ellipse at 70% 50%,rgba(18,58,45,.42),transparent 58%),#02060f}.fallback-panel .card{max-width:650px;padding:28px;background:rgba(6,18,24,.85);border:1px solid rgba(45,224,106,.38)}.footer{position:relative;z-index:2;min-height:180px;padding:42px 8vw;display:flex;justify-content:space-between;align-items:flex-start;background:rgba(2,6,15,.94);border-top:1px solid rgba(150,194,180,.15)}.footer-note{color:#aab9b4;font-size:12px;line-height:1.9}.footer-mark{color:var(--green);font:10px var(--mono);letter-spacing:.12em}.intro-cover{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#02060f;transition:opacity .5s,visibility .5s}.intro-cover.done{opacity:0;visibility:hidden}.intro-box{text-align:center}.intro-title{color:#e5eee9;font:12px var(--mono);letter-spacing:.2em}.intro-track{width:min(300px,68vw);height:1px;margin-top:20px;background:rgba(45,224,106,.18);overflow:hidden}.intro-track i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--green)}.intro-cover .intro-count{margin-top:12px;color:#7d9287;font:10px var(--mono)}@media(max-width:700px){.topbar{padding:16px 6vw}.nav{gap:0}.cluster-section{height:105svh;min-height:700px}.cluster-section:first-child{height:118svh;min-height:780px}.readout{left:auto;right:5vw;bottom:18px;gap:17px;font-size:10px}.scroll-cue{left:5vw;bottom:78px;font-size:11px}.scroll-cue:after{display:none}.footer{padding:34px 6vw;min-height:170px;flex-direction:column;gap:20px}.fallback-panel{padding:105px 6vw 50px}.fallback-panel .card{padding:22px}}
+    .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,3,9,.16) 76%,rgba(0,2,8,.52) 125%)}
+    .cursor-glow{position:fixed;z-index:3;left:0;top:0;width:180px;height:180px;border-radius:50%;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(45,224,106,.10),rgba(45,224,106,.025) 32%,transparent 70%);transform:translate(-50%,-50%);transition:opacity .25s}
+    .cluster-index{position:fixed;z-index:6;right:5.8vw;top:clamp(190px,50svh,calc(100svh - 220px));display:grid;gap:9px;transform:translateY(-50%)}.cluster-index a{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:38px;color:#93a49b;font:15px/1.4 var(--mono);opacity:.74;transition:color .2s,opacity .2s}.cluster-index a:after{content:"";width:7px;height:7px;border:1px solid #7b9085;border-radius:50%;transition:background .2s,box-shadow .2s}.cluster-index a.active,.cluster-index a:hover{color:var(--green);opacity:1}.cluster-index a.active:after{background:var(--green);border-color:var(--green);box-shadow:0 0 11px var(--green)}
+    .info-dialog{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px;background:rgba(0,4,10,.32);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .35s ease-out,visibility 0s linear .35s}.info-dialog.open{opacity:1;visibility:visible;transition:opacity .35s ease-out,visibility 0s}.info-card{position:relative;width:min(540px,100%);padding:34px 38px;border:1px solid rgba(117,220,159,.2);border-radius:16px;background:linear-gradient(145deg,rgba(9,28,34,.96),rgba(4,12,23,.96));box-shadow:0 22px 90px rgba(0,0,0,.4),0 0 32px rgba(45,224,106,.06),inset 0 0 35px rgba(45,224,106,.045);opacity:0;transform:translateY(14px) scale(.96);transition:transform .28s ease-out,opacity .28s ease-out}.info-dialog.open .info-card{opacity:1;transform:translateY(0) scale(1);transition-duration:.48s}.info-card h2{margin:0 42px 18px 0;color:#e8f4ed;font-size:clamp(25px,5vw,34px);font-weight:500}.info-card p{margin:0;color:#c3d2ca;font-size:17px;line-height:1.85;overflow-wrap:anywhere}.info-close{position:absolute;right:14px;top:14px;width:44px;height:44px;border:1px solid rgba(117,220,159,.3);border-radius:50%;background:rgba(7,24,29,.9);color:#e8f4ed;font-size:25px;cursor:pointer}.info-close:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+    @media(max-width:700px){.cluster-index{top:auto;right:5vw;left:5vw;bottom:118px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;transform:none;padding:4px 0}.cluster-index a{min-width:0;min-height:30px;justify-content:center;gap:6px;font-size:15px}.cluster-index a:after{width:6px;height:6px}.cursor-glow{display:none}.info-card{padding:30px 25px}.info-card p{font-size:16px}}
+    @media(hover:hover) and (pointer:fine){body:hover .cursor-glow{opacity:1}}
+    .motion-notice{position:fixed;z-index:12;top:14px;left:50%;width:min(680px,calc(100vw - 28px));transform:translateX(-50%);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px 12px 18px;border:1px solid rgba(117,220,159,.34);border-radius:10px;background:linear-gradient(135deg,rgba(7,24,29,.94),rgba(6,16,27,.9));backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 0 20px rgba(62,133,111,.05);color:#d0dad5;font-size:13px;line-height:1.5}.motion-notice[hidden]{display:none}.motion-notice-copy{min-width:0}.motion-notice-actions{display:flex;flex-shrink:0;gap:8px}.motion-notice button{min-height:36px;padding:7px 11px;border:1px solid rgba(117,220,159,.35);border-radius:6px;background:rgba(11,30,31,.78);color:#d9e8df;font:11px var(--mono);cursor:pointer}.motion-notice button:focus-visible{outline:2px solid var(--green);outline-offset:2px}.motion-notice .motion-enable{border-color:rgba(45,224,106,.62);color:var(--green)}.quiet-glow{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0}.quiet-glow:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 52% 47%,rgba(45,224,106,.035),transparent 57%);animation:quietBreath 7s ease-in-out infinite alternate}@keyframes quietBreath{from{opacity:.58}to{opacity:.78}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+    @media(max-width:520px){.motion-notice{top:10px;align-items:flex-start;flex-direction:column;gap:8px;padding:11px 12px}.motion-notice-actions{width:100%}.motion-notice button{flex:1}.motion-notice-copy{font-size:12px}}
+
+    .qr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px}.qr-grid[hidden]{display:none}.qr-grid figure{margin:0;min-width:0;text-align:center}.qr-grid img{display:block;width:100%;max-width:180px;height:auto;margin:auto;background:white}.qr-grid figcaption{font-size:12px;margin-top:8px;color:#c3d2ca}
+    .unit-button.visited:after{content:"";position:absolute;inset:10px;border:1px solid #b7ffd0;border-radius:50%;pointer-events:none}
+    /* M4a：DOM 命中与世界坐标同源；兜底在模块之前可读。 */
+    .static-network main,.static-network .readout,.static-network .cluster-index,.static-network .scroll-cue{display:none}
+    .static-network .fallback-panel{display:block}.static-network .scene{visibility:hidden}
+    #fallback-units article{padding:18px 0;border-top:1px solid rgba(45,224,106,.22)}#fallback-units h2{font-size:23px;font-weight:500}#fallback-units p{font-size:15px;line-height:1.9;overflow-wrap:anywhere}
+    #unit-layer{position:fixed;inset:0;z-index:7;pointer-events:none;overflow:hidden}
+    .unit-button{position:absolute;width:48px;height:48px;padding:0;transform:translate(-50%,-50%);border:0;background:transparent;pointer-events:auto;cursor:pointer;color:var(--ink)}
+    .unit-button[hidden]{display:none}.unit-button:focus-visible{outline:2px solid var(--green);outline-offset:1px;border-radius:50%}
+    .unit-label{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);max-width:min(240px,calc(100vw - 24px));width:max-content;padding:7px 10px;border:1px solid rgba(45,224,106,.5);border-radius:5px;background:rgba(3,15,20,.95);font-size:14px;line-height:1.5;overflow-wrap:anywhere;visibility:hidden;opacity:0;pointer-events:none}
+    .unit-button.active .unit-label,.unit-button.selected .unit-label{visibility:visible;opacity:1}
+    #unit-leader{position:fixed;inset:0;width:100%;height:100%;z-index:21;pointer-events:none;overflow:hidden;display:none}#unit-leader line{stroke:#2de06a;stroke-width:1;opacity:.8}
+    #info-body{white-space:pre-line}
+    .info-card{max-width:calc(100vw - 48px);max-height:calc(100svh - 48px);overflow:auto}.info-foot{margin-top:24px!important;padding-top:16px;border-top:1px solid rgba(45,224,106,.2);font-size:12px!important;color:var(--green)!important}
+    .intro-cover{display:none}#intro-skip{position:fixed;top:90px;right:6vw;z-index:11;padding:8px 12px;border:1px solid rgba(45,224,106,.35);background:#02060f;color:var(--green);cursor:pointer}#intro-skip[hidden]{display:none}
+    @media(max-width:700px){.brand{font-size:13px;letter-spacing:.04em}.nav{font-size:12px}.unit-button{width:44px;height:44px}.unit-label{bottom:34px}.info-dialog{padding:16px}.info-card{max-width:calc(100vw - 32px);max-height:calc(100svh - 32px)}}
+    /* M4d：只展示数据副本；悬浮层低于交互文字与弹窗。 */
+    .section-float{position:fixed;z-index:2;left:clamp(36px,5vw,72px);top:44%;width:min(400px,42vw);transform:translateY(-50%);opacity:.64;mix-blend-mode:screen;pointer-events:none;background:none;border:0;box-shadow:none}
+    .section-float-drift{animation:sectionFloat 9s ease-in-out infinite}
+    .section-float-copy{animation:sectionReveal .5s ease-out both}
+    .section-float-copy[hidden]{display:none}
+    .section-float-name{color:#b3c3b9;-webkit-text-fill-color:#b3c3b9;font-size:clamp(34px,3.2vw,46px);font-weight:500;line-height:1.3;letter-spacing:.02em;max-width:min(440px,100%);white-space:normal}
+    .section-float-name span{display:inline-block;white-space:nowrap}
+    .section-float-en{margin-top:14px;color:#a4c9b1;font:12px/1.5 var(--mono);letter-spacing:.25em}
+    .section-float-units{margin:26px 0 0;padding:0;list-style:none;color:#b3c3b9;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+    .section-float-units li+li{margin-top:6px}
+    .static-network .section-float{display:none}
+    @keyframes sectionFloat{0%,100%{transform:translateY(-6px)}50%{transform:translateY(6px)}}
+    @keyframes sectionReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:700px){.section-float{left:6vw;top:25%;width:88vw;opacity:.4}.section-float-name{font-size:26px}.section-float-en{margin-top:10px;font-size:11px}.section-float-units{display:none}}
+    @media(min-width:701px) and (max-width:1000px){.nav{gap:12px}.topbar{padding-left:4vw;padding-right:4vw}.brand{letter-spacing:.04em}.section-float-name{font-size:clamp(26px,3.4vw,34px)}}
+    @media(min-width:701px) and (max-height:399px){.cluster-index{top:92px;left:5.8vw;transform:none;display:flex;justify-content:flex-end;gap:14px}.cluster-index a{min-height:30px}.section-float{top:45%;width:32vw}.section-float-name{font-size:clamp(26px,3.2vw,34px)}.section-float-units{display:none}}
+    @media(prefers-reduced-motion:reduce){.section-float-drift,.section-float-copy{animation:none;transition:none;transform:none}}
+    /* M6：语言轻提示、详情过渡与页脚避让。 */
+    .nav{align-items:center}.nav a:focus-visible,.language-toggle:focus-visible,#info-publications:focus-visible{outline:2px solid var(--green);outline-offset:4px;border-radius:3px}
+    .language-toggle{padding:3px 0;border:0;background:none;color:#aab9b4;font:inherit;white-space:nowrap;cursor:pointer}.language-current{color:var(--green)}
+    .language-toast{position:fixed;z-index:13;top:92px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:10px 16px;border:1px solid rgba(117,220,159,.2);border-radius:8px;background:rgba(7,24,29,.92);color:#d0dad5;font-size:13px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,visibility 0s linear .2s}.language-toast.visible{opacity:1;visibility:visible;transition-delay:0s}
+    .info-content{opacity:1;transition:opacity .14s ease-out}.info-content.switching{opacity:0}#info-publications{padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+    #info-publications:hover{color:var(--green)}
+    .readout,.scroll-cue,.section-float,.cluster-index{transition:opacity .3s ease-out}
+    .footer-visible .readout,.footer-visible .scroll-cue,.footer-visible .section-float,.footer-visible .cluster-index{opacity:0;pointer-events:none}
+    .footer-visible .cluster-index{visibility:hidden}
+    @media(max-width:700px){.topbar{flex-direction:column;align-items:flex-start;gap:12px}.nav{width:100%;flex-wrap:wrap;gap:10px 14px}.nav a{display:inline}.language-toggle{margin-left:auto}.language-toast{top:128px}}
+    /* M7：品牌英文保留，语言按钮额外留白，页尾愿景跟随滚动。 */
+    .language-toggle{margin-left:16px}
+    .footer-vision{position:fixed;z-index:4;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 12vw);text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:none}
+    .footer-vision-title{margin:0;color:#c3d3c9;font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.4;text-shadow:0 0 18px rgba(117,220,159,.06)}
+    @media(max-width:700px){.language-toggle{margin-left:10px}.footer-vision-title{font-size:clamp(20px,6vw,28px)}}
+    .brand img{display:block;height:38px;width:auto}
+    .footer .brand img{height:30px;width:auto}
+    @media(min-width:701px){.topbar{height:72px;padding-top:0;padding-bottom:0}}
+    @media(max-width:700px){.brand img{height:32px}.footer .brand img{height:30px}}
+  </style>
+
+<style id="tuner-style">
+  header, footer, main, nav, aside, #scroll-cue, #readout, #intro, #intro-skip, #progress,
+  #footer-vision, #fallback-content, #motion-notice, #quiet-glow, #unit-layer, #unit-leader,
+  #language-toast, .section-float, .cluster-index, .info-dialog, .topbar, .footer {
+    visibility: hidden !important; pointer-events: none !important;
+  }
+  body { background:#02060f !important; }
+  #tuner-panel {
+    position:fixed; top:16px; right:16px; z-index:99999;
+    width:286px; padding:14px 16px; border-radius:10px;
+    background:rgba(6,18,28,.93); border:1px solid rgba(45,224,106,.28);
+    color:#cfe6dc; font:12px/1.5 ui-monospace,Consolas,monospace;
+    backdrop-filter:blur(8px); box-shadow:0 10px 40px rgba(0,0,0,.55);
+  }
+  #tuner-panel h3 { margin:0 0 10px; font-size:12px; letter-spacing:1px; color:#2de06a; font-weight:600; }
+  #tuner-panel .row { margin:9px 0; }
+  #tuner-panel .row label { display:flex; justify-content:space-between; margin-bottom:3px; color:#8fb3a5; }
+  #tuner-panel .row label b { color:#eafff5; font-weight:600; }
+  #tuner-panel input[type=range] { width:100%; accent-color:#2de06a; height:16px; }
+  #tuner-panel .hint { margin-top:10px; color:#5d7d70; font-size:11px; line-height:1.45; }
+  #tuner-panel button {
+    margin-top:10px; width:100%; padding:6px; border-radius:6px; cursor:pointer;
+    background:rgba(45,224,106,.12); border:1px solid rgba(45,224,106,.35); color:#9bf7c4;
+    font:11px ui-monospace,monospace;
+  }
+  #tuner-panel button:hover { background:rgba(45,224,106,.22); }
+</style>
+</head>
+<body class="static-network">
+  <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
+  <aside class="motion-notice" id="motion-notice" aria-label="减少动态效果设置提示" hidden><div class="motion-notice-copy">检测到系统&quot;减少动态效果&quot;，已为您简化动画</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">开启完整动效</button><button id="motion-dismiss" type="button">知道了</button></div></aside>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
+  <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">网络组装中</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">初始化</div></div></div>
+  <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="五区内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
+  <header class="topbar"><a class="brand" href="#top" aria-label="安集协康 / ANGECON 首页"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></a><nav class="nav" aria-label="章节导航"><a href="#company">关于我们</a><a href="#technology">技术平台</a><a href="#pipeline">研发管线</a><a href="#science">科学数据</a><a href="#contact">关注我们</a><button class="language-toggle" id="language-toggle" type="button" aria-label="当前语言为中文，切换至英文"><span class="language-current">中</span><span aria-hidden="true"> / </span><span lang="en">EN</span></button></nav></header>
+  <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
+  <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
+  <div class="scroll-cue">向下滚动 · 穿行神经之网</div>
+  <div class="readout"><div><b id="readout-nodes">800</b>节点</div><div><b id="readout-lines">已连接</b>突触</div><div><b id="readout-pulse">活跃</b>信号活动</div></div>
+  <main id="top">
+    <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="technology" data-cluster="1"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="pipeline" data-cluster="2"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="science" data-cluster="3"><span class="cluster-anchor"></span></section>
+    <section class="cluster-section" id="contact" data-cluster="4"><span class="cluster-anchor"></span></section>
+  </main>
+  <nav class="cluster-index" aria-label="分区索引"><a href="#company" data-index="0">关于我们</a><a href="#technology" data-index="1">技术平台</a><a href="#pipeline" data-index="2">研发管线</a><a href="#science" data-index="3">科学数据</a><a href="#contact" data-index="4">关注我们</a></nav>
+  <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
+  <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><p id="info-body"></p><p class="info-foot"><button type="button" id="info-publications">查阅更多见公众号</button></p><div id="info-qr" hidden></div></div></article></div>
+  <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">创造奇迹，造福人类</p></div>
+  <footer class="footer"><div><div class="brand"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼（安集大厦）<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+
+  <script>
+    const CONTENT_UNITS = [
+  {
+    "id": "1-1",
+    "sectionId": "about",
+    "title": "安集概况",
+    "body": "上海安集协康生物技术股份有限公司 2010 年 2 月创立，专注人源神经干细胞（hNSC）药物研发与临床转化；拥有符合 GMP 标准的细胞生产基地、研发中心与细胞检测中心。使命：做老百姓用得起的细胞药；愿景：世界一流的细胞公司。",
+    "sourceIds": [
+      "AN1:安集介绍"
+    ],
+    "seed": 3101,
+    "anchor": [
+      -44,
+      15,
+      -2
+    ]
+  },
+  {
+    "id": "1-2",
+    "sectionId": "about",
+    "title": "十六年之路",
+    "body": "2010 年创立 → 2016 年获国内首张生物样本库合格证书 → 2022 年脊髓损伤临床研究项目备案 → 2025 年 FDA DMF Ⅱ型备案 · INCI 名称 → 2026 年三适应症获 FDA 临床试验许可（以官方发布为准）。",
+    "sourceIds": [
+      "AN1:发展历程"
+    ],
+    "seed": 3238,
+    "anchor": [
+      -33,
+      21,
+      -6
+    ]
+  },
+  {
+    "id": "1-3",
+    "sectionId": "about",
+    "title": "科学传承",
+    "body": "三代师承：Sally Temple 博士首次发现神经干细胞（1989）；其学生沈沁发现神经干细胞微环境机制并创立安集；沈沁的学生孙希财深耕迁移调控与临床转化，现任公司 CTO。",
+    "sourceIds": [
+      "AN1:安集介绍"
+    ],
+    "seed": 3375,
+    "anchor": [
+      -25,
+      12,
+      0
+    ]
+  },
+  {
+    "id": "1-4",
+    "sectionId": "about",
+    "title": "资质与荣誉",
+    "body": "高新技术企业（2024）· 上海市专精特新中小企业 · 科技型中小企业（2025）· 全国生物样本标准化技术委员会 TC559 委员单位（2015）· 上海市浦东新区博士后创新实践基地（2023）。",
+    "sourceIds": [
+      "AN1:资质荣誉",
+      "资料库:第7栏"
+    ],
+    "seed": 3512,
+    "anchor": [
+      -30,
+      3,
+      -4
+    ]
+  },
+  {
+    "id": "1-5",
+    "sectionId": "about",
+    "title": "安库生医",
+    "body": "上海安库生医生物科技有限公司成立于 2017 年 10 月，为安集协康全资子公司；聚焦细胞及其小细胞外囊泡技术的研发与应用，依托母公司平台资源开展技术服务。",
+    "sourceIds": [
+      "AN1:安库生医"
+    ],
+    "seed": 3649,
+    "anchor": [
+      -43,
+      1,
+      1
+    ]
+  },
+  {
+    "id": "2-1",
+    "sectionId": "technology",
+    "title": "神经干细胞药品开发平台",
+    "body": "一体化神经干细胞创新药研发平台：覆盖从细胞库构建、CMC 生产到临床开发全链条；攻克持续扩增、定向分化、冻存复苏关键技术，适配中美申报质控标准。\n\n质量与标准：建立全流程质量追溯与放行质控体系；产品通过中检院质控与安全性检定；获 ISO 9001 认证；参与全国生物样本标准化技术委员会（TC559）标准制定。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 2000,
+    "anchor": [
+      28,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-3",
+    "sectionId": "technology",
+    "title": "神经干细胞外泌体药品开发平台",
+    "body": "基于神经干细胞旁分泌机制，开发外泌体无细胞治疗新路径；2025 年获美国 FDA 药物主文件（DMF）Ⅱ型原料药备案，并获国际化妆品原料 INCI 名称。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 2274,
+    "anchor": [
+      36,
+      16,
+      -53
+    ]
+  },
+  {
+    "id": "2-2",
+    "sectionId": "technology",
+    "title": "生物样本库",
+    "body": "临床级细胞资源平台：400 万份级存储，种子库→主库→工作库三级体系；单份样本独立操作防交叉污染；2016 年起连续三次通过《生物样本库质量达标检查》。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 2137,
+    "anchor": [
+      32,
+      21,
+      -53
+    ]
+  },
+  {
+    "id": "3-1",
+    "sectionId": "pipeline",
+    "title": "药品研发管线",
+    "body": "七大适应症方向：帕金森病、阿尔茨海默病、早发型帕金森、脊髓损伤、渐冻症、小儿脑瘫、缺血性脑卒中；覆盖药物发现至 FDA IND 六环节。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 3000,
+    "anchor": [
+      -4,
+      -18,
+      -98
+    ]
+  },
+  {
+    "id": "3-2",
+    "sectionId": "pipeline",
+    "title": "临床研究",
+    "body": "帕金森病：与北京协和医院合作；人源神经干细胞经鼻移植治疗帕金森病 Ⅰ 期研究结果于 2024 年发表（JNNP）；经鼻给药全程无创。研究性结论，以官方发布为准。\n\n脊髓损伤：与同济大学附属同济医院合作（程黎明教授团队）；2026 年 6 月，人源神经干细胞治疗脊髓损伤研究完成国家卫健委生物医学新技术临床研究备案。\n\n脑卒中·小儿脑瘫：缺血性卒中研究由仁济医院管阳太教授团队牵头；小儿脑瘫研究与安徽医科大学第一附属医院合作；5 项干细胞临床研究项目均获评 B 级。\n\nAD 与外泌体管线：外泌体治疗中重度早发型阿尔茨海默病临床研究由上海市精神卫生中心牵头获批（2025）；外泌体管线三适应症处于临床前阶段。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 3137,
+    "anchor": [
+      0,
+      -13,
+      -98
+    ]
+  },
+  {
+    "id": "4-1",
+    "sectionId": "science",
+    "title": "发表文章",
+    "body": "团队与合作机构发表相关论文：含 JNNP 2024、J Immunother Cancer 2025、Neuron 2017、Science 2004、Nature 1989 等；均可查 DOI。\n\nANGE-S003 研究：18 例晚期帕金森患者的 12 个月 Ⅰ 期研究（经鼻移植、剂量递增）；提供安全性与初步疗效信号，非疗效定论。\n\n备案与监管进展：两项国家卫健委生物医学新技术临床研究备案（仁济/同济）；5 项研究获评 B 级；外泌体获 FDA DMF Ⅱ型原料药备案（备案号 MF 31537，公司披露）。\n\n研究积淀：2010 年创立至今十六年深耕；建成大规模细胞生产体系，积累真实世界研究数据；与多家顶尖三甲医院建立长期临床研究合作。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 4000,
+    "anchor": [
+      -44,
+      15,
+      -142
+    ]
+  },
+  {
+    "id": "5-1",
+    "sectionId": "contact",
+    "title": "关注公众号",
+    "body": "扫码关注安集协康与安库生医微信公众号，获取最新研究与技术动态。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 5000,
+    "anchor": [
+      35,
+      0,
+      -190
+    ]
+  },
+  {
+    "id": "5-2",
+    "sectionId": "contact",
+    "title": "合作方向",
+    "body": "面向细胞存储关注者、临床研究合作机构、媒体与投资机构，欢迎通过公众号与我们联系。",
+    "sourceIds": [
+      "AN3:M4b:任务卡审定文案"
+    ],
+    "seed": 5137,
+    "anchor": [
+      39,
+      5,
+      -190
+    ]
+  }
+];
+    window.CONTENT_UNITS=CONTENT_UNITS;
+    (()=>{
+      document.querySelector('#language-toggle').addEventListener('click',()=>{
+        return; // tuner keeps the current document
+      });
+      const footer=document.querySelector('.footer');
+      const setFooterVisible=visible=>{
+        document.body.classList.toggle('footer-visible',visible);
+        document.querySelector('.cluster-index').inert=visible||document.querySelector('#info-dialog').classList.contains('open');
+        document.querySelector('.readout').setAttribute('aria-hidden',String(visible));
+        document.querySelector('.scroll-cue').setAttribute('aria-hidden',String(visible));
+      };
+      if('IntersectionObserver' in window){
+        const observer=new IntersectionObserver(entries=>setFooterVisible(entries.some(entry=>entry.isIntersecting)),{threshold:0});observer.observe(footer);
+      }else{
+        const update=()=>{const rect=footer.getBoundingClientRect();setFooterVisible(rect.top<innerHeight&&rect.bottom>0)};
+        addEventListener('scroll',update,{passive:true});addEventListener('resize',update);update();
+      }
+    })();
+    (()=>{
+      const footer=document.querySelector('.footer'),vision=document.querySelector('#footer-vision');
+      const reducedMotion=matchMedia('(prefers-reduced-motion:reduce)');
+      // 文字与相机共用一个时钟和 ease 进度；快速反向从当前值对称回收。
+      const view={active:false,blend:0,duration:1000,started:performance.now(),from:0};
+      let frame=0;
+      view.tick=now=>{
+        if(reducedMotion.matches)view.blend=view.active?1:0;
+        else{const t=Math.max(0,Math.min(1,(now-view.started)/view.duration));view.blend=view.from+((view.active?1:0)-view.from)*t*t*(3-2*t)}
+        vision.style.opacity=String(view.blend);
+        vision.style.visibility=view.blend>0?'visible':'hidden';
+        vision.setAttribute('aria-hidden',String(view.blend===0));
+        return view.blend;
+      };
+      const animate=now=>{frame=0;view.tick(now);if(view.blend!==(view.active?1:0))frame=requestAnimationFrame(animate)};
+      const update=()=>{
+        const now=performance.now(),rect=footer.getBoundingClientRect();
+        const active=rect.top<innerHeight&&rect.bottom>0;
+        view.tick(now);
+        if(active!==view.active){view.from=view.blend;view.started=now;view.active=active}
+        view.tick(now);
+        if(!frame&&view.blend!==(view.active?1:0))frame=requestAnimationFrame(animate);
+      };
+      window.__FOOTER_VIEW__=view;
+      addEventListener('scroll',update,{passive:true});addEventListener('resize',update);
+      reducedMotion.addEventListener?.('change',update);
+      if('ResizeObserver' in window)new ResizeObserver(update).observe(footer);
+      update();
+    })();
+    // 五组文字只在启动时读取数据；滚动切换不重建 DOM 或几何。
+    (()=>{
+      const sections=[['about','关于我们'],['technology','技术平台'],['pipeline','研发管线'],['science','科学数据'],['contact','关注我们']];
+      const sectionThemes={about:'十六年，一条神经之路',technology:'把细胞，做成药',pipeline:'从实验室，到临床',science:'每一个结论，都有出处',contact:'和我们，保持连接'};
+      const layer=document.querySelector('#section-float-drift');
+      const copies=sections.map(([sectionId,label])=>{
+        const copy=document.createElement('div'),title=document.createElement('div'),english=document.createElement('div'),list=document.createElement('ul');
+        copy.className='section-float-copy';copy.dataset.sectionId=sectionId;copy.hidden=true;
+        title.className='section-float-name';
+        sectionThemes[sectionId].split('，').forEach((part,index)=>{const phrase=document.createElement('span');phrase.textContent=index===0?`${part}，`:part;title.append(phrase);if(index===0)title.append(document.createElement('wbr'))});
+        english.className='section-float-en';english.textContent=label;list.className='section-float-units';
+        CONTENT_UNITS.filter(unit=>unit.sectionId===sectionId).forEach(unit=>{const item=document.createElement('li');item.textContent=unit.title;list.append(item)});
+        copy.append(title,english,list);layer.append(copy);return copy;
+      });
+      let current=-1;
+      window.__SECTION_FLOAT__={setActive(c){if(c===current||!copies[c])return;copies.forEach((copy,i)=>copy.hidden=i!==c);current=c;document.querySelector('#section-float').dataset.activeCluster=String(c)}};
+      window.__SECTION_FLOAT__.setActive(0);
+    })();
+    (()=>{
+      const active=CONTENT_UNITS,layer=document.querySelector('#unit-layer');
+      const dialog=document.querySelector('#info-dialog'),close=document.querySelector('#info-close');
+      const controller={hover:null,selected:null,hoverAt:0,lastInput:performance.now(),idleNode:-1,idleAt:0,nextIdle:0,ready:false,motion:false};
+      window.__UNIT_CONTROL__=controller;
+      window.__NET_STATS__={nodes:0,lines:0,mobile:matchMedia('(max-width:700px), (pointer:coarse)').matches,bloomOn:false,reducedMotion:matchMedia('(prefers-reduced-motion:reduce)').matches,motionEnabled:false,motionOverride:false,noticeShown:false,fps:0,fpsSamples:[],introDone:true,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled:false,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:0,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:true};
+      controller.sync=()=>{Object.assign(window.__NET_STATS__,{unitHover:controller.hover,unitSelected:controller.selected,transmission:null,idlePulse:null,visited:[...controller.visited]})};
+      const setHover=id=>{if(controller.selected)return;if(controller.hover!==id){controller.hover=id;controller.hoverAt=performance.now()}controller.buttons.forEach((b,key)=>b.classList.toggle('active',key===id));controller.sync()};
+      controller.clearHover=()=>setHover(null);
+      controller.buttons=new Map();
+      active.forEach(unit=>{
+        const article=document.createElement('article'),title=document.createElement('h2'),body=document.createElement('p');
+        article.dataset.unitId=unit.id;title.textContent=unit.title;body.textContent=unit.body;article.append(title,body);document.querySelector('#fallback-units').append(article);
+        const b=document.createElement('button'),label=document.createElement('span');b.type='button';b.className='unit-button';b.dataset.unitId=unit.id;b.setAttribute('aria-label',`阅读${unit.title}`);b.setAttribute('aria-haspopup','dialog');b.hidden=true;label.className='unit-label';label.textContent=unit.title;b.append(label);layer.append(b);controller.buttons.set(unit.id,b);
+        b.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')setHover(unit.id)});
+        b.addEventListener('pointerleave',()=>{if(document.activeElement!==b)setHover(null)});
+        b.addEventListener('focus',()=>setHover(unit.id));b.addEventListener('blur',()=>{if(controller.hover===unit.id)setHover(null)});
+        b.addEventListener('click',()=>controller.open(unit.title,unit.body,b,unit.id));
+      });
+      function addQR(container){
+        for(const [src,name] of [['assets/qr-angecon.jpg','安集协康'],['assets/qr-anku.png','安库生医']]){
+          const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
+          img.src=src;img.alt=`${name}微信公众号二维码`;img.width=180;img.height=180;caption.textContent=name;figure.append(img,caption);container.append(figure);
+        }
+      }
+      const qr=document.querySelector('#info-qr');qr.className='qr-grid';addQR(qr);
+      const fallbackQR=document.createElement('div');fallbackQR.className='qr-grid';addQR(fallbackQR);document.querySelector('#fallback-units [data-unit-id="5-1"]').append(fallbackQR);
+      controller.visited=new Set();
+      let trigger=null,scrollPosition=0,priorOverflow='',priorPadding='',contentTimer;
+      const content=document.querySelector('#info-content'),publications=document.querySelector('#info-publications');
+      const showQR=()=>{
+        document.querySelector('#info-title').textContent='关注公众号';document.querySelector('#info-body').textContent='扫码关注，获取完整内容';
+        qr.hidden=false;publications.parentElement.hidden=false;
+      };
+      publications.addEventListener('click',showQR);
+      controller.open=(title,body,b,id=null)=>{
+        if(controller.selected||dialog.classList.contains('open'))return;
+        controller.clearHover();controller.selected=id;if(id){controller.visited.add(id);b.classList.add('visited');b.setAttribute('aria-label',`阅读${title}，已阅读`)}document.querySelector('#info-qr').hidden=id!=='5-1';controller.idleNode=-1;trigger=b;scrollPosition=scrollY;
+        clearTimeout(contentTimer);content.classList.remove('switching');publications.parentElement.hidden=false;
+        document.querySelector('#info-title').textContent=title;document.querySelector('#info-body').textContent=body;if(id==='5-1')showQR();
+        const card=document.querySelector('.info-card');card.style.position='';card.style.left='';card.style.top='';
+        priorOverflow=document.body.style.overflow;priorPadding=document.body.style.paddingRight;
+        const gap=innerWidth-document.documentElement.clientWidth;document.body.style.paddingRight=`${gap}px`;document.body.style.overflow='hidden';
+        dialog.classList.add('open');dialog.setAttribute('aria-hidden','false');layer.inert=true;document.querySelector('main').inert=true;document.querySelector('.topbar').inert=true;document.querySelector('.cluster-index').inert=true;document.querySelector('.footer').inert=true;
+        controller.buttons.forEach((button,key)=>button.classList.toggle('selected',key===id));controller.sync();close.focus({preventScroll:true});
+      };
+      controller.close=()=>{
+        if(!dialog.classList.contains('open'))return;
+        clearTimeout(contentTimer);content.classList.remove('switching');controller.selected=null;qr.hidden=true;dialog.classList.remove('open');dialog.setAttribute('aria-hidden','true');document.querySelector('#unit-leader').style.display='none';
+        document.body.style.overflow=priorOverflow;document.body.style.paddingRight=priorPadding;layer.inert=false;document.querySelector('main').inert=false;document.querySelector('.topbar').inert=false;document.querySelector('.cluster-index').inert=document.body.classList.contains('footer-visible');document.querySelector('.footer').inert=false;
+        controller.buttons.forEach(b=>b.classList.remove('selected'));controller.lastInput=performance.now();controller.idleNode=-1;controller.sync();
+        // 焦点回原触发点；preventScroll 避免浏览器定位按钮改变阅读位置。
+        trigger?.focus({preventScroll:true});if(scrollY!==scrollPosition)scrollTo({top:scrollPosition,behavior:'instant'});
+      };
+      close.addEventListener('click',controller.close);dialog.addEventListener('click',e=>{if(e.target===dialog)controller.close()});
+      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){const focusable=publications.parentElement.hidden?[close]:[close,publications];const index=focusable.indexOf(document.activeElement);e.preventDefault();focusable[(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus({preventScroll:true})}});
+      const input=()=>{controller.lastInput=performance.now();controller.idleNode=-1;controller.nextIdle=controller.lastInput+6000;window.__NET_STATS__.idlePulse=null;controller.skipIntro?.()};
+      for(const event of ['pointermove','pointerdown','keydown','wheel','touchstart','scroll','focusin'])addEventListener(event,input,{passive:true});
+      document.addEventListener('visibilitychange',()=>{input();if(document.hidden)controller.clearHover()});
+      document.querySelector('#intro-skip').addEventListener('click',()=>controller.skipIntro?.());
+      controller.fail=()=>{controller.ready=false;document.body.classList.add('static-network');controller.buttons.forEach(b=>b.hidden=true);document.querySelector('#intro-skip').hidden=true;Object.assign(window.__NET_STATS__,{fallback:true,unitsActive:0,introDone:true,unitHover:null,transmission:null,idlePulse:null})};
+    })();
+  </script>
+  <script type="module">
+    const THREE=await import('./vendor/three.module.js').catch(()=>null);
+    if(!THREE){window.__UNIT_CONTROL__.fail()}
+    if(THREE){
+    const unitControl=window.__UNIT_CONTROL__;
+
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motionChoiceKey='network-motion-choice-v1';
+    let motionChoice=null;
+    try{motionChoice=sessionStorage.getItem(motionChoiceKey)}catch{}
+    if(motionChoice!=='enable'&&motionChoice!=='dismiss')motionChoice=null;
+    let motionEnabled=!reduce||motionChoice==='enable';
+    const notice=document.querySelector('#motion-notice'),quietGlow=document.querySelector('#quiet-glow');
+    const noticeShown=reduce&&!motionChoice;
+    let chooseMotion=()=>{};
+    notice.hidden=!noticeShown;quietGlow.style.opacity=reduce&&!motionEnabled?'1':'0';
+    function syncMotionStats(){if(!stats)return;stats.motionEnabled=motionEnabled;stats.motionOverride=motionChoice==='enable';stats.noticeShown=!notice.hidden;stats.gazeEnabled=motionEnabled&&!mobile;}
+    const mobile=matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+    let gazeEnabled=motionEnabled&&!mobile;
+    const gaze={x:0,y:0,targetX:0,targetY:0};
+    const cursorGlow=document.querySelector('#cursor-glow');
+    if(!mobile)addEventListener('pointermove',e=>{gaze.targetX=((e.clientX/innerWidth)-.5)*THREE.MathUtils.degToRad(12);gaze.targetY=((e.clientY/innerHeight)-.5)*THREE.MathUtils.degToRad(8);if(motionEnabled){cursorGlow.style.left=`${e.clientX}px`;cursorGlow.style.top=`${e.clientY}px`}},{passive:true});
+    function netSeeded(seed){let value=seed>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296}}
+    // M5：唯一调优表。生长、时序与着色共用；内容/交互系统保持原有接口。
+    const NET_CONFIG={
+      seed:20261019, desktopNodes:40, mobileNodes:40,
+      form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
+        minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
+        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:5.5,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
+      light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
+        spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
+        breathAmplitude:.03,breathPeriod:8,hoverGain:.12,hoverRadius:.16},
+      atmosphere:{desktopDust:48,mobileDust:16,dustOpacity:.09},
+      budget:{maxEvents:40,focusWidth:15,farOpacity:.10,meshFraction:.6}
+    };
+    const N=mobile?NET_CONFIG.mobileNodes:NET_CONFIG.desktopNodes, K=5, per=Math.floor(N/K), canvas=document.querySelector('#network');
+    const colors=Array.from({length:K},()=>new THREE.Color('#2de06a'));
+    const centers=[[-37,10,-8],[32,16,-53],[0,-18,-98],[-40,15,-142],[39,0,-190]];
+    const positions=new Float32Array(N*3), seeds=new Float32Array(N), clusterIds=new Float32Array(N), sizes=new Float32Array(N), phases=new Float32Array(N), nodeColors=new Float32Array(N*3);
+    const nodeDistances=new Float32Array(N),nodeRoots=new Float32Array(N);
+    const rand=(a,b)=>a+Math.random()*(b-a); let renderer,scene,camera,points,composer,bloom,stats;
+    let pulses=[],lastBurst=0,lastFlicker=0,activeCluster=0,introDone=false,fps=0,frameCount=0,fpsAt=0;
+    const infoDialog=document.querySelector('#info-dialog'),infoTitle=document.querySelector('#info-title'),infoBody=document.querySelector('#info-body');
+    document.querySelectorAll('.cluster-index a').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',link.getAttribute('href'))}));
+    const form=NET_CONFIG.form;
+
+window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
+
+
+    // ===== TUNER: hash 参数覆盖 =====
+    (function(){
+      const H = new URLSearchParams(location.hash.slice(1));
+      const num = function(k, fb){ const v = parseFloat(H.get(k)); return Number.isFinite(v) ? v : fb; };
+      form.ringTubeRadius = num('tube', form.ringTubeRadius);
+      form.rootRingRatio  = num('ratio', form.rootRingRatio);
+      form.tipRadius      = num('tip', form.tipRadius);
+      form.ringScale      = num('scale', form.ringScale);
+      window.__TUNER__ = { tube: form.ringTubeRadius, ratio: form.rootRingRatio, tip: form.tipRadius, scale: form.ringScale };
+    })();
+
+function generateNetwork(){
+    const growthRandom=netSeeded(NET_CONFIG.seed);
+
+    const networkPaths=[],linePositions=[],lineDistances=[],lineRoots=[],lineClusters=[],lineRoutes=[],lineBridges=[],lineLevels=[];
+    const rootCount=1,maxDepth=1;
+    const mobileSlots=[[-9,9],[7,14],[9,-5],[-8,-9],[0,-20]],sectionIndices=[0,0,0,0,0];
+    const unitWorld=CONTENT_UNITS.map(u=>{const c=Number(u.id[0])-1,index=sectionIndices[c]++;return mobile?new THREE.Vector3(centers[c][0]+mobileSlots[index][0],centers[c][1]+mobileSlots[index][1],centers[c][2]):new THREE.Vector3(...u.anchor)});
+    const unitAttachments=[],terminalStars=[];
+    const rr=(a,b)=>a+growthRandom()*(b-a);
+    // Seeded free axons grow outward from each content or ambient soma.
+    function dendrite(center,radius,scale=1,onRing=false,arm=0,count=6){
+      const u=rr(-1,1),theta=rr(0,Math.PI*2),v=(1-u*u)**.5;
+      const dir=new THREE.Vector3(v*Math.cos(theta),u,v*Math.sin(theta)*.72).normalize();
+      const length=rr(form.minLength,form.maxLength)*scale,phase=rr(0,Math.PI*2),bend=rr(form.bendMin,form.bendMax),curl=rr(.35,.75);
+      const sideA=new THREE.Vector3().crossVectors(dir,new THREE.Vector3(0,1,0));if(sideA.lengthSq()<1e-4)sideA.set(1,0,0);
+      sideA.normalize().applyAxisAngle(dir,phase);const sideB=sideA.clone().applyAxisAngle(dir,bend*3.2);
+      // The torus lies in XY: a 3D radial offset would miss its surface.
+      const angle=arm/count*Math.PI*2+rr(-.12,.12);
+      if(onRing)dir.set(Math.cos(angle),Math.sin(angle),rr(-.20,.20)).normalize();
+      const ringDir=new THREE.Vector3(Math.cos(angle),Math.sin(angle),0);
+      const root=center.clone().addScaledVector(onRing?ringDir:dir,radius*(onRing?form.ringScale:.9));
+      const controls=[root,
+        center.clone().addScaledVector(dir,length*.30).addScaledVector(sideA,length*bend*.85),
+        center.clone().addScaledVector(dir,length*.66).addScaledVector(sideA,length*bend*.25).addScaledVector(sideB,length*bend*.30*curl),
+        center.clone().addScaledVector(dir,length).addScaledVector(sideB,length*bend*.55)];
+      controls[3].y+=rr(-1.2,1.2);
+      if(onRing)controls[1].copy(root).addScaledVector(ringDir,length*.30).addScaledVector(new THREE.Vector3(-ringDir.y,ringDir.x,dir.z),length*bend*.20);
+      return {controls,length,sideA,bend,ringDir,onRing,center,radius,sub:rr(0,1)<form.branchChance,subT:rr(.45,.72),subAngle:rr(-.9,.9),subRatio:rr(.22,.38)};
+    }
+    function addPath(curve,c,level,r0,r1,route,offset=0,unit=-1){
+      const segments=Math.ceil((mobile?12:20)/(level+1));
+      // Resolve the small membrane collar without increasing the whole axon budget.
+      const samples=Array.from({length:segments+1},(_,i)=>i/segments);
+      const points=samples.map(t=>curve.getPointAt(t)),cumulative=[offset];
+      for(let j=1;j<points.length;j++)cumulative.push(cumulative[j-1]+points[j].distanceTo(points[j-1]));
+      const path={curve,points,samples,cumulative,level,cluster:c,root:0,route,bridge:false,r0,r1,unit};networkPaths.push(path);
+      terminalStars.push({point:points.at(-1),size:rr(.09,.19),path});return path;
+    }
+    // Content is the soma itself. Background has no content ID or hit target.
+    const clusterSomas=Array.from({length:K},(_,c)=>{
+      const base=new THREE.Vector3(...centers[c]);
+      const content=CONTENT_UNITS.flatMap((unit,id)=>Number(unit.id[0])-1===c?[{center:unitWorld[id].clone(),radius:form.somaRadii[c],isContent:true,unit:id}]:[]);
+      // Independent seeded stream keeps the ambient field identical in both languages.
+      const random=netSeeded(NET_CONFIG.seed+100+c),ambient=[];
+      for(let i=0;i<8;i++){
+        const angle=i*Math.PI/4+(random()-.5)*.4,spread=12+random()*9;
+        const center=base.clone().add(new THREE.Vector3(Math.cos(angle)*spread,Math.sin(angle)*spread*.85,(i<4?-1:1)*(8+random()*10)));
+        ambient.push({center,radius:form.somaRadii[c]*(.45+random()*.20),isContent:false,opacity:.22});
+      }
+      return [...content,...ambient].map(soma=>{const count=Math.floor(rr(form.minArms,form.maxArms+1));return {...soma,branches:Array.from({length:count},(_,i)=>dendrite(soma.center,soma.radius,soma.isContent?1:.36,soma.isContent,i,count)),paths:[]}});
+    });
+    // ID-only shape stream: never consumes the seeded branch/ambient stream.
+    function membraneShape(soma){
+      let hash=2166136261;for(const ch of CONTENT_UNITS[soma.unit].id)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
+      return {ratio:1.04+(hash%1009)/1008*.12,phase:((hash>>>10)%4096)/4096*Math.PI*2,rotation:((hash>>>5)%1024)/1024*Math.PI};
+    }
+    function membranePoint(soma,angle){
+      const q=soma.membrane,R=soma.radius*form.ringScale,w=1+.06*Math.sin(3*angle+q.phase);
+      return new THREE.Vector3(R*(q.ratio**.5)*w*Math.cos(angle-q.rotation),R/(q.ratio**.5)*w*Math.sin(angle-q.rotation),0).applyAxisAngle(new THREE.Vector3(0,0,1),q.rotation).add(soma.center);
+    }
+    function membraneFrame(soma,angle){
+      const point=membranePoint(soma,angle),tangent=membranePoint(soma,angle+1e-5).sub(membranePoint(soma,angle-1e-5)).normalize();
+      return {point,tangent,out:new THREE.Vector3(tangent.y,-tangent.x,0),z:new THREE.Vector3(0,0,1)};
+    }
+    for(const soma of clusterSomas.flat().filter(s=>s.isContent))soma.membrane=membraneShape(soma);
+    const somaBranches=clusterSomas.map(somas=>somas.flatMap(s=>s.branches)),connections=[];
+    for(let c=0;c<K;c++){
+      clusterSomas[c].forEach((soma,si)=>soma.branches.forEach((b,i)=>{
+        const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
+        let curve=original;
+        if(b.onRing){
+          const ringTube=b.radius*form.ringTubeRadius,lead=.18;
+          b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
+          const frame=b.membraneFrame,start=frame.point.clone().addScaledVector(frame.out,.12),root=start.clone().addScaledVector(frame.out,lead),tangent=frame.out;
+          let join=.08;while(join<.3&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
+          const end=original.getPoint(join),handle=root.distanceTo(end)*.34;
+          const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
+          const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
+          const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
+          curve=new THREE.CurvePath();curve.add(neck);curve.add(collar);curve.add(rest);
+          b.lead=neck.getLength();b.root=root;
+        }
+        // A single shared trunk ends at 25–40% of the original arc length.
+        const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
+        trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
+        const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
+        // Keep child starts above .02, including small ambient somas.
+        const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
+        path.trunk=true;path.split=split;path.children=[];
+        if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
+          path.frame={normal:b.membraneFrame.tangent.clone().addScaledVector(b.membraneFrame.z,-1).normalize()};}
+        const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
+        const normal=new THREE.Vector3().crossVectors(T,reference).normalize(),binormal=new THREE.Vector3().crossVectors(T,normal);
+        const span=path.r1*10,childRadius=path.r1*.55,restLength=whole.getLength()*(1-split),angle=rr(.32,.58);
+        path.fork={joint,T,normal,binormal,span,childRadius};
+        for(const sign of [-1,1]){
+          const direction=T.clone().multiplyScalar(Math.cos(angle)).addScaledVector(normal,sign*Math.sin(angle)).normalize();
+          const start=joint.clone().addScaledVector(T,span).addScaledVector(normal,sign*childRadius*1.65);
+          const end=joint.clone().addScaledVector(T,restLength*.90).addScaledVector(normal,sign*restLength*.38).addScaledVector(binormal,rr(-.12,.12)*restLength);
+          const curve=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(direction,restLength*.32),end.clone().addScaledVector(T,-restLength*.30).addScaledVector(binormal,sign*restLength*.14),end);
+          const child=addPath(curve,c,soma.isContent?0:4,childRadius,form.tipRadius,route,path.cumulative.at(-1)+span,soma.unit??-1);
+          child.child=true;child.sign=sign;child.parent=path;child.frame={normal:normal.clone().addScaledVector(direction,-normal.dot(direction)).normalize()};
+          child.frame.binormal=new THREE.Vector3().crossVectors(direction,child.frame.normal);
+          path.children.push(child);soma.paths.push(child);
+        }
+        // No terminal marker or cap belongs at the branching junction.
+        terminalStars.splice(terminalStars.findIndex(t=>t.path===path),1);
+        if(soma.isContent&&i===0)unitAttachments[soma.unit]={points:[...path.children[0].points].reverse().concat([...path.points].reverse(),[soma.center.clone()])};
+      }));
+      for(let i=0;i<per;i++){
+        const idx=c*per+i,point=clusterSomas[c].filter(s=>!s.isContent)[i].center;
+        positions.set(point.toArray(),idx*3);clusterIds[idx]=c;nodeRoots[idx]=0;nodeDistances[idx]=0;
+        sizes[idx]=0;seeds[idx]=growthRandom();phases[idx]=growthRandom()*Math.PI*2;nodeColors.set(colors[c].toArray(),idx*3);
+      }
+    }
+    // Join free axon tips, never make a second thick root at the far soma.
+    function connectSomas(a,b,c){
+      let pair=null,best=Infinity;
+      for(const pa of a.paths)for(const pb of b.paths){const d=pa.points.at(-1).distanceToSquared(pb.points.at(-1));if(d<best){best=d;pair=[pa,pb]}}
+      const [pa,pb]=pair,start=pa.points.at(-1),end=pb.points.at(-1),length=start.distanceTo(end);
+      const curve=new THREE.CubicBezierCurve3(start.clone(),start.clone().addScaledVector(pa.curve.getTangentAt(1),length*.28),end.clone().addScaledVector(pb.curve.getTangentAt(1),length*.28),end.clone());
+      const path=addPath(curve,c,0,form.tipRadius,form.tipRadius,.5,pa.cumulative.at(-1));path.bridge=true;
+      connections.push({from:a.unit,to:b.unit,radius:form.tipRadius,start:start.toArray(),end:end.toArray()});
+    }
+    const contentSomas=clusterSomas.map(somas=>somas.filter(s=>s.isContent));
+    contentSomas.forEach((somas,c)=>{for(let i=1;i<somas.length;i++)connectSomas(somas[i-1],somas[i],c);if(c<K-1)connectSomas(somas.at(-1),contentSomas[c+1][0],c)});
+    // The contact is widest; neither trunks nor children may widen outward.
+    function rootProfile(path,t){
+      if(path.bridge)return path.r1;
+      const u=THREE.MathUtils.clamp(t,0,1),ease=u*u*(3-2*u);
+      return path.r0+(path.r1-path.r0)*ease;
+    }
+    // Prototype taperedTube, expanded once into the existing batched signal shader.
+    function taperedTube(path){
+      const {curve}=path;
+      if(path.rootLead){
+        const lead=path.rootLead/curve.getLength();path.samples=[...new Set([...path.samples,lead*.01,lead*.03,lead*.08,lead*.2,lead*.5,lead,lead+.01,lead+.03,lead+.05,lead+.06])].sort((a,b)=>a-b);
+        path.points=path.samples.map(t=>curve.getPointAt(t));path.cumulative=[0];
+        for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
+      }
+      if(path.child){
+        // Avoid redundant near-identical rings whose Float32 rounding exceeds the taper.
+        path.samples=[...new Set([...path.samples,.04,.08])].sort((a,b)=>a-b);
+        path.points=path.samples.map(t=>curve.getPointAt(t));const offset=path.cumulative[0];path.cumulative=[offset];
+        for(let i=1;i<path.points.length;i++)path.cumulative.push(path.cumulative[i-1]+path.points[i].distanceTo(path.points[i-1]));
+      }
+      const {points,cumulative,samples}=path,segments=points.length-1,radial=(path.trunk||path.child)?(path.level===4?8:24):(mobile?form.mobileRadial:form.desktopRadial);
+      // Parallel transport at the actual nonuniform sample positions.
+      const tangents=samples.map(t=>curve.getTangentAt(t)),normals=[],binormals=[],axis=new THREE.Vector3(),vertices=[];
+      const reference=Math.abs(tangents[0].z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
+      normals[0]=path.frame?path.frame.normal.clone():new THREE.Vector3().crossVectors(tangents[0],reference).normalize();
+      binormals[0]=new THREE.Vector3().crossVectors(tangents[0],normals[0]);
+      for(let i=1;i<=segments;i++){
+        normals[i]=normals[i-1].clone();axis.crossVectors(tangents[i-1],tangents[i]);
+        if(axis.lengthSq()>1e-12)normals[i].applyAxisAngle(axis.normalize(),Math.acos(THREE.MathUtils.clamp(tangents[i-1].dot(tangents[i]),-1,1)));
+        binormals[i]=new THREE.Vector3().crossVectors(tangents[i],normals[i]);
+      }
+      // End frame is shared byte-for-byte with the fork patch.
+      if(path.trunk){normals[segments]=path.fork.normal;binormals[segments]=path.fork.binormal;}
+      path.meshRings=[];
+      for(let i=0;i<=segments;i++)for(let j=0;j<=radial;j++){
+        const angle=j/radial*Math.PI*2,r=rootProfile(path,samples[i]);
+        vertices.push(points[i].clone().addScaledVector(normals[i],r*Math.cos(angle)).addScaledVector(binormals[i],r*Math.sin(angle)));
+      }
+      for(let i=0;i<=segments;i++)path.meshRings.push(vertices.slice(i*(radial+1),(i+1)*(radial+1)));
+      for(let i=0;i<segments;i++)for(let j=0;j<radial;j++){
+        const a=i*(radial+1)+j,b=a+radial+1;
+        for(const n of [a,b,a+1,b,b+1,a+1]){
+          const v=vertices[n],sample=Math.floor(n/(radial+1));linePositions.push(v.x,v.y,v.z);lineDistances.push(cumulative[sample]);
+          lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
+        }
+      }
+    }
+    networkPaths.forEach(taperedTube);
+    // Pair-of-pants surface: each outlet shares half the inlet and the same crotch seam.
+    // There are no overlapping tubes, disks or spherical caps at the junction.
+    function forkSurface(path){
+      const {joint,T,normal,binormal,span}=path.fork,r=path.r1,radial=path.meshRings[0].length-1,half=radial/2,quarter=radial/4,steps=8;
+      const seam=Array.from({length:half+1},(_,i)=>joint.clone().addScaledVector(binormal,r*Math.cos(i/half*Math.PI)).addScaledVector(T,span*.52*Math.sin(i/half*Math.PI)));
+      path.fork.seam=seam;path.fork.patches=[];
+      for(const child of path.children){
+        const sign=child.sign,rings=[],startRing=[],endRing=child.meshRings[0];
+        for(let j=0;j<=radial;j++){
+          const theta=-Math.PI/2+j/radial*Math.PI*2;
+          // Reuse actual inlet vertices, reversing the negative outlet's outer half.
+          const inletIndex=sign===1?(j+radial-quarter)%radial:(radial-quarter-j+radial)%radial;
+          startRing.push(j<=half?path.meshRings.at(-1)[inletIndex].clone():seam[j-half].clone());
+        }
+        for(let i=0;i<=steps;i++){
+          const t=i/steps,ring=[];
+          for(let j=0;j<=radial;j++){
+            const theta=-Math.PI/2+j/radial*Math.PI*2,inner=j>half;
+            const d0=inner?normal.clone().multiplyScalar(sign*span*.65*Math.sin((j-half)/half*Math.PI)):T.clone().multiplyScalar(span*.65*Math.max(0,Math.cos(theta)));
+            const d1=child.curve.getTangentAt(0).multiplyScalar(span*.65);
+            const a=startRing[j],b=endRing[sign===1?(j+radial-quarter)%radial:(radial-quarter-j+radial)%radial];
+            // Cubic Hermite interpolation keeps the outlet tangent equal to its child.
+            ring.push(a.clone().multiplyScalar(2*t*t*t-3*t*t+1).addScaledVector(d0,t*t*t-2*t*t+t).addScaledVector(b,-2*t*t*t+3*t*t).addScaledVector(d1,t*t*t-t*t));
+          }
+          rings.push(ring);
+        }
+        path.fork.patches.push(rings);
+        for(let i=0;i<steps;i++)for(let j=0;j<radial;j++)for(const [row,col] of [[i,j],[i+1,j],[i,j+1],[i+1,j],[i+1,j+1],[i,j+1]]){
+          const v=rings[row][col];linePositions.push(v.x,v.y,v.z);lineDistances.push(path.cumulative.at(-1)+row/steps*span);
+          lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(path.level);
+        }
+      }
+    }
+    networkPaths.filter(p=>p.trunk).forEach(forkSurface);
+    // A punctured membrane strip and its side outlet form a single surface.
+    // The strip's two cross sections are shared with adjacent ellipse arcs;
+    // the outlet is the actual first trunk ring, not an intersecting tube.
+    const membraneJunctions=[],membraneRanges=[];
+    function membraneSurface(soma){
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius*form.rootRingRatio,R=soma.radius*form.ringScale;
+      const radial=8,along=4,steps=12,delta=2.2*t/R,beta=Math.PI/2;
+      const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
+      function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
+      function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
+      function strip(rows,path){for(let i=0;i<rows.length-1;i++)for(let j=0;j<rows[i].length-1;j++){emit(rows[i][j],rows[i+1][j],rows[i][j+1],path);emit(rows[i+1][j],rows[i+1][j+1],rows[i][j+1],path);}}
+      const boundaries=[];
+      for(const b of branches){
+        const path=b.path,coords=[];
+        for(let j=0;j<radial;j++)coords.push([delta,-Math.PI+j/radial*2*Math.PI]);
+        for(let j=0;j<along;j++)coords.push([delta-2*delta*j/along,Math.PI]);
+        for(let j=0;j<radial;j++)coords.push([-delta,Math.PI-j/radial*2*Math.PI]);
+        for(let j=0;j<along;j++)coords.push([delta-2*delta*(along-j)/along,-Math.PI]);
+        const n=coords.length,outer=coords.map(([a,p])=>surface(b.angle+a,p)),inner=[],derivatives=[],rows=[];
+        for(const [a,p] of coords){
+          const alpha=Math.atan2(p/Math.PI,a/delta),da=delta*.66*Math.cos(alpha),dp=beta*Math.sin(alpha),angle=b.angle+da;
+          inner.push(surface(angle,dp));
+          const e=1e-5,A=surface(angle+e,dp).sub(surface(angle-e,dp)).multiplyScalar(.5/e),B=surface(angle,dp+e).sub(surface(angle,dp-e)).multiplyScalar(.5/e);
+          const edge=A.clone().multiplyScalar(-delta*.66*Math.sin(alpha)).addScaledVector(B,beta*Math.cos(alpha));
+          const normal=new THREE.Vector3().crossVectors(A,B).normalize(),d=new THREE.Vector3().crossVectors(normal,edge).normalize();
+          const inward=A.clone().multiplyScalar(-da).addScaledVector(B,-dp);if(d.dot(inward)<0)d.negate();derivatives.push(d.multiplyScalar(.04));
+        }
+        // Parameter-space annulus leaves a real hole, with no internal face/cap.
+        for(let i=0;i<=6;i++){
+          const u=i/6,row=[];
+          for(let j=0;j<n;j++){
+            const [a,p]=coords[j],alpha=Math.atan2(p/Math.PI,a/delta);
+            row.push(i===0?inner[j]:i===6?outer[j]:surface(b.angle+(1-u)*delta*.66*Math.cos(alpha)+u*a,(1-u)*beta*Math.sin(alpha)+u*p));
+          }row.push(row[0]);rows.push(row);
+        }strip(rows,path);
+        const outlet=path.meshRings[0],collar=[];
+        for(let i=0;i<=steps;i++){
+          const u=(1-Math.cos(Math.PI*i/steps))/2,row=[];
+          for(let j=0;j<n;j++){
+            const end=outlet[j],d1=b.membraneFrame.out.clone().multiplyScalar(.12);
+            row.push(i===0?inner[j]:i===steps?end:inner[j].clone().multiplyScalar(2*u*u*u-3*u*u+1).addScaledVector(derivatives[j],u*u*u-2*u*u+u).addScaledVector(end,-2*u*u*u+3*u*u).addScaledVector(d1,u*u*u-u*u));
+          }row.push(row[0]);collar.push(row);
+        }strip(collar,path);
+        const plus=Array.from({length:radial+1},(_,j)=>outer[j% n]);
+        plus[radial]=outer[radial];
+        const minus=Array.from({length:radial+1},(_,j)=>outer[(radial+along+radial-j)%n]);
+        boundaries.push({plus,minus});
+        membraneJunctions.push({unit:soma.unit,angle:b.angle,path,inner,outer,derivatives,collar,surface:(a,p)=>surface(a,p),coords,delta,beta});
+      }
+      for(let k=0;k<branches.length;k++){
+        const b=branches[k],next=branches[(k+1)%branches.length],a=b.angle+delta,end=next.angle-delta+(k===branches.length-1?Math.PI*2:0),rows=[];
+        const samples=Math.ceil((end-a)*R/t/2);
+        for(let i=0;i<=samples;i++)rows.push(i===0?boundaries[k].plus:i===samples?boundaries[(k+1)%branches.length].minus:Array.from({length:radial+1},(_,j)=>surface(a+(end-a)*i/samples,-Math.PI+j/radial*2*Math.PI)));
+        strip(rows,b.path);
+      }
+      membraneRanges.push({unit:soma.unit,start:vertexStart,end:linePositions.length/3});
+    }
+    clusterSomas.flat().filter(s=>s.isContent).forEach(membraneSurface);
+    // Small three-ray terminals share the same pulse/breath material as the tapered tubes.
+    for(const {point,size,path} of terminalStars)for(let arm=0;arm<3;arm++){
+      const angle=arm*Math.PI*2/3,dir=new THREE.Vector3(Math.cos(angle),Math.sin(angle),0),side=new THREE.Vector3(-dir.y,dir.x,0);
+      for(const v of [point.clone().addScaledVector(side,size*.2),point.clone().addScaledVector(side,-size*.2),point.clone().addScaledVector(dir,size)]){
+        linePositions.push(...v.toArray());lineDistances.push(path.cumulative.at(-1));lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
+      }
+    }
+    const L=networkPaths.length;
+
+return {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth};
+}
+let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth}=generateNetwork();
+    // 编排状态按簇固定分配；每帧仅更新 5 个 vec4，无几何重建、CPU 顶点扫描或计时器。
+    function createLightClock(){
+      const random=netSeeded(NET_CONFIG.seed+73),cfg=NET_CONFIG.light;
+      const events=Array.from({length:K},(_,c)=>new THREE.Vector4(0,99,0,0));
+      const next=Array.from({length:K},(_,c)=>.35+c*cfg.phaseStep),serial=new Uint32Array(K);
+      const counts={'spike-out':0,converge:0,cascade:0,'rare-storm':0},directions={outward:0,inward:0,fold:0,bridge:0},log=[];
+      let stormAt=-99,nextStorm=cfg.stormMin+random()*(cfg.stormMax-cfg.stormMin),lastTime=0;
+      function record(type,c,t,direction){counts[type]++;directions[direction]++;log.push({type,cluster:c,at:+t.toFixed(3),direction});if(log.length>NET_CONFIG.budget.maxEvents)log.shift()}
+      return {events,counts,directions,log,update(time,enabled){
+        if(!enabled){events.forEach(e=>e.set(0,99,0,0));return {stormAge:99,active:0}}
+        const delta=Math.max(0,time-lastTime);lastTime=time;let active=0;
+        for(let c=0;c<K;c++){
+          events[c].y+=delta;
+          if(time>=next[c]){const kind=serial[c]%3+1,root=Math.floor(serial[c]/3)%rootCount;serial[c]++;
+            events[c].set(kind,0,cfg.strengthMin+random()*(cfg.strengthMax-cfg.strengthMin),root);
+            record(['','spike-out','converge','cascade'][kind],c,time,['','outward','inward','fold'][kind]);
+            next[c]=time+cfg.interval+(random()-.5)*cfg.jitter}
+          if(events[c].y<['',cfg.spikeTravel,cfg.converge,cfg.cascade][events[c].x])active++
+        }
+        if(time>=nextStorm){stormAt=time;record('rare-storm',0,time,'bridge');nextStorm=time+cfg.stormMin+random()*(cfg.stormMax-cfg.stormMin)}
+        return {stormAge:time-stormAt,active:active+(time-stormAt<cfg.stormDuration?1:0)}
+      }}
+    }
+    const lightClock=createLightClock(),lightEvents=lightClock.events,pointerNDC=new THREE.Vector2(9,9);
+    if(!mobile){addEventListener('pointermove',e=>pointerNDC.set(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2),{passive:true});addEventListener('pointerout',e=>{if(!e.relatedTarget)pointerNDC.set(9,9)})}
+    // 距离场来自同一生长拓扑：同一根的各支路共享传播前沿；桥接按相邻簇延时级联。
+    const lightGLSL=`uniform vec4 uEvent[5];uniform float uStorm,uMotion;
+      float eventSignal(float distance,float root,float cluster,float route,float bridge){
+        vec4 e=uEvent[0];for(int i=0;i<5;i++){if(abs(cluster-float(i))<.1)e=uEvent[i];}
+        float selected=1.-step(.1,abs(root-e.w));float q=distance/${Math.max(...networkPaths.map(p=>p.cumulative.at(-1))).toFixed(4)};
+        float wave=0.;
+        if(e.x<1.5&&e.x>.5){float t=e.y/${NET_CONFIG.light.spikeTravel};for(int i=0;i<${NET_CONFIG.light.spikeTailSamples};i++){float lag=float(i)*${NET_CONFIG.light.spikeTailStep};wave=max(wave,(1.-smoothstep(.008,.025,abs(q-(t-lag))))*exp(-float(i)*.34));}wave*= ${NET_CONFIG.light.spikeGain}*step(0.,t)*step(t,1.15);}
+        else if(e.x<2.5&&e.x>1.5){float t=e.y/${NET_CONFIG.light.converge};wave=(1.-smoothstep(.03,.21,abs(q-(1.-t))))*step(t,1.15);}
+        else if(e.x>2.5){float t=e.y/${NET_CONFIG.light.cascade};float head=1.-abs(2.*pow(clamp(t,0.,1.),.72)-1.);for(int i=0;i<${NET_CONFIG.light.cascadeRelays};i++){float relay=float(i)*${NET_CONFIG.light.cascadeSpacing};wave=max(wave,(1.-smoothstep(.012,.042,abs(q-head+route*.025+relay)))*(1.-float(i)*.18));}wave*=1.7*step(t,1.);}
+        float stormTime=uStorm-cluster*${NET_CONFIG.light.stormStep};float storm=0.;
+        if(stormTime>=0.&&stormTime<${NET_CONFIG.light.stormDuration}){float t=stormTime/${NET_CONFIG.light.stormDuration};storm=(1.-smoothstep(.03,.16,abs(mix(q,distance,bridge)-t)))*( .65+.35*pow(max(0.,sin(stormTime*29.)),4.));}
+        return (wave*e.z*selected*(1.-bridge)+storm*1.8*(1.+bridge*${NET_CONFIG.light.bridgeGain}))*uMotion;
+      }
+      float stormEnvelope(float cluster){float age=uStorm-cluster*${NET_CONFIG.light.stormStep};return step(0.,age)*(1.-smoothstep(0.,${NET_CONFIG.light.stormFade},age))*uMotion;
+      }
+      float stormCore(float distance,float cluster){return (1.-step(.1,distance))*stormEnvelope(cluster)*pow(max(0.,cos((uStorm-cluster*${NET_CONFIG.light.stormStep})*29.)),4.);
+      }
+      float clusterPulse(float cluster){return 1.+${NET_CONFIG.light.stormPulse}*stormEnvelope(cluster);
+      }`;
+    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent='活跃';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));if(stats)stats.activeCluster=c;}
+    function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
+    addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
+    function fallback(){unitControl.fail();introDone=true;stats=window.__NET_STATS__;Object.assign(stats,{nodes:0,lines:0,mobile,bloomOn:false,gazeEnabled:false,introDone:true,pulses:0,lightActive:0,lightPaused:true});}
+    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer?.setAnimationLoop(null);fallback()});
+    try{
+      renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x02060f,1);
+      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0012);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(-34,11,mobile?62:36);camera.lookAt(-34,11,-5);const gazeRig=new THREE.Group();scene.add(gazeRig);gazeRig.add(camera);
+      const sharedLightUniforms={uEvent:{value:lightEvents},uStorm:{value:99},uPointer:{value:pointerNDC},uHoverGain:{value:NET_CONFIG.light.hoverGain},uHoverRadius:{value:NET_CONFIG.light.hoverRadius},uBreath:{value:1}};
+      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aNode',new THREE.Float32BufferAttribute(Array.from({length:N},(_,i)=>i),1));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));pg.setAttribute('aCluster',new THREE.BufferAttribute(clusterIds,1));pg.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));pg.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));pg.setAttribute('aColor',new THREE.BufferAttribute(nodeColors,3));pg.setAttribute('aDistance',new THREE.BufferAttribute(nodeDistances,1));pg.setAttribute('aRoot',new THREE.BufferAttribute(nodeRoots,1));
+      const pmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{...sharedLightUniforms,uFocusDepth:{value:45},uFocusWidth:{value:NET_CONFIG.budget.focusWidth},uFocusSize:{value:1},uTime:{value:0},uGrow:{value:0},uMotion:{value:motionEnabled?1:0},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uActive:{value:0},uFocus:{value:0},uPixelRatio:{value:Math.min(devicePixelRatio||1,mobile?1.15:1.5)}},vertexShader:`
+        attribute float aSeed,aCluster,aSize,aPhase,aNode,aDistance,aRoot;attribute vec3 aColor;
+        uniform float uFocusDepth,uFocusWidth,uFocusSize,uTime,uGrow,uPulse[8],uPulseNode[8],uPulseCount,uActive,uFocus,uPixelRatio,uBreath;
+        varying vec3 vColor;varying float vLight,vHot;${lightGLSL}
+        void main(){float grow=smoothstep(aSeed*.82,aSeed*.82+.18,uGrow);vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;
+          float pulse=eventSignal(aDistance,aRoot,aCluster,0.,0.);
+          for(int i=0;i<8;i++){if(float(i)<uPulseCount)pulse=max(pulse,uPulse[i]*(1.-step(.1,abs(aNode-uPulseNode[i]))));}
+          vec4 e=uEvent[0];for(int i=0;i<5;i++){if(abs(aCluster-float(i))<.1)e=uEvent[i];}
+          float core=(1.-step(.1,aDistance))*(1.-step(.1,abs(aRoot-e.w)))*(1.-smoothstep(0.,${NET_CONFIG.light.spikeCore},e.y))*step(.5,e.x)*uMotion;
+          float optical=exp(-abs(-mv.z-uFocusDepth)/uFocusWidth);float focus=1.+uFocus*max(0.,1.-abs(aCluster-uActive))*.65;
+          core+=stormCore(aDistance,aCluster)*2.;vHot=max(pulse,core*1.5);vLight=(.6+pulse*1.5+core*2.)*clusterPulse(aCluster)*uBreath*focus*(.16+.84*optical)*grow;vColor=aColor;
+          gl_PointSize=clamp((1.+uFocusSize*(1.-optical)*.4)*aSize*(1.+vHot*.65)*uPixelRatio*(120./max(1.,-mv.z)),1.,26.);}`,
+        fragmentShader:`varying vec3 vColor;varying float vLight,vHot;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;float core=1.-smoothstep(.02,.24,d);float halo=exp(-d*12.);vec3 color=mix(vColor,vec3(.9,1.,.93),clamp(vHot*.55,0.,.88)*core);gl_FragColor=vec4(color*(.72+core*1.6+halo*.45)*vLight,core*.9+halo*.24);}`});points=new THREE.Points(pg,pmat);scene.add(points);
+function packNetwork(){
+      const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
+      for(const [name,array] of Object.entries({aDistance:lineDistances,aRoot:lineRoots,aCluster:lineClusters,aRoute:lineRoutes,aBridge:lineBridges,aLevel:lineLevels}))lg.setAttribute(name,new THREE.Float32BufferAttribute(array,1));
+      // Weld at construction precision before Float32 packing: close but distinct
+      // surface vertices must keep separate indices even when GPU coordinates coincide.
+
+      const attributes=Object.entries(lg.attributes),count=lg.attributes.position.count;
+      const unique=attributes.map(([name,attr])=>new Float32Array(count*attr.itemSize));
+      const indices=new Uint32Array(count),buckets=new Map(),next=new Int32Array(count),coords=new Float64Array(count*3);let uniqueCount=0;
+      for(let i=0;i<count;i++){
+        const x=Math.round(linePositions[i*3]*1e10),y=Math.round(linePositions[i*3+1]*1e10),z=Math.round(linePositions[i*3+2]*1e10);
+        const hash=(Math.imul(x|0,73856093)^Math.imul(y|0,19349663)^Math.imul(z|0,83492791))>>>0;
+        let index=buckets.get(hash);if(index===undefined)index=-1;
+        while(index!==-1&&(coords[index*3]!==x||coords[index*3+1]!==y||coords[index*3+2]!==z))index=next[index];
+        if(index===-1){index=uniqueCount++;next[index]=buckets.get(hash)??-1;buckets.set(hash,index);coords.set([x,y,z],index*3);
+          for(let a=0;a<attributes.length;a++){const attr=attributes[a][1],size=attr.itemSize;for(let j=0;j<size;j++)unique[a][index*size+j]=attr.array[i*size+j];}
+        }
+        indices[i]=index;
+      }
+      attributes.forEach(([name,attr],i)=>lg.setAttribute(name,new THREE.BufferAttribute(unique[i].subarray(0,uniqueCount*attr.itemSize),attr.itemSize)));
+      lg.setIndex(new THREE.BufferAttribute(uniqueCount>65535?indices:new Uint16Array(indices),1));
+
+return lg;
+}
+const lg=packNetwork();
+      const lmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{...sharedLightUniforms,uFocusDepth:{value:45},uFocusWidth:{value:NET_CONFIG.budget.focusWidth},uFocusSize:{value:1},uTime:{value:0},uMotion:{value:motionEnabled?1:0},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uIntro:{value:0},uActive:{value:0},uFocus:{value:0}},
+        vertexShader:`attribute float aDistance,aRoot,aCluster,aRoute,aBridge,aLevel;varying float vLevel,vDistance,vRoot,vCluster,vRoute,vBridge,vOptical,vNear;varying vec2 vScreen;
+          uniform float uFocusDepth,uFocusWidth;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;vScreen=gl_Position.xy/max(.001,gl_Position.w);vDistance=aDistance;vRoot=aRoot;vCluster=aCluster;vRoute=aRoute;vBridge=aBridge;vLevel=aLevel;vOptical=exp(-abs(-mv.z-uFocusDepth)/uFocusWidth);vNear=clamp(55./max(1.,-mv.z),.18,1.);}`,
+        fragmentShader:`${lightGLSL}uniform float uIntro,uFocus,uActive,uBreath,uHoverGain,uHoverRadius;uniform vec2 uPointer;
+          varying float vLevel,vDistance,vRoot,vCluster,vRoute,vBridge,vOptical,vNear;varying vec2 vScreen;
+          void main(){float signal=eventSignal(vDistance,vRoot,vCluster,vRoute,vBridge);float hover=(1.-smoothstep(0.,uHoverRadius,length(vScreen-uPointer)))*uHoverGain*uMotion;
+            float focal=${NET_CONFIG.budget.farOpacity}+.84*vOptical;float focus=1.+uFocus*(1.-step(.1,abs(vCluster-uActive)))*.25;
+            float hierarchy=pow(${form.levelLightDecay},vLevel);float alpha=(${form.opacity}*hierarchy+signal*.65+hover)*focal*vNear*uIntro*focus*uBreath*clusterPulse(vCluster);
+            vec3 color=mix(vec3(.1764706,.8784314,.4156863),vec3(.9,1.,.93),clamp(signal*.42,0.,.8));
+            gl_FragColor=vec4(color*(.8*hierarchy+signal*1.8+hover),alpha);}`});const lines=new THREE.Mesh(lg,lmat);scene.add(lines);
+window.__TUNER_METRICS__={builds:[],renders:0,details:[]};
+function buildNetwork(overrides={}){
+ const started=performance.now();Object.assign(form,overrides);
+ ({growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth}=generateNetwork());
+ const generated=performance.now();const geometry=packNetwork(),old=lines.geometry;const packed=performance.now();
+ lines.geometry=geometry;old.dispose();
+ for(const attr of Object.values(points.geometry.attributes))attr.needsUpdate=true;
+ Object.assign(window.__TUNER__,{tube:form.ringTubeRadius,ratio:form.rootRingRatio,tip:form.tipRadius,scale:form.ringScale});
+ if(composer)composer.render();else renderer.render(scene,camera);
+ const ms=performance.now()-started;
+ window.__TUNER_METRICS__.details.push({ms,generate:generated-started,pack:packed-generated});window.__TUNER_METRICS__.builds.push(ms);window.__TUNER_METRICS__.renders++;
+ console.log('[tuner] rebuild '+ms.toFixed(2)+'ms; generate '+(generated-started).toFixed(2)+'; pack '+(packed-generated).toFixed(2));return ms;
+}
+window.__REBUILD__=buildNetwork;
+
+      // 微尘仅一批 Points，局部漂移在 GPU；reduce 完全固定。
+      const dustPositions=[];for(let c=0;c<K;c++)for(let i=0;i<(mobile?NET_CONFIG.atmosphere.mobileDust:NET_CONFIG.atmosphere.desktopDust);i++)dustPositions.push(centers[c][0]+(growthRandom()-.5)*38,centers[c][1]+(growthRandom()-.5)*30,centers[c][2]+(growthRandom()-.5)*20);
+      const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.Float32BufferAttribute(dustPositions,3));
+      const dmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:motionEnabled?1:0},uOpacity:{value:NET_CONFIG.atmosphere.dustOpacity}},vertexShader:`uniform float uTime,uMotion;void main(){vec3 p=position;p.xy+=vec2(sin(uTime*.13+p.z),cos(uTime*.11+p.x))*.22*uMotion;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(60./max(1.,-mv.z),1.,2.);}`,fragmentShader:`uniform float uOpacity;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(.1764706,.8784314,.4156863,a*uOpacity);}`});scene.add(new THREE.Points(dg,dmat));
+      const bloomOn=!mobile;
+      if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .72 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
+      const state={nodes:clusterSomas.flat().length,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:clusterSomas.flat().length,networkDepth:maxDepth+1,somaCenters:clusterSomas.flat().map(s=>s.center.toArray()),contentCounts:contentSomas.map(s=>s.length),backgroundCounts:clusterSomas.map(s=>s.filter(a=>!a.isContent).length),somaDetails:clusterSomas.flatMap((somas,c)=>somas.map(s=>({cluster:c,id:s.isContent?CONTENT_UNITS[s.unit].id:null,center:s.center.toArray(),radius:s.radius,opacity:s.isContent?.66:s.opacity,isContent:s.isContent}))),connections,dendrites:somaBranches.map(b=>b.length),terminalCount:terminalStars.length,attachments:unitAttachments.map((p,i)=>({id:CONTENT_UNITS[i].id,end:p.points.at(-1).toArray(),world:unitWorld[i].toArray()})),lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
+
+
+      // Membranes are part of lg/lmat; only soma cores are instanced here.
+      const aboutUnits=CONTENT_UNITS,unitCount=aboutUnits.length;
+      const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.66,depthWrite:false});
+      const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
+      const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.7);
+      aboutUnits.forEach((unit,i)=>{const radius=form.somaRadii[Number(unit.id[0])-1];dummy.position.copy(unitWorld[i]);dummy.rotation.set(0,0,0);dummy.scale.setScalar(radius);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green)});
+      somas.frustumCulled=false;scene.add(somas);
+      const backgroundSomas=clusterSomas.flat().filter(s=>!s.isContent);
+      const background=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?10:14,mobile?7:10),new THREE.MeshBasicMaterial({color:green,transparent:true,opacity:.22,depthWrite:false}),backgroundSomas.length);
+      backgroundSomas.forEach((s,i)=>{dummy.position.copy(s.center);dummy.scale.setScalar(s.radius);dummy.updateMatrix();background.setMatrixAt(i,dummy.matrix)});background.frustumCulled=false;scene.add(background);
+      const treePositions=[],treeUnits=[],treeDistances=[],treeSignals=[],paths=[];
+      function ribbon(points,width,id,signal){
+        const cumulative=[0];for(let j=1;j<points.length;j++)cumulative.push(cumulative[j-1]+points[j].distanceTo(points[j-1]));
+        const total=cumulative.at(-1);if(signal)paths[id]={points:points.map(p=>p.clone()),distances:cumulative,total};
+        for(let j=0;j<points.length-1;j++){
+          const a=points[j],b=points[j+1],tangent=b.clone().sub(a).normalize(),normal=new THREE.Vector3(-tangent.y,tangent.x,0);
+          const wa=width*(1-.8*j/(points.length-1)),wb=width*(1-.8*(j+1)/(points.length-1));
+          const vertices=[a.clone().addScaledVector(normal,wa),a.clone().addScaledVector(normal,-wa),b.clone().addScaledVector(normal,wb),b.clone().addScaledVector(normal,wb),a.clone().addScaledVector(normal,-wa),b.clone().addScaledVector(normal,-wb)];
+          vertices.forEach((v,k)=>{treePositions.push(v.x,v.y,v.z);treeUnits.push(id);treeDistances.push(cumulative[k===0||k===1||k===4?j:j+1]/total);treeSignals.push(signal?1:0)});
+        }
+      }
+      aboutUnits.forEach((unit,id)=>{
+        // Highlight/transmission follows an inward axon and ends at its soma.
+        ribbon(unitAttachments[id].points,.035,id,true);
+      });
+      const visitedAttribute=new THREE.Float32BufferAttribute(new Float32Array(treeUnits.length),1);
+      const tg=new THREE.BufferGeometry();tg.setAttribute('aVisited',visitedAttribute);tg.setAttribute('aSection',new THREE.Float32BufferAttribute(treeUnits.map(i=>Number(aboutUnits[i].id[0])-1),1));tg.setAttribute('position',new THREE.Float32BufferAttribute(treePositions,3));tg.setAttribute('aUnit',new THREE.Float32BufferAttribute(treeUnits,1));tg.setAttribute('aDistance',new THREE.Float32BufferAttribute(treeDistances,1));tg.setAttribute('aSignal',new THREE.Float32BufferAttribute(treeSignals,1));
+      const treeMaterial=new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:{uPanorama:{value:0},uActive:{value:0},uReveal:{value:0},uHover:{value:-1},uSelected:{value:-1},uPhase:{value:-1}},vertexShader:`attribute float aUnit,aDistance,aSignal,aVisited,aSection;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){vSection=aSection;vVisited=aVisited;vUnit=aUnit;vDistance=aDistance;vSignal=aSignal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform float uPanorama,uActive,uReveal,uHover,uSelected,uPhase;varying float vUnit,vDistance,vSignal,vVisited,vSection;void main(){if(uPanorama<.5&&abs(vSection-uActive)>.1)discard;float memory=vVisited*vSignal*(1.-smoothstep(.22,.38,vDistance));float selected=1.-step(.1,abs(vUnit-uSelected));float hovered=(1.-step(.1,abs(vUnit-uHover)))*(1.-step(0.,uSelected));float light=hovered*vSignal*(1.-smoothstep(.015,.12,abs(vDistance-uPhase)))*step(0.,uPhase);float reveal=smoothstep(vDistance-.08,vDistance+.08,uReveal);gl_FragColor=vec4(vec3(.1764706,.8784314,.4156863)*(.6+light*1.4+selected*.4+memory*.3),(.34+light*.65+selected*.3+memory*.15)*reveal);}`});
+      const trees=new THREE.Mesh(tg,treeMaterial);scene.add(trees);
+      Object.assign(stats,{unitDrawCalls:4,unitTreeTriangles:treePositions.length/9,unitPaths:paths.map((p,i)=>({id:aboutUnits[i].id,length:p.total,distances:p.distances})),unitAnchors:aboutUnits.map((u,i)=>({id:u.id,anchor:u.anchor,world:unitWorld[i].toArray(),seed:u.seed})),introDone:false});
+      let introStarted=performance.now();
+      unitControl.skipIntro=()=>{introDone=true;stats.introDone=true;pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1;treeMaterial.uniforms.uReveal.value=1;document.querySelector('#intro-skip').hidden=true};
+      function startIntro(){if(introDone)return;introStarted=performance.now();document.querySelector('#intro-skip').hidden=false}
+      if(motionEnabled)startIntro();else unitControl.skipIntro();
+      const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
+      const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
+      let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
+      function updateUnits(now){
+        const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
+        if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;previousSection=displaySection}
+        if(previousVisited!==unitControl.visited.size){for(let i=0;i<treeUnits.length;i++)visitedAttribute.array[i]=!mobile&&!stats.performanceTier&&unitControl.visited.has(aboutUnits[treeUnits[i]].id)?1:0;visitedAttribute.needsUpdate=true;previousVisited=unitControl.visited.size;stats.visited=[...unitControl.visited]}
+
+        if(!introDone){const t=(now-introStarted)/1000;treeMaterial.uniforms.uReveal.value=THREE.MathUtils.clamp((t-.25)/.4,0,1);pmat.uniforms.uGrow.value=THREE.MathUtils.clamp((t-.65)/.35,0,1);lmat.uniforms.uIntro.value=pmat.uniforms.uGrow.value;if(t>=1)unitControl.skipIntro()}
+        const hover=aboutUnits.findIndex(u=>u.id===unitControl.hover),selected=aboutUnits.findIndex(u=>u.id===unitControl.selected),highlight=selected>=0?selected:hover;
+        treeMaterial.uniforms.uHover.value=hover;treeMaterial.uniforms.uSelected.value=selected;
+        const age=now-unitControl.hoverAt,phase=motionEnabled&&!document.hidden&&selected<0&&hover>=0&&age>=80&&age<=240?1-(age-80)/160:-1;
+        treeMaterial.uniforms.uPhase.value=phase;stats.transmission=phase>=0?{id:aboutUnits[hover].id,phase,distance:phase*paths[hover].total}:null;
+        stats.unitHover=unitControl.hover;stats.unitSelected=unitControl.selected;
+        if(highlight!==previousHighlight){aboutUnits.forEach((u,i)=>{somas.setColorAt(i,i===highlight?green:dimGreen)});somas.instanceColor.needsUpdate=true;previousHighlight=highlight}
+        camera.updateMatrixWorld(true);camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+        let cardRect=null;
+        if(selected>=0){
+          projection.copy(unitWorld[selected]).project(camera);
+          const sx=(projection.x*.5+.5)*innerWidth,sy=(-projection.y*.5+.5)*innerHeight;
+          const width=cardElement.offsetWidth,height=cardElement.offsetHeight,padding=mobile?16:24;
+          const preferred=sx+38+width<=innerWidth-padding?sx+38:sx-width-38;
+          cardElement.style.position='absolute';cardElement.style.left=`${THREE.MathUtils.clamp(preferred,padding,Math.max(padding,innerWidth-width-padding))}px`;
+          cardElement.style.top=`${THREE.MathUtils.clamp(sy-height/2,padding,Math.max(padding,innerHeight-height-padding))}px`;
+          cardRect=cardElement.getBoundingClientRect();
+        }
+        let visibleCount=0;leader.style.display='none';
+        aboutUnits.forEach((unit,i)=>{
+          projection.copy(unitWorld[i]).project(camera);viewPoint.copy(unitWorld[i]).applyMatrix4(camera.matrixWorldInverse);
+          const visible=!panorama&&Number(unit.id[0])-1===section&&viewPoint.z<0&&projection.z>=-1&&projection.z<=1&&Math.abs(projection.x)<=1&&Math.abs(projection.y)<=1;
+          const button=unitControl.buttons.get(unit.id);button.hidden=!visible;
+          if(!visible){if(unitControl.hover===unit.id)unitControl.clearHover();return}
+          visibleCount++;const x=(projection.x*.5+.5)*innerWidth,y=(-projection.y*.5+.5)*innerHeight;button.style.left=`${x}px`;button.style.top=`${y}px`;
+          const label=button.firstElementChild;label.style.marginLeft=`${THREE.MathUtils.clamp(x,128,Math.max(128,innerWidth-128))-x}px`;label.style.bottom=y<75?'auto':'';label.style.top=y<75?'34px':'';
+          if(i===selected){const endX=THREE.MathUtils.clamp(x,cardRect.left,cardRect.right),endY=THREE.MathUtils.clamp(y,cardRect.top,cardRect.bottom);leader.style.display='block';leaderLine.setAttribute('x1',x);leaderLine.setAttribute('y1',y);leaderLine.setAttribute('x2',endX);leaderLine.setAttribute('y2',endY)}
+        });
+        if(selected<0)leader.style.display='none';stats.unitsVisible=visibleCount;
+      }
+      // M8b：真实结构拟合，微尘不决定取景，避免包围盒空角拉远镜头。
+      const panoramaBounds=new THREE.Box3(),boundPoint=new THREE.Vector3();
+      const panoramaArrays=[positions,linePositions,treePositions];
+      for(const array of panoramaArrays){
+        for(let i=0;i<array.length;i+=3)panoramaBounds.expandByPoint(boundPoint.set(array[i],array[i+1],array[i+2]));
+      }
+      for(const point of unitWorld)panoramaBounds.expandByPoint(point);
+      panoramaBounds.expandByScalar(2); // 胞体、细环与光晕余量。
+      const panoramaCenter=panoramaBounds.getCenter(new THREE.Vector3());
+      // 延续 hero 朝向 z 的层叠关系，水平展开五簇，取消俯视导致的上浮。
+      const panoramaDirection=new THREE.Vector3(.85,0,1).normalize();
+      const panoramaRight=new THREE.Vector3().crossVectors(new THREE.Vector3(0,1,0),panoramaDirection).normalize();
+      const panoramaUp=new THREE.Vector3().crossVectors(panoramaDirection,panoramaRight).normalize();
+      const panoramaVertices=[];
+      const recordPanoramaPoint=point=>{
+        boundPoint.copy(point).sub(panoramaCenter);
+        panoramaVertices.push(boundPoint.dot(panoramaRight),boundPoint.dot(panoramaUp),boundPoint.dot(panoramaDirection));
+      };
+      for(const array of panoramaArrays)for(let i=0;i<array.length;i+=3){boundPoint.set(array[i],array[i+1],array[i+2]);recordPanoramaPoint(boundPoint)}
+      for(const point of unitWorld)recordPanoramaPoint(point);
+      const panoramaProjection=new Float32Array(panoramaVertices);
+      let panoramaMinDepth=Infinity,panoramaMaxDepth=-Infinity;
+      for(let i=2;i<panoramaProjection.length;i+=3){panoramaMinDepth=Math.min(panoramaMinDepth,panoramaProjection[i]);panoramaMaxDepth=Math.max(panoramaMaxDepth,panoramaProjection[i])}
+      const panoramaFocusWidth=Math.max(NET_CONFIG.budget.focusWidth,(panoramaMaxDepth-panoramaMinDepth)*.6);
+      const panoramaPosition=new THREE.Vector3(),panoramaTarget=new THREE.Vector3();
+      const regularPosition=new THREE.Vector3(),regularTarget=new THREE.Vector3(),viewTarget=new THREE.Vector3();
+      const fitPanorama=()=>{
+        const tangent=Math.tan(THREE.MathUtils.degToRad(camera.fov/2));
+        const topbar=document.querySelector('.topbar').getBoundingClientRect();
+        const footer=document.querySelector('.footer').getBoundingClientRect();
+        const topSpace=Math.min(innerHeight*.3,Math.max(70,topbar.bottom+20));
+        const bottomSpace=Math.min(innerHeight*.35,Math.max(footer.height+20,100));
+        const top=1-2*topSpace/innerHeight,bottom=-1+2*bottomSpace/innerHeight;
+        const halfHeight=Math.min(top,-bottom),width=.72,margin=2;
+        const horizontal=tangent*camera.aspect*width,vertical=tangent*halfHeight;
+        let minX,maxX,minY,maxY;
+        // 顶点约束形成允许的平移区间，交集存在即完整入画；仅初始化/resize 执行。
+        const fits=distance=>{
+          minX=minY=-Infinity;maxX=maxY=Infinity;
+          for(let i=0;i<panoramaProjection.length;i+=3){
+            const px=panoramaProjection[i],py=panoramaProjection[i+1],depth=distance-panoramaProjection[i+2]-margin;
+            if(depth<=0)return false;
+            minX=Math.max(minX,px+margin-horizontal*depth);maxX=Math.min(maxX,px-margin+horizontal*depth);
+            minY=Math.max(minY,py+margin-vertical*depth);maxY=Math.min(maxY,py-margin+vertical*depth);
+            if(minX>maxX||minY>maxY)return false;
+          }
+          return true;
+        };
+        let near=panoramaMaxDepth+margin,far=Math.max(700,near+1);
+        while(!fits(far))far*=2;
+        for(let i=0;i<24;i++){const mid=(near+far)/2;if(fits(mid))far=mid;else near=mid}
+        const distance=far;fits(distance);
+        panoramaTarget.copy(panoramaCenter).addScaledVector(panoramaRight,(minX+maxX)/2).addScaledVector(panoramaUp,(minY+maxY)/2);
+        panoramaPosition.copy(panoramaTarget).addScaledVector(panoramaDirection,distance);
+        // 极窄/矮视口距离可能越过原 far；只更新投影，不改变几何与降级策略。
+        camera.far=Math.max(700,distance+panoramaBounds.min.distanceTo(panoramaBounds.max)+50);camera.updateProjectionMatrix();
+        Object.assign(stats,{panoramaDistance:distance,panoramaFocusWidth,panoramaBounds:{min:panoramaBounds.min.toArray(),max:panoramaBounds.max.toArray()},panoramaViewport:{top,bottom,width,halfHeight},panoramaTarget:panoramaTarget.toArray()});
+      };
+      fitPanorama();
+      addEventListener('resize',fitPanorama,{passive:true});
+      if('ResizeObserver' in window){const observer=new ResizeObserver(fitPanorama);observer.observe(document.querySelector('.topbar'));observer.observe(document.querySelector('.footer'))}
+      const pulseValues=new Float32Array(8),pulseNodes=new Float32Array(8);
+      stats.performanceTier=0;let slowWindows=0;
+      let last=performance.now(),elapsed=0,frameWindow=last,windowFrames=0;
+      chooseMotion=choice=>{motionChoice=choice;try{sessionStorage.setItem(motionChoiceKey,choice)}catch{}motionEnabled=choice==='enable';notice.hidden=true;quietGlow.style.opacity=motionEnabled?'0':'1';syncMotionStats();if(motionEnabled){pmat.uniforms.uMotion.value=1;lmat.uniforms.uMotion.value=1;if(bloom&&!stats.performanceTier)bloom.strength=.72;if(!introDone)startIntro();else{pmat.uniforms.uGrow.value=1;lmat.uniforms.uIntro.value=1}}else{pulses=[];lastBurst=elapsed;pmat.uniforms.uMotion.value=0;lmat.uniforms.uMotion.value=0;if(bloom)bloom.strength=0;unitControl.skipIntro();}};
+      document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
+      document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
+
+      window.__DBG__={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get composer(){return composer},get lines(){return lines},get network(){return {networkPaths,clusterSomas,membraneRanges,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels}}};
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
+        const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
+        const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
+          // 每区固定内容取景；滚动焦面仍沿五簇路径变化，鼠标只叠加小幅环视。
+          const distance=Math.max(mobile?62:46,13/(Math.tan(THREE.MathUtils.degToRad(53/2))*camera.aspect));
+          regularPosition.set(from[0],from[1]+4,from[2]+distance);regularTarget.set(from[0],from[1]+4,from[2]);
+          camera.position.copy(regularPosition).lerp(panoramaPosition,panoramaBlend);
+          viewTarget.copy(regularTarget).lerp(panoramaTarget,panoramaBlend);camera.lookAt(viewTarget);
+          if(window.__TUNER_CAM__){camera.position.set(window.__TUNER_CAM__.p[0],window.__TUNER_CAM__.p[1],window.__TUNER_CAM__.p[2]);viewTarget.set(window.__TUNER_CAM__.t[0],window.__TUNER_CAM__.t[1],window.__TUNER_CAM__.t[2]);camera.lookAt(viewTarget);}
+          stats.cameraTarget=viewTarget.toArray();
+          if(animate&&!mobile&&!stats.panoramaActive){gaze.x+=(gaze.targetX-gaze.x)*.05;gaze.y+=(gaze.targetY-gaze.y)*.05;gazeRig.rotation.set(0,0,0);camera.rotateY(gaze.x);camera.rotateX(-gaze.y)}else{gazeRig.rotation.set(0,0,0);gaze.x=0;gaze.y=0}
+          stats.gaze=[+gaze.x.toFixed(4),+gaze.y.toFixed(4)];
+          const movingFocus=motionEnabled&&!mobile&&!stats.performanceTier;const regularDepth=movingFocus?distance-12+local*24:distance;const depth=THREE.MathUtils.lerp(regularDepth,stats.panoramaDistance,panoramaBlend);
+          for(const mat of [pmat,lmat]){mat.uniforms.uFocusDepth.value=depth;mat.uniforms.uFocusWidth.value=THREE.MathUtils.lerp(NET_CONFIG.budget.focusWidth,panoramaFocusWidth,panoramaBlend);mat.uniforms.uFocusSize.value=movingFocus?1:0;mat.uniforms.uTime.value=motionEnabled?elapsed:0}
+          stats.focusDepth=depth;stats.focusMode=movingFocus?'scroll':'fixed';stats.scrollProgress=progress;
+        }
+        // 无操作六秒后，仅一枚背景点与直接邻接轻响应；输入/弹窗/后台立即清零。
+        if(!animate||mobile||now-unitControl.lastInput<6000){unitControl.idleNode=-1}
+        else if(unitControl.idleNode<0&&now>=unitControl.nextIdle){unitControl.idleNode=c*per+Math.floor(Math.random()*per);unitControl.idleAt=now;unitControl.nextIdle=now+4000+Math.random()*3000}
+        let idleStrength=0;
+        if(unitControl.idleNode>=0){const age=(now-unitControl.idleAt)/1600;if(age>=1)unitControl.idleNode=-1;else idleStrength=Math.sin(age*Math.PI)*.65}
+        pulseValues.fill(0);pulseNodes.fill(0);pulses=[];
+        if(unitControl.idleNode>=0){pulseValues[0]=idleStrength;pulseNodes[0]=unitControl.idleNode;pulses.push({node:unitControl.idleNode})}
+        stats.idlePulse=unitControl.idleNode>=0?{node:unitControl.idleNode,phase:(now-unitControl.idleAt)/1600}:null;
+        for(const mat of [pmat,lmat]){mat.uniforms.uPulse.value=pulseValues;mat.uniforms.uPulseNode.value=pulseNodes;mat.uniforms.uPulseCount.value=pulses.length}
+        const lightState=lightClock.update(elapsed,animate);sharedLightUniforms.uStorm.value=lightState.stormAge;
+        sharedLightUniforms.uBreath.value=motionEnabled?1+NET_CONFIG.light.breathAmplitude*Math.sin(elapsed*Math.PI*2/NET_CONFIG.light.breathPeriod):1;
+        for(const mat of [pmat,lmat,dmat])mat.uniforms.uMotion.value=animate?1:0;
+        sharedLightUniforms.uHoverGain.value=animate&&!mobile&&!stats.performanceTier?NET_CONFIG.light.hoverGain:0;
+        dmat.uniforms.uTime.value=motionEnabled?elapsed:0;
+        stats.lightActive=lightState.active;stats.lightPaused=!animate;stats.pulses=pulses.length+lightState.active;stats.cam=[+camera.position.x.toFixed(2),+camera.position.y.toFixed(2),+camera.position.z.toFixed(2)];document.querySelector('#readout-nodes').textContent=`${stats.networkRoots}`;document.querySelector('#readout-lines').textContent=`${L.toLocaleString('zh-CN')}`;
+        gazeRig.updateMatrixWorld(true);updateUnits(now);if(document.hidden)return;
+        if(composer)composer.render();else renderer.render(scene,camera);windowFrames++;if(now-frameWindow>=1000){fps=Math.round(windowFrames*1000/(now-frameWindow));stats.fps=fps;if(fps<45&&!document.hidden&&!modalOpen){slowWindows++}else{slowWindows=0}if(slowWindows>=3&&stats.performanceTier<3){stats.performanceTier++;if(stats.performanceTier===1){composer=null;stats.bloomOn=false}else if(stats.performanceTier===2){renderer.setPixelRatio(1);pmat.uniforms.uPixelRatio.value=1}else{pg.setDrawRange(0,Math.floor(N*.6));dg.setDrawRange(0,0);stats.backgroundVisible=Math.floor(N*.6)}previousVisited=-1;slowWindows=0}stats.fpsSamples.push(fps);if(stats.fpsSamples.length>60)stats.fpsSamples.shift();windowFrames=0;frameWindow=now}
+      });
+      function ease(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+      addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;fitPanorama();renderer.setSize(innerWidth,innerHeight);if(composer)composer.setSize(innerWidth,innerHeight)},{passive:true});
+      const observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting)setCluster(Number(e.target.closest('.cluster-section').dataset.cluster))},{rootMargin:'-42% 0px -42% 0px'});document.querySelectorAll('.cluster-anchor').forEach(x=>observer.observe(x));
+      }catch(e){window.__ERRS__.push(e.stack||String(e));console.error(e);fallback()}
+    if(motionEnabled){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
+    }
+  </script>
+
+<div id="tuner-panel">
+  <h3>NEURON TUNER</h3>
+  <div class="row"><label>环粗细 ringTubeRadius <b id="v-tube"></b></label>
+    <input id="s-tube" type="range" min="0.008" max="0.045" step="0.001"></div>
+  <div class="row"><label>接触面 rootRingRatio <b id="v-ratio"></b></label>
+    <input id="s-ratio" type="range" min="2" max="12" step="0.1"></div>
+  <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
+    <input id="s-tip" type="range" min="0.010" max="0.045" step="0.001"></div>
+  <div class="row"><label>环大小 ringScale <b id="v-scale"></b></label>
+    <input id="s-scale" type="range" min="1.00" max="1.45" step="0.01"></div>
+  <button id="t-copy">复制当前参数</button>
+  <div class="hint">拖动即重建，参数写进地址栏，可直接分享。</div>
+</div>
+<script>
+window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo({top: 480, behavior:'instant'}); }, 900); });
+(function(){
+  function init(){
+    var T = window.__TUNER__;
+    if (!T || !window.__REBUILD__) { setTimeout(init, 120); return; }
+    // 自驱动渲染：正式页的 setAnimationLoop 在剥离滚动后会停，这里手动跑
+    setInterval(function(){
+      var d = window.__DBG__;
+      if (!d || !d.renderer) return;
+      var cam = d.camera;
+      cam.position.set(-37, 19, 10);
+      cam.lookAt(-44, 15, -2);
+      try { if (d.composer) d.composer.render(); else d.renderer.render(d.scene, cam); } catch(e) { window.__ERRS__.push(e.stack||String(e));console.error(e); }
+    }, 33);
+    var map = {tube:'v-tube', ratio:'v-ratio', tip:'v-tip', scale:'v-scale'};
+    var sliders = {tube:'s-tube', ratio:'s-ratio', tip:'s-tip', scale:'s-scale'};
+    var fmt = function(v){ return v < 1 ? v.toFixed(3) : v.toFixed(2); };
+    var pending={},frame=0;
+    var fields={tube:'ringTubeRadius',ratio:'rootRingRatio',tip:'tipRadius',scale:'ringScale'};
+    Object.keys(map).forEach(function(k){
+      var el = document.getElementById(sliders[k]);
+      el.value = T[k];
+      document.getElementById(map[k]).textContent = fmt(T[k]);
+      el.addEventListener('input', function(){
+        var v = parseFloat(el.value);
+        document.getElementById(map[k]).textContent = fmt(v);
+        T[k]=v;pending[fields[k]]=v;
+        var H = new URLSearchParams(location.hash.slice(1));
+        Object.keys(fields).forEach(function(key){ H.set(key,T[key]); });
+        history.replaceState(null,'','#'+H.toString());
+        if(!frame)frame=requestAnimationFrame(function(){
+          frame=0;var changes=pending;pending={};window.__REBUILD__(changes);
+        });
+      });
+    });
+    document.getElementById('t-copy').addEventListener('click', function(){
+      var H = new URLSearchParams(location.hash.slice(1));
+      var text = 'ringTubeRadius=' + (parseFloat(H.get('tube'))||T.tube) + '  rootRingRatio=' + (parseFloat(H.get('ratio'))||T.ratio) + '  tipRadius=' + (parseFloat(H.get('tip'))||T.tip) + '  ringScale=' + (parseFloat(H.get('scale'))||T.scale);
+      var btn = document.getElementById('t-copy');
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){ btn.textContent='已复制 ✓'; }).catch(function(){ btn.textContent=text; });
+      else btn.textContent = text;
+      setTimeout(function(){ btn.textContent='复制当前参数'; }, 1600);
+    });
+  }
+  init();
+})();
+</script>
+</body>
+</html>
