@@ -485,13 +485,13 @@
       seed:20261019, desktopNodes:40, mobileNodes:40,
       form:{somaRadii:[1.05,.86,.94,.78,.90],somaDepth:[8,-8,-30,-16,0],
         minArms:5,maxArms:6,minLength:11,maxLength:19,bendMin:.16,bendMax:.34,
-        branchChance:.55,ringScale:1.18,ringTubeRadius:.025,rootRingRatio:5.5,tipRadius:.02,opacity:.66,levelLightDecay:.73,
+        branchChance:.55,ringScale:.725,ringTubeRadius:.008,rootRingRatio:5.5,tipRadius:.01,contactAngle:150,contactSmooth:5,contactSpread:1,opacity:.66,levelLightDecay:.73,
         desktopSamples:40,mobileSamples:24,desktopRadial:7,mobileRadial:5},
       light:{interval:2.65,phaseStep:.47,jitter:.38,strengthMin:.78,strengthMax:1.18,
         spikeCore:.24,spikeTravel:.28,spikeTailSamples:8,spikeTailStep:.018,spikeGain:2.4,cascadeRelays:3,cascadeSpacing:.065,converge:2.1,cascade:2.6,stormMin:12,stormMax:18,stormDuration:2.5,stormStep:.18,stormPulse:.10,stormFade:.85,bridgeGain:1.5,
         breathAmplitude:.03,breathPeriod:8,hoverGain:.12,hoverRadius:.16},
       atmosphere:{desktopDust:48,mobileDust:16,dustOpacity:.09},
-      budget:{maxEvents:40,focusWidth:15,farOpacity:.10,meshFraction:.6}
+      budget:{maxEvents:40,focusWidth:15,farOpacity:.04,meshFraction:.6}
     };
     const N=mobile?NET_CONFIG.mobileNodes:NET_CONFIG.desktopNodes, K=5, per=Math.floor(N/K), canvas=document.querySelector('#network');
     const colors=Array.from({length:K},()=>new THREE.Color('#2de06a'));
@@ -513,15 +513,17 @@ window.__TUNER_CAM__ = { p: [-37, 19, 10], t: [-44, 15, -2] };
       const num = function(k, fb){ const v = parseFloat(H.get(k)); return Number.isFinite(v) ? v : fb; };
       form.ringTubeRadius = num('tube', form.ringTubeRadius);
       form.rootRingRatio = 5.5;
-      form.contactAngle = THREE.MathUtils.clamp(num('angle',45),20,150);
-      form.contactSmooth = THREE.MathUtils.clamp(num('smooth',.5),-4,5);
+      form.contactAngle = THREE.MathUtils.clamp(num('angle',form.contactAngle),20,175);
+      form.contactSmooth = THREE.MathUtils.clamp(num('smooth',form.contactSmooth),-4,5);
       form.tipRadius      = num('tip', form.tipRadius);
       form.ringScale      = num('scale', form.ringScale);
-      window.__TUNER__ = { tube: form.ringTubeRadius, angle: form.contactAngle, smooth: form.contactSmooth, tip: form.tipRadius, scale: form.ringScale };
+      form.contactSpread  = THREE.MathUtils.clamp(num('spread', form.contactSpread ?? 1), .3, 3);
+      window.__TUNER__ = { tube: form.ringTubeRadius, angle: form.contactAngle, smooth: form.contactSmooth, tip: form.tipRadius, scale: form.ringScale, spread: form.contactSpread ?? 1 };
     })();
 
 function generateNetwork(){
     const growthRandom=netSeeded(NET_CONFIG.seed);
+
 
     const networkPaths=[],linePositions=[],lineDistances=[],lineRoots=[],lineClusters=[],lineRoutes=[],lineBridges=[],lineLevels=[];
     const rootCount=1,maxDepth=1;
@@ -571,6 +573,21 @@ function generateNetwork(){
       }
       return [...content,...ambient].map(soma=>{const count=Math.floor(rr(form.minArms,form.maxArms+1));return {...soma,branches:Array.from({length:count},(_,i)=>dendrite(soma.center,soma.radius,soma.isContent?1:.36,soma.isContent,i,count)),paths:[]}});
     });
+    // Stable soma identity uses a separate hash, never the geometry random stream.
+    const somaRhythms=clusterSomas.flatMap((somas,c)=>somas.map((s,i)=>{
+      const id=s.isContent?CONTENT_UNITS[s.unit].id:`ambient-${c}-${i-somas.filter(a=>a.isContent).length}`;
+      const identity=s.isContent?Number(id[0])*16+Number(id.slice(2)):128+c*8+i-somas.filter(a=>a.isContent).length;
+      const code=1+(identity*4051+137)%65521;
+      const frequencyMultiplier=.55+1.2*code/65521,speedMultiplier=.7+.7*((code*29)%65521)/65521,phase=((code*43)%65521)/65521*Math.PI*2;
+      s.light={id,code,frequencyHz:frequencyMultiplier/NET_CONFIG.light.interval,frequencyMultiplier,speedMultiplier,phase};return s.light;
+    }));
+    function flowDistance(path,distance){
+      if(path.bridge)return distance;
+      const trunk=path.parent||path,join=trunk.cumulative.at(-1),span=trunk.fork.span;
+      const total=trunk.flowTotal??=Math.max(...trunk.children.map(p=>p.cumulative.at(-1))),split=trunk.flowSplit??=(join+span)/total;
+      if(!path.parent)return Math.min(split,distance/total);
+      const start=path.cumulative[0];return split+(1-split)*(distance-start)/(path.cumulative.at(-1)-start);
+    }
     // ID-only shape stream: never consumes the seeded branch/ambient stream.
     function membraneShape(soma){
       let hash=2166136261;for(const ch of CONTENT_UNITS[soma.unit].id)hash=Math.imul(hash^ch.charCodeAt(0),16777619)>>>0;
@@ -611,8 +628,6 @@ function generateNetwork(){
       // neighbouring rings after Float32 packing (world coordinates ~40).
       return (t+(lo+hi)/2)/2;
     }
-    window.__TUNER_EASE__=contactEase;
-    window.__TUNER_LENGTH_SCALE__=contactLengthScale;
     function membraneFrame(soma,angle){
       const point=membranePoint(soma,angle),tangent=membranePoint(soma,angle+1e-5).sub(membranePoint(soma,angle-1e-5)).normalize();
       return {point,tangent,out:new THREE.Vector3(tangent.y,-tangent.x,0),z:new THREE.Vector3(0,0,1)};
@@ -624,24 +639,24 @@ function generateNetwork(){
         const original=new THREE.CatmullRomCurve3(b.controls,false,'centripetal');
         let curve=original;
         if(b.onRing){
-          const ringTube=b.radius*form.ringTubeRadius,lead=.18;
+          const ringTube=b.radius*form.ringTubeRadius*(form.ringScale/1.45),spread=THREE.MathUtils.clamp(form.contactSpread??1,.3,3),lead=.18*spread;
           b.angle=Math.atan2(b.ringDir.y,b.ringDir.x);b.membraneFrame=membraneFrame(soma,b.angle);
-          const frame=b.membraneFrame,tangent=frame.out.clone(),contactLength=Math.min(.12*contactLengthScale(),(original.getLength()-original.getLengths(200)[form.contactSmooth>2?122:62])*.25*.60),start=frame.point.clone().addScaledVector(frame.out,contactLength),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
+          const frame=b.membraneFrame,tangent=frame.out.clone(),contactLength=Math.min(.12*contactLengthScale()*spread,(original.getLength()-original.getLengths(200)[form.contactSmooth>2?122:62])*.25*.60*spread),start=frame.point.clone().addScaledVector(frame.out,contactLength),root=start.clone().addScaledVector(tangent,lead);b.contactDirection=tangent;b.contactStart=start;
           let join=.08+.12*THREE.MathUtils.clamp((form.contactSmooth-2)/3,0,1);while(join<(form.contactSmooth>2?.6:.3)&&original.getPoint(join).sub(root).dot(tangent)<ringTube*form.rootRingRatio*2)join+=.01;
           const end=original.getPoint(join),handle=root.distanceTo(end)*.4;
           const neck=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(tangent,lead/3),root.clone().addScaledVector(tangent,-lead/3),root);
           const collar=new THREE.CubicBezierCurve3(root,root.clone().addScaledVector(tangent,handle),end.clone().addScaledVector(original.getTangent(join),-handle),end);
           const rest=new THREE.Curve();rest.getPoint=(t,target=new THREE.Vector3())=>original.getPoint(join+(1-join)*t,target);
           curve=new THREE.CurvePath();curve.add(neck);curve.add(collar);curve.add(rest);
-          b.lead=neck.getLength();b.root=root;b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:.4,landing:frame.point.toArray(),direction:tangent.toArray()};
+          b.lead=neck.getLength();b.root=root;b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:THREE.MathUtils.lerp(.18,.62,form.contactSmooth),landing:frame.point.toArray(),direction:tangent.toArray()};b.contactMetrics={lead,neckLength:neck.getLength(),collarLength:collar.getLength(),handle,handleRatio:.4,landing:frame.point.toArray(),direction:tangent.toArray()};
         }
         // A single shared trunk ends at 25–40% of the original arc length.
         const split=rr(.25,.40),whole=curve,trunk=new THREE.Curve();
         trunk.getPoint=(t,target=new THREE.Vector3())=>whole.getPointAt(t*split,target);
-        const ringTube=soma.radius*form.ringTubeRadius*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
+        const ringTube=soma.radius*form.ringTubeRadius*(form.ringScale/1.45)*(soma.isContent?1:.6),route=(si+i/soma.branches.length)/clusterSomas[c].length;
         // Keep child starts above .02, including small ambient somas.
         const path=addPath(trunk,c,soma.isContent?0:4,Math.max(ringTube*form.rootRingRatio,form.tipRadius*2.2),Math.max(ringTube*2.2,form.tipRadius*1.1/.55),route,0,soma.unit??-1);
-        path.trunk=true;path.split=split;path.children=[];
+        path.root=soma.light.code;path.trunk=true;path.split=split;path.children=[];
         if(b.onRing){path.rootLead=b.lead;path.ringTube=ringTube;path.ringRoot=b.root;path.membraneBranch=b;b.path=path;
           path.frame={normal:b.membraneFrame.tangent.clone()};}
         const joint=trunk.getPointAt(1),T=trunk.getTangentAt(1),reference=Math.abs(T.z)<.9?new THREE.Vector3(0,0,1):new THREE.Vector3(0,1,0);
@@ -654,7 +669,7 @@ function generateNetwork(){
           const end=joint.clone().addScaledVector(T,restLength*.90).addScaledVector(normal,sign*restLength*.38).addScaledVector(binormal,rr(-.12,.12)*restLength);
           const curve=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(direction,restLength*.32),end.clone().addScaledVector(T,-restLength*.30).addScaledVector(binormal,sign*restLength*.14),end);
           const child=addPath(curve,c,soma.isContent?0:4,childRadius,form.tipRadius,route,path.cumulative.at(-1)+span,soma.unit??-1);
-          child.child=true;child.sign=sign;child.parent=path;child.frame={normal:normal.clone().addScaledVector(direction,-normal.dot(direction)).normalize()};
+          child.root=soma.light.code;child.child=true;child.sign=sign;child.parent=path;child.frame={normal:normal.clone().addScaledVector(direction,-normal.dot(direction)).normalize()};
           child.frame.binormal=new THREE.Vector3().crossVectors(direction,child.frame.normal);
           path.children.push(child);soma.paths.push(child);
         }
@@ -721,8 +736,8 @@ function generateNetwork(){
       for(let i=0;i<segments;i++)for(let j=0;j<radial;j++){
         const a=i*(radial+1)+j,b=a+radial+1;
         for(const n of [a,b,a+1,b,b+1,a+1]){
-          const v=vertices[n],sample=Math.floor(n/(radial+1));linePositions.push(v.x,v.y,v.z);lineDistances.push(cumulative[sample]);
-          lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
+          const v=vertices[n],sample=Math.floor(n/(radial+1));linePositions.push(v.x,v.y,v.z);lineDistances.push(flowDistance(path,cumulative[sample]));
+          lineRoots.push(path.root);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
         }
       }
     }
@@ -755,8 +770,8 @@ function generateNetwork(){
         }
         path.fork.patches.push(rings);
         for(let i=0;i<steps;i++)for(let j=0;j<radial;j++)for(const [row,col] of [[i,j],[i+1,j],[i,j+1],[i+1,j],[i+1,j+1],[i,j+1]]){
-          const v=rings[row][col];linePositions.push(v.x,v.y,v.z);lineDistances.push(path.cumulative.at(-1)+row/steps*span);
-          lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(path.level);
+          const v=rings[row][col];linePositions.push(v.x,v.y,v.z);lineDistances.push(flowDistance(path,path.cumulative.at(-1)+row/steps*span));
+          lineRoots.push(path.root);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(path.level);
         }
       }
     }
@@ -766,7 +781,7 @@ function generateNetwork(){
     // the outlet is the actual first trunk ring, not an intersecting tube.
     const membraneJunctions=[],membraneRanges=[];
     function membraneSurface(soma){
-      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius,R=soma.radius*form.ringScale;
+      const vertexStart=linePositions.length/3,t=soma.radius*form.ringTubeRadius*(form.ringScale/1.45),R=soma.radius*form.ringScale;
       const radial=8,along=4,steps=12,beta=Math.PI/2;
       const branches=[...soma.branches].sort((a,b)=>a.angle-b.angle);
       const gaps=branches.map((b,i)=>branches[(i+1)%branches.length].angle-b.angle+(i===branches.length-1?Math.PI*2:0));
@@ -774,7 +789,7 @@ function generateNetwork(){
       const delta=requested/2;
       soma.contactOpening={requested:form.contactAngle,effective:THREE.MathUtils.radToDeg(2*delta),minGap:THREE.MathUtils.radToDeg(minGap),gaps:gaps.map(a=>THREE.MathUtils.radToDeg(a))};
       function surface(angle,phi){const f=membraneFrame(soma,angle);return f.point.addScaledVector(f.out,t*Math.cos(phi)).addScaledVector(f.z,t*(Math.abs(phi)===Math.PI?0:Math.sin(phi)));}
-      function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
+      function emit(a,b,c,path){for(const v of [a,b,c]){linePositions.push(v.x,v.y,v.z);lineDistances.push(0);lineRoots.push(path.root);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(0);lineLevels.push(0);}}
       function strip(rows,path){for(let i=0;i<rows.length-1;i++)for(let j=0;j<rows[i].length-1;j++){emit(rows[i][j],rows[i+1][j],rows[i][j+1],path);emit(rows[i+1][j],rows[i+1][j+1],rows[i][j+1],path);}}
       const boundaries=[];
       for(const b of branches){
@@ -843,14 +858,15 @@ function generateNetwork(){
     for(const {point,size,path} of terminalStars)for(let arm=0;arm<3;arm++){
       const angle=arm*Math.PI*2/3,dir=new THREE.Vector3(Math.cos(angle),Math.sin(angle),0),side=new THREE.Vector3(-dir.y,dir.x,0);
       for(const v of [point.clone().addScaledVector(side,size*.2),point.clone().addScaledVector(side,-size*.2),point.clone().addScaledVector(dir,size)]){
-        linePositions.push(...v.toArray());lineDistances.push(path.cumulative.at(-1));lineRoots.push(0);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
+        linePositions.push(...v.toArray());lineDistances.push(flowDistance(path,path.cumulative.at(-1)));lineRoots.push(path.root);lineClusters.push(path.cluster);lineRoutes.push(path.route);lineBridges.push(path.bridge?1:0);lineLevels.push(path.level);
       }
     }
     const L=networkPaths.length;
 
-return {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth};
+
+return {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth,somaRhythms};
 }
-let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth}=generateNetwork();
+let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth,somaRhythms}=generateNetwork();
     // 编排状态按簇固定分配；每帧仅更新 5 个 vec4，无几何重建、CPU 顶点扫描或计时器。
     function createLightClock(){
       const random=netSeeded(NET_CONFIG.seed+73),cfg=NET_CONFIG.light;
@@ -863,12 +879,12 @@ let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineCluster
         if(!enabled){events.forEach(e=>e.set(0,99,0,0));return {stormAge:99,active:0}}
         const delta=Math.max(0,time-lastTime);lastTime=time;let active=0;
         for(let c=0;c<K;c++){
-          events[c].y+=delta;
+          events[c].y=time;
           if(time>=next[c]){const kind=serial[c]%3+1,root=Math.floor(serial[c]/3)%rootCount;serial[c]++;
-            events[c].set(kind,0,cfg.strengthMin+random()*(cfg.strengthMax-cfg.strengthMin),root);
+            events[c].set(kind,time,cfg.strengthMin+random()*(cfg.strengthMax-cfg.strengthMin),root);
             record(['','spike-out','converge','cascade'][kind],c,time,['','outward','inward','fold'][kind]);
             next[c]=time+cfg.interval+(random()-.5)*cfg.jitter}
-          if(events[c].y<['',cfg.spikeTravel,cfg.converge,cfg.cascade][events[c].x])active++
+          if(events[c].x>0)active++
         }
         if(time>=nextStorm){stormAt=time;record('rare-storm',0,time,'bridge');nextStorm=time+cfg.stormMin+random()*(cfg.stormMax-cfg.stormMin)}
         return {stormAge:time-stormAt,active:active+(time-stormAt<cfg.stormDuration?1:0)}
@@ -880,11 +896,16 @@ let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineCluster
     const lightGLSL=`uniform vec4 uEvent[5];uniform float uStorm,uMotion;
       float eventSignal(float distance,float root,float cluster,float route,float bridge){
         vec4 e=uEvent[0];for(int i=0;i<5;i++){if(abs(cluster-float(i))<.1)e=uEvent[i];}
-        float selected=1.-step(.1,abs(root-e.w));float q=distance/${Math.max(...networkPaths.map(p=>p.cumulative.at(-1))).toFixed(4)};
+        float selected=1.;float q=distance;
+        float frequency=(.55+1.2*root/65521.)/${NET_CONFIG.light.interval};
+        float speed=.7+.7*mod(root*29.,65521.)/65521.;float phase=mod(root*43.,65521.)/65521.*6.28318530718;
+        float breath=.22+.78*pow(.5+.5*sin(e.y*frequency*6.28318530718+phase),2.);
         float wave=0.;
-        if(e.x<1.5&&e.x>.5){float t=e.y/${NET_CONFIG.light.spikeTravel};for(int i=0;i<${NET_CONFIG.light.spikeTailSamples};i++){float lag=float(i)*${NET_CONFIG.light.spikeTailStep};wave=max(wave,(1.-smoothstep(.008,.025,abs(q-(t-lag))))*exp(-float(i)*.34));}wave*= ${NET_CONFIG.light.spikeGain}*step(0.,t)*step(t,1.15);}
-        else if(e.x<2.5&&e.x>1.5){float t=e.y/${NET_CONFIG.light.converge};wave=(1.-smoothstep(.03,.21,abs(q-(1.-t))))*step(t,1.15);}
-        else if(e.x>2.5){float t=e.y/${NET_CONFIG.light.cascade};float head=1.-abs(2.*pow(clamp(t,0.,1.),.72)-1.);for(int i=0;i<${NET_CONFIG.light.cascadeRelays};i++){float relay=float(i)*${NET_CONFIG.light.cascadeSpacing};wave=max(wave,(1.-smoothstep(.012,.042,abs(q-head+route*.025+relay)))*(1.-float(i)*.18));}wave*=1.7*step(t,1.);}
+        if(e.x>.5){for(int i=0;i<2;i++){
+          float cycle=mod(e.y*speed/1.8+phase/6.28318530718+float(i)*.85,2.);
+          float head=1.-abs(cycle-1.);float gain=cycle<=1.?1.:.78;
+          wave=max(wave,(1.-smoothstep(.012,.042,abs(q-head)))*gain);
+        }wave*=1.7*breath;}
         float stormTime=uStorm-cluster*${NET_CONFIG.light.stormStep};float storm=0.;
         if(stormTime>=0.&&stormTime<${NET_CONFIG.light.stormDuration}){float t=stormTime/${NET_CONFIG.light.stormDuration};storm=(1.-smoothstep(.03,.16,abs(mix(q,distance,bridge)-t)))*( .65+.35*pow(max(0.,sin(stormTime*29.)),4.));}
         return (wave*e.z*selected*(1.-bridge)+storm*1.8*(1.+bridge*${NET_CONFIG.light.bridgeGain}))*uMotion;
@@ -902,7 +923,7 @@ let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineCluster
     canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer?.setAnimationLoop(null);fallback()});
     try{
       renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1.15:1.5));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x02060f,1);
-      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0012);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(-34,11,mobile?62:36);camera.lookAt(-34,11,-5);const gazeRig=new THREE.Group();scene.add(gazeRig);gazeRig.add(camera);
+      scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x02060f,.0025);camera=new THREE.PerspectiveCamera(53,innerWidth/innerHeight,.1,700);camera.position.set(-34,11,mobile?62:36);camera.lookAt(-34,11,-5);const gazeRig=new THREE.Group();scene.add(gazeRig);gazeRig.add(camera);
       const sharedLightUniforms={uEvent:{value:lightEvents},uStorm:{value:99},uPointer:{value:pointerNDC},uHoverGain:{value:NET_CONFIG.light.hoverGain},uHoverRadius:{value:NET_CONFIG.light.hoverRadius},uBreath:{value:1}};
       const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aNode',new THREE.Float32BufferAttribute(Array.from({length:N},(_,i)=>i),1));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));pg.setAttribute('aCluster',new THREE.BufferAttribute(clusterIds,1));pg.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));pg.setAttribute('aPhase',new THREE.BufferAttribute(phases,1));pg.setAttribute('aColor',new THREE.BufferAttribute(nodeColors,3));pg.setAttribute('aDistance',new THREE.BufferAttribute(nodeDistances,1));pg.setAttribute('aRoot',new THREE.BufferAttribute(nodeRoots,1));
       const pmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{...sharedLightUniforms,uFocusDepth:{value:45},uFocusWidth:{value:NET_CONFIG.budget.focusWidth},uFocusSize:{value:1},uTime:{value:0},uGrow:{value:0},uMotion:{value:motionEnabled?1:0},uPulse:{value:new Float32Array(8)},uPulseNode:{value:new Float32Array(8)},uPulseCount:{value:0},uActive:{value:0},uFocus:{value:0},uPixelRatio:{value:Math.min(devicePixelRatio||1,mobile?1.15:1.5)}},vertexShader:`
@@ -915,7 +936,7 @@ let {growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineCluster
           vec4 e=uEvent[0];for(int i=0;i<5;i++){if(abs(aCluster-float(i))<.1)e=uEvent[i];}
           float core=(1.-step(.1,aDistance))*(1.-step(.1,abs(aRoot-e.w)))*(1.-smoothstep(0.,${NET_CONFIG.light.spikeCore},e.y))*step(.5,e.x)*uMotion;
           float optical=exp(-abs(-mv.z-uFocusDepth)/uFocusWidth);float focus=1.+uFocus*max(0.,1.-abs(aCluster-uActive))*.65;
-          core+=stormCore(aDistance,aCluster)*2.;vHot=max(pulse,core*1.5);vLight=(.6+pulse*1.5+core*2.)*clusterPulse(aCluster)*uBreath*focus*(.16+.84*optical)*grow;vColor=aColor;
+          core+=stormCore(aDistance,aCluster)*2.;vHot=max(pulse,core*1.5);vLight=(.6+pulse*1.5+core*2.)*clusterPulse(aCluster)*uBreath*focus*(${NET_CONFIG.budget.farOpacity}+${1-NET_CONFIG.budget.farOpacity}*optical)*grow;vColor=aColor;
           gl_PointSize=clamp((1.+uFocusSize*(1.-optical)*.4)*aSize*(1.+vHot*.65)*uPixelRatio*(120./max(1.,-mv.z)),1.,26.);}`,
         fragmentShader:`varying vec3 vColor;varying float vLight,vHot;void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;float core=1.-smoothstep(.02,.24,d);float halo=exp(-d*12.);vec3 color=mix(vColor,vec3(.9,1.,.93),clamp(vHot*.55,0.,.88)*core);gl_FragColor=vec4(color*(.72+core*1.6+halo*.45)*vLight,core*.9+halo*.24);}`});points=new THREE.Points(pg,pmat);scene.add(points);
 function packNetwork(){
@@ -949,18 +970,18 @@ const lg=packNetwork();
         fragmentShader:`${lightGLSL}uniform float uIntro,uFocus,uActive,uBreath,uHoverGain,uHoverRadius;uniform vec2 uPointer;
           varying float vLevel,vDistance,vRoot,vCluster,vRoute,vBridge,vOptical,vNear;varying vec2 vScreen;
           void main(){float signal=eventSignal(vDistance,vRoot,vCluster,vRoute,vBridge);float hover=(1.-smoothstep(0.,uHoverRadius,length(vScreen-uPointer)))*uHoverGain*uMotion;
-            float focal=${NET_CONFIG.budget.farOpacity}+.84*vOptical;float focus=1.+uFocus*(1.-step(.1,abs(vCluster-uActive)))*.25;
+            float focal=${NET_CONFIG.budget.farOpacity}+${.94-NET_CONFIG.budget.farOpacity}*vOptical;float focus=1.+uFocus*(1.-step(.1,abs(vCluster-uActive)))*.25;
             float hierarchy=pow(${form.levelLightDecay},vLevel);float alpha=(${form.opacity}*hierarchy+signal*.65+hover)*focal*vNear*uIntro*focus*uBreath*clusterPulse(vCluster);
             vec3 color=mix(vec3(.1764706,.8784314,.4156863),vec3(.9,1.,.93),clamp(signal*.42,0.,.8));
             gl_FragColor=vec4(color*(.8*hierarchy+signal*1.8+hover),alpha);}`});const lines=new THREE.Mesh(lg,lmat);scene.add(lines);
 window.__TUNER_METRICS__={builds:[],renders:0,details:[]};
 function buildNetwork(overrides={}){
  const started=performance.now();Object.assign(form,overrides);form.rootRingRatio=5.5;
- ({growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth}=generateNetwork());
+ ({growthRandom,networkPaths,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels,unitAttachments,terminalStars,clusterSomas,somaBranches,connections,contentSomas,membraneJunctions,membraneRanges,unitWorld,L,rootCount,maxDepth,somaRhythms}=generateNetwork());
  const generated=performance.now();const geometry=packNetwork(),old=lines.geometry;const packed=performance.now();
  lines.geometry=geometry;old.dispose();
  for(const attr of Object.values(points.geometry.attributes))attr.needsUpdate=true;
- Object.assign(window.__TUNER__,{tube:form.ringTubeRadius,angle:form.contactAngle,smooth:form.contactSmooth,tip:form.tipRadius,scale:form.ringScale});
+ Object.assign(window.__TUNER__,{tube:form.ringTubeRadius,angle:form.contactAngle,smooth:form.contactSmooth,tip:form.tipRadius,scale:form.ringScale,spread:form.contactSpread??1});
  if(composer)composer.render();else renderer.render(scene,camera);
  const ms=performance.now()-started;
  window.__TUNER_METRICS__.details.push({ms,generate:generated-started,pack:packed-generated});window.__TUNER_METRICS__.builds.push(ms);window.__TUNER_METRICS__.renders++;
@@ -974,7 +995,7 @@ window.__REBUILD__=buildNetwork;
       const dmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uMotion:{value:motionEnabled?1:0},uOpacity:{value:NET_CONFIG.atmosphere.dustOpacity}},vertexShader:`uniform float uTime,uMotion;void main(){vec3 p=position;p.xy+=vec2(sin(uTime*.13+p.z),cos(uTime*.11+p.x))*.22*uMotion;vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(60./max(1.,-mv.z),1.,2.);}`,fragmentShader:`uniform float uOpacity;void main(){float a=1.-smoothstep(.1,.5,length(gl_PointCoord-.5));gl_FragColor=vec4(.1764706,.8784314,.4156863,a*uOpacity);}`});scene.add(new THREE.Points(dg,dmat));
       const bloomOn=!mobile;
       if(bloomOn){const {EffectComposer}=await import('./vendor/jsm/postprocessing/EffectComposer.js');const {RenderPass}=await import('./vendor/jsm/postprocessing/RenderPass.js');const {UnrealBloomPass}=await import('./vendor/jsm/postprocessing/UnrealBloomPass.js');composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),motionEnabled ? .72 : 0,motionEnabled ? .55 : 0,.74);composer.addPass(bloom);}
-      const state={nodes:clusterSomas.flat().length,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:clusterSomas.flat().length,networkDepth:maxDepth+1,somaCenters:clusterSomas.flat().map(s=>s.center.toArray()),contentCounts:contentSomas.map(s=>s.length),backgroundCounts:clusterSomas.map(s=>s.filter(a=>!a.isContent).length),somaDetails:clusterSomas.flatMap((somas,c)=>somas.map(s=>({cluster:c,id:s.isContent?CONTENT_UNITS[s.unit].id:null,center:s.center.toArray(),radius:s.radius,opacity:s.isContent?.66:s.opacity,isContent:s.isContent}))),connections,dendrites:somaBranches.map(b=>b.length),terminalCount:terminalStars.length,attachments:unitAttachments.map((p,i)=>({id:CONTENT_UNITS[i].id,end:p.points.at(-1).toArray(),world:unitWorld[i].toArray()})),lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
+      const state={nodes:clusterSomas.flat().length,lines:L,mobile,bloomOn:!!composer,reducedMotion:reduce,motionEnabled,motionOverride:motionChoice==='enable',noticeShown:!notice.hidden,fps:0,fpsSamples:[],introDone:false,activeCluster:0,pulses:0,cam:[0,0,0],gazeEnabled,gaze:[0,0],clusterFocus:0,proximity:0,unitsActive:CONTENT_UNITS.length,unitHover:null,unitSelected:null,transmission:null,idlePulse:null,fallback:false};stats=state;Object.assign(stats,{lightEvents:lightClock.counts,lightDirections:lightClock.directions,lightEventLog:lightClock.log,lightActive:0,networkPaths:L,networkTriangles:linePositions.length/9,networkRoots:clusterSomas.flat().length,networkDepth:maxDepth+1,somaCenters:clusterSomas.flat().map(s=>s.center.toArray()),contentCounts:contentSomas.map(s=>s.length),backgroundCounts:clusterSomas.map(s=>s.filter(a=>!a.isContent).length),somaDetails:clusterSomas.flatMap((somas,c)=>somas.map(s=>({cluster:c,id:s.isContent?CONTENT_UNITS[s.unit].id:null,center:s.center.toArray(),radius:s.radius,opacity:s.isContent?.66:s.opacity,isContent:s.isContent}))),connections,dendrites:somaBranches.map(b=>b.length),terminalCount:terminalStars.length,attachments:unitAttachments.map((p,i)=>({id:CONTENT_UNITS[i].id,end:p.points.at(-1).toArray(),world:unitWorld[i].toArray()})),somaRhythms,lightConfig:NET_CONFIG,lightPaused:!motionEnabled});window.__NET_STATS__=stats;unitControl.ready=true;document.body.classList.remove('static-network');
 
 
       // Membranes are part of lg/lmat; only soma cores are instanced here.
@@ -982,7 +1003,7 @@ window.__REBUILD__=buildNetwork;
       const somaMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.66,depthWrite:false});
       const somas=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?12:20,mobile?8:14),somaMaterial,unitCount*2);
       const dummy=new THREE.Object3D(),green=new THREE.Color('#2de06a'),dimGreen=green.clone().multiplyScalar(.7);
-      aboutUnits.forEach((unit,i)=>{const radius=form.somaRadii[Number(unit.id[0])-1];dummy.position.copy(unitWorld[i]);dummy.rotation.set(0,0,0);dummy.scale.setScalar(radius);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green)});
+      aboutUnits.forEach((unit,i)=>{const radius=form.somaRadii[Number(unit.id[0])-1];dummy.position.copy(unitWorld[i]);dummy.rotation.set(0,0,0);dummy.scale.setScalar(radius*.5);dummy.updateMatrix();somas.setMatrixAt(i,dummy.matrix);dummy.scale.multiplyScalar(.31);dummy.updateMatrix();somas.setMatrixAt(i+unitCount,dummy.matrix);somas.setColorAt(i,dimGreen);somas.setColorAt(i+unitCount,green)});
       somas.frustumCulled=false;scene.add(somas);
       const backgroundSomas=clusterSomas.flat().filter(s=>!s.isContent);
       const background=new THREE.InstancedMesh(new THREE.SphereGeometry(1,mobile?10:14,mobile?7:10),new THREE.MeshBasicMaterial({color:green,transparent:true,opacity:.22,depthWrite:false}),backgroundSomas.length);
@@ -1014,6 +1035,14 @@ window.__REBUILD__=buildNetwork;
       const projection=new THREE.Vector3(),viewPoint=new THREE.Vector3();
       const leader=document.querySelector('#unit-leader'),leaderLine=document.querySelector('#unit-leader-line'),cardElement=document.querySelector('.info-card');
       let previousHighlight=-2,previousSection=-1,previousVisited=-1;const originalSomas=Array.from({length:unitCount*2},(_,i)=>{const m=new THREE.Matrix4();somas.getMatrixAt(i,m);return m}),hiddenMatrix=new THREE.Matrix4().makeScale(0,0,0);
+      const depthPoint=new THREE.Vector3(),somaColor=new THREE.Color();
+      function somaGain(soma){
+        depthPoint.copy(soma.center).applyMatrix4(camera.matrixWorldInverse);
+        const width=lmat.uniforms.uFocusWidth.value,offset=Math.max(0,Math.abs(-depthPoint.z-lmat.uniforms.uFocusDepth.value)-width*.6);
+        const focal=NET_CONFIG.budget.farOpacity+(1-NET_CONFIG.budget.farOpacity)*Math.exp(-offset/width);
+        const light=soma.light,breath=motionEnabled?.65+.35*Math.pow(.5+.5*Math.sin(elapsed*light.frequencyHz*Math.PI*2+light.phase),2):1;
+        return focal*breath;
+      }
       function updateUnits(now){
         const section=stats.activeCluster,panorama=!!stats.panoramaActive,displaySection=panorama?5:section;treeMaterial.uniforms.uActive.value=section;treeMaterial.uniforms.uPanorama.value=panorama?1:0;
         if(displaySection!==previousSection){aboutUnits.forEach((u,i)=>{const on=panorama||Number(u.id[0])-1===section;somas.setMatrixAt(i,on?originalSomas[i]:hiddenMatrix);somas.setMatrixAt(i+unitCount,on?originalSomas[i+unitCount]:hiddenMatrix)});somas.instanceMatrix.needsUpdate=true;previousSection=displaySection}
@@ -1025,7 +1054,8 @@ window.__REBUILD__=buildNetwork;
         const age=now-unitControl.hoverAt,phase=motionEnabled&&!document.hidden&&selected<0&&hover>=0&&age>=80&&age<=240?1-(age-80)/160:-1;
         treeMaterial.uniforms.uPhase.value=phase;stats.transmission=phase>=0?{id:aboutUnits[hover].id,phase,distance:phase*paths[hover].total}:null;
         stats.unitHover=unitControl.hover;stats.unitSelected=unitControl.selected;
-        if(highlight!==previousHighlight){aboutUnits.forEach((u,i)=>{somas.setColorAt(i,i===highlight?green:dimGreen)});somas.instanceColor.needsUpdate=true;previousHighlight=highlight}
+        aboutUnits.forEach((u,i)=>{const soma=contentSomas[Number(u.id[0])-1].find(s=>s.unit===i),gain=somaGain(soma);somas.setColorAt(i,somaColor.copy(i===highlight?green:dimGreen).multiplyScalar(gain));somas.setColorAt(i+unitCount,somaColor.copy(green).multiplyScalar(gain))});somas.instanceColor.needsUpdate=true;previousHighlight=highlight;
+        backgroundSomas.forEach((s,i)=>{const gain=somaGain(s);background.setColorAt(i,somaColor.setRGB(gain,gain,gain))});background.instanceColor.needsUpdate=true;
         camera.updateMatrixWorld(true);camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
         let cardRect=null;
         if(selected>=0){
@@ -1117,7 +1147,7 @@ window.__REBUILD__=buildNetwork;
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      window.__DBG__={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get composer(){return composer},get lines(){return lines},get network(){return {networkPaths,clusterSomas,membraneJunctions,membraneRanges,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels}}};
+      window.__DBG__={get scene(){return scene},get camera(){return camera},get renderer(){return renderer},get composer(){return composer},get lines(){return lines},get network(){return {networkPaths,clusterSomas,membraneRanges,linePositions,lineDistances,lineRoots,lineClusters,lineRoutes,lineBridges,lineLevels}}};
       renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
         const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
         const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
@@ -1163,24 +1193,26 @@ window.__REBUILD__=buildNetwork;
 <div id="tuner-panel">
   <h3>NEURON TUNER</h3>
   <div class="row"><label>环粗细 ringTubeRadius <b id="v-tube"></b></label>
-    <input id="s-tube" type="range" min="0.008" max="0.045" step="0.001"></div>
-  <div class="row"><label>根部张角（环上开口） contactAngle <b id="v-angle"></b></label>
-    <input id="s-angle" aria-label="根部张角（环上开口）" type="range" min="20" max="150" step="1"></div>
-  <div class="row"><label>过渡圆润度 contactSmooth <b id="v-smooth"></b></label>
-    <input id="s-smooth" aria-label="过渡圆润度" type="range" min="-4" max="5" step="0.01"></div>
+    <input id="s-tube" type="range" min="0.002" max="0.030" step="0.0005"></div>
+  <div class="row"><label>接触角度 contactAngle <b id="v-angle"></b></label>
+    <input id="s-angle" aria-label="接触角度" type="range" min="90" max="170" step="1"></div>
+  <div class="row"><label>接触平滑度 contactSmooth <b id="v-smooth"></b></label>
+    <input id="s-smooth" aria-label="接触平滑度" type="range" min="-4" max="5" step="0.1"></div>
   <div class="row"><label>枝末端 tipRadius <b id="v-tip"></b></label>
-    <input id="s-tip" type="range" min="0.010" max="0.045" step="0.001"></div>
+    <input id="s-tip" type="range" min="0.004" max="0.030" step="0.0005"></div>
   <div class="row"><label>环大小 ringScale <b id="v-scale"></b></label>
-    <input id="s-scale" type="range" min="1.00" max="1.45" step="0.01"></div>
+    <input id="s-scale" type="range" min="0.50" max="1.60" step="0.005"></div>
+  <div class="row"><label>接触展开度 contactSpread <b id="v-spread">1.00</b></label>
+    <input id="s-spread" aria-label="接触展开度" type="range" min="0.30" max="3.00" step="0.05"></div>
   <button id="t-copy">复制当前参数</button>
-  <div class="hint" id="contact-effective"></div><div class="hint">圆润度 −4.00～5.00，默认0.50；过渡长度0.15～3.00倍，上限为路径60%。拖动即重建，参数写进地址栏，可直接分享。</div>
+  <div class="hint">拖动即重建，参数写进地址栏，可直接分享。</div>
 </div>
 <script>
 window.addEventListener('load', function(){ setTimeout(function(){ window.scrollTo({top: 480, behavior:'instant'}); }, 900); });
 (function(){
   function init(){
     var T = window.__TUNER__;
-    if (!T || !window.__REBUILD__ || !window.__DBG__) { setTimeout(init, 120); return; }
+    if (!T || !window.__REBUILD__) { setTimeout(init, 120); return; }
     // 自驱动渲染：正式页的 setAnimationLoop 在剥离滚动后会停，这里手动跑
     setInterval(function(){
       var d = window.__DBG__;
@@ -1190,15 +1222,11 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
       cam.lookAt(...window.__TUNER_CAM__.t);
       try { if (d.composer) d.composer.render(); else d.renderer.render(d.scene, cam); } catch(e) { window.__ERRS__.push(e.stack||String(e));console.error(e); }
     }, 33);
-    var map = {tube:'v-tube', angle:'v-angle', smooth:'v-smooth', tip:'v-tip', scale:'v-scale'};
-    var sliders = {tube:'s-tube', angle:'s-angle', smooth:'s-smooth', tip:'s-tip', scale:'s-scale'};
+    var map = {tube:'v-tube', angle:'v-angle', smooth:'v-smooth', tip:'v-tip', scale:'v-scale', spread:'v-spread'};
+    var sliders = {tube:'s-tube', angle:'s-angle', smooth:'s-smooth', tip:'s-tip', scale:'s-scale', spread:'s-spread'};
     var fmt = function(v){ return v < 1 ? v.toFixed(3) : v.toFixed(2); };
-    function showOpening(){
-      document.getElementById('contact-effective').textContent='设定值（无限幅） '+T.angle+'°';
-    }
-    showOpening();
     var pending={},frame=0;
-    var fields={tube:'ringTubeRadius',angle:'contactAngle',smooth:'contactSmooth',tip:'tipRadius',scale:'ringScale'};
+    var fields={tube:'ringTubeRadius',angle:'contactAngle',smooth:'contactSmooth',tip:'tipRadius',scale:'ringScale',spread:'contactSpread'};
     Object.keys(map).forEach(function(k){
       var el = document.getElementById(sliders[k]);
       el.value = T[k];
@@ -1210,9 +1238,9 @@ window.addEventListener('load', function(){ setTimeout(function(){ window.scroll
         var H = new URLSearchParams(location.hash.slice(1));
         H.delete('ratio');Object.keys(fields).forEach(function(key){ H.set(key,T[key]); });
         history.replaceState(null,'','#'+H.toString());
-        if(!frame)frame=requestAnimationFrame(function(){
-          frame=0;var changes=pending;pending={};window.__REBUILD__(changes);showOpening();
-        });
+        if(!frame)frame=setTimeout(function(){
+          frame=0;var changes=pending;pending={};try{window.__REBUILD__(changes);}catch(e){window.__ERRS__.push(String(e));console.error(e);}
+        },16);
       });
     });
     document.getElementById('t-copy').addEventListener('click', function(){
