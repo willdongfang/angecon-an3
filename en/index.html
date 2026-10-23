@@ -329,9 +329,10 @@
         date.textContent=/^\d{4}-\d{2}-\d{2}$/.test(row.publishedAt)?row.publishedAt:'';date.dateTime=date.textContent;title.textContent=row.title||'';summary.textContent=row.summary||'';body.className='news-body';
         head.append(date,title,summary);article.append(head,body);
         const safeUrl=value=>typeof value==='string'&&!/[\s\\\x00-\x1f]/.test(value)&&(/^(https?:)\/\//i.test(value)||/^\/(?!\/)/.test(value));
-        if(safeUrl(row.coverUrl)){const image=document.createElement('img');image.src=row.coverUrl;image.alt='';image.loading='lazy';body.append(image);}
+        const assetUrl=value=>value.startsWith('/assets/')?'..'+value:value;
+        if(safeUrl(row.coverUrl)){const image=document.createElement('img');image.src=assetUrl(row.coverUrl);image.alt='';image.loading='lazy';body.append(image);}
         for(const part of String(row.body||'').split(/\n\s*\n/)){const p=document.createElement('p');p.textContent=part;body.append(p);}
-        if(safeUrl(row.linkUrl)){const link=document.createElement('a');link.href=row.linkUrl;link.textContent='Read original article';link.target='_blank';link.rel='noopener noreferrer';body.append(link);}
+        if(safeUrl(row.linkUrl)){const link=document.createElement('a');link.href=assetUrl(row.linkUrl);link.textContent='Read original article';link.target='_blank';link.rel='noopener noreferrer';body.append(link);}
         container.append(article);
       }
     }
