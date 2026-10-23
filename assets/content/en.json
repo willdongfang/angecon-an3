@@ -1,0 +1,286 @@
+{
+  "generatedAt": "2026-10-22T14:30:19.578+08:00",
+  "lang": "en",
+  "sections": [
+    {
+      "id": "about",
+      "name": "About Us",
+      "sortOrder": 0
+    },
+    {
+      "id": "technology",
+      "name": "Technology Platforms",
+      "sortOrder": 1
+    },
+    {
+      "id": "pipeline",
+      "name": "Pipeline",
+      "sortOrder": 2
+    },
+    {
+      "id": "science",
+      "name": "Scientific Data",
+      "sortOrder": 3
+    },
+    {
+      "id": "contact",
+      "name": "Contact Us",
+      "sortOrder": 4
+    }
+  ],
+  "units": [
+    {
+      "id": "1-1",
+      "sectionId": "about",
+      "title": "Company Profile",
+      "body": "ANGECON — Shanghai Anji Xiekang Biotechnology Co., Ltd. — founded in February 2010, is a clinical-stage biotechnology company developing human neural stem cell (hNSC) therapeutics from discovery through clinical translation.\n\nBased in Shanghai, we operate a GMP-compliant cell manufacturing facility, an R&D center and a dedicated cell-testing center.\n\nMission: cell therapies that ordinary patients can afford. Vision: a world-class cell company.\n\nMilestones\n2016 — China's first qualified biobank certificate\n2022 — Clinical research filing for spinal cord injury\n2025 — US FDA Drug Master File (Type II); INCI name assigned\n2026 — FDA clinical trial clearances for three indications (subject to official release)",
+      "seed": 3101,
+      "anchor": [
+        -44,
+        15,
+        -2
+      ],
+      "sourceIds": [
+        "AN1:安集介绍",
+        "AN1:发展历程",
+        "AN1:资质荣誉",
+        "资料库:第7栏"
+      ]
+    },
+    {
+      "id": "1-3",
+      "sectionId": "about",
+      "title": "Scientific Heritage",
+      "body": "Our science descends from the laboratory that first isolated neural stem cells.\n\nDr. Sally Temple — first isolated neural stem cells (1989)\nQin Shen — trainee of Dr. Temple; discovered the neural stem cell niche mechanism; founded ANGECON\nXicai Sun — trainee of Prof. Shen; works on migration regulation and clinical translation; Chief Technology Officer\n\nA discovery made in 1989 has become a clinical-stage pipeline — carried by three generations of the same scientific lineage.",
+      "seed": 3375,
+      "anchor": [
+        -25,
+        12,
+        0
+      ],
+      "sourceIds": [
+        "AN1:安集介绍"
+      ]
+    },
+    {
+      "id": "1-5",
+      "sectionId": "about",
+      "title": "Anku Biomed",
+      "body": "Shanghai Anku Biomed Biotechnology Co., Ltd. — founded in October 2017 — is a wholly owned subsidiary of ANGECON.\n\nAnku Biomed focuses on cells and small extracellular vesicles (sEV): R&D, application development and technical services, built on the parent company's platform and quality systems.\n\nIts exosome program holds a US FDA Drug Master File (Type II) under MF 31537.",
+      "seed": 3649,
+      "anchor": [
+        -43,
+        1,
+        1
+      ],
+      "sourceIds": [
+        "AN1:安库生医"
+      ]
+    },
+    {
+      "id": "1-6",
+      "sectionId": "about",
+      "title": "News",
+      "body": "",
+      "sourceIds": [
+        "AN3:CMS:P4"
+      ],
+      "seed": 3917,
+      "anchor": [
+        -24,
+        3,
+        0
+      ]
+    },
+    {
+      "id": "2-1",
+      "sectionId": "technology",
+      "title": "NSC Drug Development Platform",
+      "body": "An integrated platform for innovative neural stem cell drug development: covering the full chain from cell bank establishment and CMC production to clinical development; addressing key technologies in sustained expansion, directed differentiation, cryopreservation and recovery, with quality control aligned to Chinese and US regulatory submission standards.\n\nQuality & Standards: A full-process quality traceability and release quality control system has been established; products have passed quality control and safety testing by the National Institutes for Food and Drug Control (NIFDC); ISO 9001 certification has been obtained; the company participates in standard development by TC559, the national technical committee for biobank standardization.",
+      "seed": 2000,
+      "anchor": [
+        28,
+        16,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "2-3",
+      "sectionId": "technology",
+      "title": "NSC Exosome Drug Development Platform",
+      "body": "Based on neural stem cell paracrine mechanisms, the platform develops new approaches to cell-free therapy using exosomes; in 2025, it obtained a US FDA Type II Drug Master File (DMF) filing for an active pharmaceutical ingredient and an INCI name for an international cosmetic ingredient.",
+      "seed": 2274,
+      "anchor": [
+        36,
+        16,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "2-2",
+      "sectionId": "technology",
+      "title": "Cell Bank",
+      "body": "A clinical-grade cell resource platform: storage capacity on the scale of 4 million samples, with a three-tier seed bank → master bank → working bank system; each sample is handled separately to prevent cross-contamination; it has passed three consecutive Biobank Quality Compliance Inspections since 2016.",
+      "seed": 2137,
+      "anchor": [
+        32,
+        21,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "3-1",
+      "sectionId": "pipeline",
+      "title": "Drug Development Pipeline",
+      "body": "Seven indication areas: Parkinson's disease, Alzheimer's disease, early-onset Parkinson's disease, spinal cord injury, amyotrophic lateral sclerosis, pediatric cerebral palsy and ischemic stroke; spanning six stages from drug discovery to FDA IND.",
+      "seed": 3000,
+      "anchor": [
+        -4,
+        -18,
+        -98
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "3-2",
+      "sectionId": "pipeline",
+      "title": "Clinical Research",
+      "body": "Parkinson’s Disease: In collaboration with Peking Union Medical College Hospital; results of a Phase I study of intranasal human neural stem cell transplantation for Parkinson's disease were published in 2024 (JNNP); intranasal delivery is non-invasive throughout. These are research findings, subject to official announcements.\n\nSpinal Cord Injury: In collaboration with Tongji Hospital affiliated with Tongji University (Prof. Liming Cheng's team); in June 2026, the study of human neural stem cells for spinal cord injury completed the biomedical new technology clinical research filing with China's National Health Commission (NHC).\n\nStroke & Pediatric Cerebral Palsy: The ischemic stroke study is led by Prof. Yangtai Guan's team at Renji Hospital; the pediatric cerebral palsy study is conducted in collaboration with the First Affiliated Hospital of Anhui Medical University; all 5 stem cell clinical research projects received a Grade B rating.\n\nAD & Exosome Pipeline: The clinical study of exosomes for moderate-to-severe early-onset Alzheimer's disease, led by Shanghai Mental Health Center, received clinical research approval (2025); the three indications in the exosome pipeline are at the preclinical stage.",
+      "seed": 3137,
+      "anchor": [
+        0,
+        -13,
+        -98
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "4-1",
+      "sectionId": "science",
+      "title": "Publications",
+      "body": "The team and collaborating institutions have published related papers, including JNNP 2024, J Immunother Cancer 2025, Neuron 2017, Science 2004 and Nature 1989; all can be looked up by DOI.\n\nANGE-S003 Research: A 12-month Phase I study in 18 patients with advanced Parkinson's disease (intranasal transplantation, dose escalation); it provides safety and preliminary efficacy signals, rather than definitive conclusions on efficacy.\n\nFiling & Regulatory Progress: Two biomedical new technology clinical research filings with China's National Health Commission (Renji / Tongji); 5 studies received a Grade B rating; exosomes obtained an FDA Type II DMF filing for an active pharmaceutical ingredient (filing number MF 31537, as disclosed by the company).\n\nResearch Foundation: 16 years of dedicated work since the company's founding in 2010; a large-scale cell production system has been established and real-world research data accumulated; long-term clinical research collaborations have been established with leading Grade III Class A hospitals.",
+      "seed": 4000,
+      "anchor": [
+        -44,
+        15,
+        -142
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "5-1",
+      "sectionId": "contact",
+      "title": "Contact Us",
+      "body": "For more details or to discuss collaboration, please contact us at bd@angecon.com.",
+      "seed": 5000,
+      "anchor": [
+        35,
+        0,
+        -190
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "5-2",
+      "sectionId": "contact",
+      "title": "Collaboration Opportunities",
+      "body": "For those interested in cell storage, clinical research partners, media and investment institutions, we welcome you to contact us at bd@angecon.com.",
+      "seed": 5137,
+      "anchor": [
+        39,
+        5,
+        -190
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    }
+  ],
+  "texts": {
+    "site.title": "ANGECON",
+    "site.description": "ANGECON Neural Stem Cell Research and Technology Platform",
+    "hero.brand": "安集协康 / ANGECON",
+    "hero.line1": "Neural Stem Cell",
+    "hero.line2": "Research Network",
+    "hero.sections": "Company Profile · Technology Platforms · Pipeline · Scientific Data · Contact Us",
+    "ui.motion_notice": "Your system prefers \"reduced motion\"; animations have been simplified",
+    "ui.motion_enable": "Enable full animation",
+    "ui.motion_dismiss": "Got it",
+    "ui.loading": "Assembling the network",
+    "ui.init": "Initializing",
+    "ui.skip_intro": "Skip intro",
+    "ui.scroll_hint": "Scroll down · Explore the neural network",
+    "ui.lang_current": "EN",
+    "readout.nodes": "Nodes",
+    "readout.linked": "Connected",
+    "readout.synapse": "Synapses",
+    "readout.active": "Active",
+    "readout.signal": "Signal activity",
+    "fallback.title": "Neural Stem Cell Research Network",
+    "fallback.body": "SHANGHAI ANGECON BIOTECHNOLOGY CO.,LTD engages in cell R&D, production, storage and services, focusing on human neural stem cell drug development and clinical translation.",
+    "dialog.publications": "More on WeChat",
+    "dialog.contact": "For more details, please contact us: bd@angecon.com",
+    "footer.slogan": "Creating Miracles, Benefiting Humanity",
+    "footer.company": "SHANGHAI ANGECON BIOTECHNOLOGY CO.,LTD",
+    "footer.address": "Building 3, No. 588 Qingdai Road, Pudong New Area, Shanghai, China",
+    "footer.email": "bd@angecon.com",
+    "footer.tagline": "Neural Stem Cells · Research and Technology Platform",
+    "section.about": "16 years, one neural journey",
+    "section.technology": "Turning cells, into medicines",
+    "section.pipeline": "From the laboratory, to the clinic",
+    "section.science": "Every conclusion, has a source",
+    "section.contact": "Stay connected, with us",
+    "dialog.qr_title": "Follow us on WeChat",
+    "dialog.qr_body": "Scan to follow us and read more",
+    "ui.lang_other": "中",
+    "pipeline.stages0": "Discovery",
+    "pipeline.stages1": "Preclinical",
+    "pipeline.stages2": "IND",
+    "pipeline.stages3": "Phase I",
+    "pipeline.stages4": "Phase II",
+    "pipeline.legend0": "Completed",
+    "pipeline.legend1": "Ongoing",
+    "pipeline.legend2": "Not started",
+    "pipeline.row0_name": "Parkinson’s Disease",
+    "pipeline.row0_sub": "ANGE-S003",
+    "pipeline.row0_note": "Phase I results published in JNNP 2024; intranasal dose escalation",
+    "pipeline.row1_name": "Spinal Cord Injury",
+    "pipeline.row1_sub": "Tongji Hospital",
+    "pipeline.row1_note": "National Health Commission clinical research filing completed Jun 2026",
+    "pipeline.row2_name": "Ischemic Stroke",
+    "pipeline.row2_sub": "Renji Hospital",
+    "pipeline.row2_note": "Led by Prof. Guan Yangtai; rated Grade B",
+    "pipeline.row3_name": "Cerebral Palsy",
+    "pipeline.row3_sub": "AHMU First Affiliated",
+    "pipeline.row3_note": "Collaborative study; rated Grade B",
+    "pipeline.row4_name": "Early-onset Parkinson’s",
+    "pipeline.row4_sub": "Exosome",
+    "pipeline.row4_note": "Approved 2025, led by Shanghai Mental Health Center",
+    "pipeline.row5_name": "Alzheimer’s Disease",
+    "pipeline.row5_sub": "Exosome",
+    "pipeline.row5_note": "Preclinical stage",
+    "pipeline.row6_name": "ALS",
+    "pipeline.row6_sub": "—",
+    "pipeline.row6_note": "Preclinical stage",
+    "dialog.qr_angecon": "ANGECON",
+    "dialog.qr_anku": "ANKU"
+  },
+  "news": []
+}

@@ -60,12 +60,12 @@ def require(condition, message):
 
 
 def units(page):
-    match = re.search(r"\bconst\s+CONTENT_UNITS\s*=\s*", page.text)
+    match = re.search(r"\bconst\s+(?:CONTENT_UNITS|FALLBACK_UNITS)\s*=\s*", page.text)
     require(match is not None, "CONTENT_UNITS declaration missing")
     value, _ = json.JSONDecoder().raw_decode(page.text[match.end():])
     groups = dict(GROUP_IDS)
     if page.path.parent.name == "en":
-        groups["about"] = ["1-1", "1-3", "1-5"]
+        groups["about"] = ["1-1", "1-3", "1-5", "1-6"]
     expected_ids = [unit_id for ids in groups.values() for unit_id in ids]
     require(isinstance(value, list) and len(value) == len(expected_ids), f"expected {len(expected_ids)} content units")
     require(all(isinstance(unit, dict) for unit in value), "content units must be objects")
@@ -75,7 +75,7 @@ def units(page):
         require([unit.get("id") for unit in value if unit.get("sectionId") == section] == ids, "section membership differs: " + section)
     for unit in value:
         require(set(("id", "sectionId", "title", "body", "sourceIds", "seed", "anchor")) <= unit.keys(), "unit fields missing")
-        require(all(isinstance(unit[k], str) and unit[k].strip() for k in ("title", "body")), "empty title/body")
+        require(all(isinstance(unit[k], str) and unit[k].strip() for k in (("title",) if unit.get("id") == "1-6" and page.path.parent.name == "en" else ("title", "body"))), "empty title/body")
         require(isinstance(unit["seed"], int), "seed must be integer")
         anchor = unit["anchor"]
         require(isinstance(anchor, list) and len(anchor) == 3 and all(isinstance(x, (int, float)) and math.isfinite(x) for x in anchor), "invalid anchor")
@@ -199,7 +199,10 @@ def check_project(root):
     if len(pages) == 2:
         def bilingual():
             zh, en = ({unit["id"]: unit for unit in units(page)} for page in pages)
+            require("1-6" not in zh and en["1-6"]["sectionId"] == "about", "News must be English only")
             for unit_id, right in en.items():
+                if unit_id == "1-6":
+                    continue
                 left = zh[unit_id]
                 require(left.keys() == right.keys(), "unit field sets differ: " + left["id"])
                 for key in ("id", "sectionId", "seed", "anchor", "sourceIds"):
@@ -215,7 +218,7 @@ def check_project(root):
                 require(not re.search(r"[\u4e00-\u9fff]", unit["body"]), "Chinese text in English body: " + unit["id"])
             require(not any(term in profile for term in ("High-Tech Enterprise", "Certifications & honors", "Postdoctoral")), "Retired local credentials in Company Profile")
             def shared_styles(page):
-                return [re.sub(r"\s+", "", re.sub(r"#info-publications(?::hover)?\{[^}]*\}|\.qr-grid[^{}]*\{[^}]*\}", "", body)) for _, body in page.styles]
+                return [re.sub(r"\s+", "", re.sub(r"#info-publications(?::hover)?\{[^}]*\}|\.qr-grid[^{}]*\{[^}]*\}|(?:#info-body\.news-list|\.news-list|\.news-body)[^{}]*\{[^}]*\}", "", body)) for _, body in page.styles]
             require(shared_styles(pages[0]) == shared_styles(pages[1]), "bilingual CSS differs outside publication control")
             require(not re.search(r"WeChat|QR|公众号|Follow Us", pages[1].text, re.I), "retired English contact content")
             require(en["5-1"]["title"] == "Contact Us" and all("bd@angecon.com" in en[id]["body"] for id in ("5-1", "5-2")), "English contact content missing")

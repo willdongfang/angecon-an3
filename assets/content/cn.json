@@ -1,0 +1,298 @@
+{
+  "generatedAt": "2026-10-22T14:34:23.673+08:00",
+  "lang": "cn",
+  "sections": [
+    {
+      "id": "about",
+      "name": "关于我们",
+      "sortOrder": 0
+    },
+    {
+      "id": "technology",
+      "name": "技术平台",
+      "sortOrder": 1
+    },
+    {
+      "id": "pipeline",
+      "name": "研发管线",
+      "sortOrder": 2
+    },
+    {
+      "id": "science",
+      "name": "科学数据",
+      "sortOrder": 3
+    },
+    {
+      "id": "contact",
+      "name": "关注我们",
+      "sortOrder": 4
+    }
+  ],
+  "units": [
+    {
+      "id": "1-1",
+      "sectionId": "about",
+      "title": "安集概况",
+      "body": "上海安集协康生物技术股份有限公司 2010 年 2 月创立，专注人源神经干细胞（hNSC）药物研发与临床转化；拥有符合 GMP 标准的细胞生产基地、研发中心与细胞检测中心。使命：做老百姓用得起的细胞药；愿景：世界一流的细胞公司。",
+      "seed": 3101,
+      "anchor": [
+        -44,
+        15,
+        -2
+      ],
+      "sourceIds": [
+        "AN1:安集介绍"
+      ]
+    },
+    {
+      "id": "1-2",
+      "sectionId": "about",
+      "title": "十六年之路",
+      "body": "2010 年创立 → 2016 年获国内首张生物样本库合格证书 → 2022 年脊髓损伤临床研究项目备案 → 2025 年 FDA DMF Ⅱ型备案 · INCI 名称 → 2026 年三适应症获 FDA 临床试验许可（以官方发布为准）。",
+      "seed": 3238,
+      "anchor": [
+        -33,
+        21,
+        -6
+      ],
+      "sourceIds": [
+        "AN1:发展历程"
+      ]
+    },
+    {
+      "id": "1-3",
+      "sectionId": "about",
+      "title": "科学传承",
+      "body": "三代师承：Sally Temple 博士首次发现神经干细胞（1989）；其学生沈沁发现神经干细胞微环境机制并创立安集；沈沁的学生孙希财深耕迁移调控与临床转化，现任公司 CTO。",
+      "seed": 3375,
+      "anchor": [
+        -25,
+        12,
+        0
+      ],
+      "sourceIds": [
+        "AN1:安集介绍"
+      ]
+    },
+    {
+      "id": "1-4",
+      "sectionId": "about",
+      "title": "资质与荣誉",
+      "body": "高新技术企业（2024）· 上海市专精特新中小企业 · 科技型中小企业（2025）· 全国生物样本标准化技术委员会 TC559 委员单位（2015）· 上海市浦东新区博士后创新实践基地（2023）。",
+      "seed": 3512,
+      "anchor": [
+        -30,
+        3,
+        -4
+      ],
+      "sourceIds": [
+        "AN1:资质荣誉",
+        "资料库:第7栏"
+      ]
+    },
+    {
+      "id": "1-5",
+      "sectionId": "about",
+      "title": "安库生医",
+      "body": "上海安库生医生物科技有限公司成立于 2017 年 10 月，为安集协康全资子公司；聚焦细胞及其小细胞外囊泡技术的研发与应用，依托母公司平台资源开展技术服务。",
+      "seed": 3649,
+      "anchor": [
+        -43,
+        1,
+        1
+      ],
+      "sourceIds": [
+        "AN1:安库生医"
+      ]
+    },
+    {
+      "id": "2-1",
+      "sectionId": "technology",
+      "title": "神经干细胞药品开发平台",
+      "body": "一体化神经干细胞创新药研发平台：覆盖从细胞库构建、CMC 生产到临床开发全链条；攻克持续扩增、定向分化、冻存复苏关键技术，适配中美申报质控标准。\n\n质量与标准：建立全流程质量追溯与放行质控体系；产品通过中检院质控与安全性检定；获 ISO 9001 认证；参与全国生物样本标准化技术委员会（TC559）标准制定。",
+      "seed": 2000,
+      "anchor": [
+        28,
+        16,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "2-3",
+      "sectionId": "technology",
+      "title": "神经干细胞外泌体药品开发平台",
+      "body": "基于神经干细胞旁分泌机制，开发外泌体无细胞治疗新路径；2025 年获美国 FDA 药物主文件（DMF）Ⅱ型原料药备案，并获国际化妆品原料 INCI 名称。",
+      "seed": 2274,
+      "anchor": [
+        36,
+        16,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "2-2",
+      "sectionId": "technology",
+      "title": "生物样本库",
+      "body": "临床级细胞资源平台：400 万份级存储，种子库→主库→工作库三级体系；单份样本独立操作防交叉污染；2016 年起连续三次通过《生物样本库质量达标检查》。",
+      "seed": 2137,
+      "anchor": [
+        32,
+        21,
+        -53
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "3-1",
+      "sectionId": "pipeline",
+      "title": "药品研发管线",
+      "body": "七大适应症方向：帕金森病、阿尔茨海默病、早发型帕金森、脊髓损伤、渐冻症、小儿脑瘫、缺血性脑卒中；覆盖药物发现至 FDA IND 六环节。",
+      "seed": 3000,
+      "anchor": [
+        -4,
+        -18,
+        -98
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "3-2",
+      "sectionId": "pipeline",
+      "title": "临床研究",
+      "body": "帕金森病：与北京协和医院合作；人源神经干细胞经鼻移植治疗帕金森病 Ⅰ 期研究结果于 2024 年发表（JNNP）；经鼻给药全程无创。研究性结论，以官方发布为准。\n\n脊髓损伤：与同济大学附属同济医院合作（程黎明教授团队）；2026 年 6 月，人源神经干细胞治疗脊髓损伤研究完成国家卫健委生物医学新技术临床研究备案。\n\n脑卒中·小儿脑瘫：缺血性卒中研究由仁济医院管阳太教授团队牵头；小儿脑瘫研究与安徽医科大学第一附属医院合作；5 项干细胞临床研究项目均获评 B 级。\n\nAD 与外泌体管线：外泌体治疗中重度早发型阿尔茨海默病临床研究由上海市精神卫生中心牵头获批（2025）；外泌体管线三适应症处于临床前阶段。",
+      "seed": 3137,
+      "anchor": [
+        0,
+        -13,
+        -98
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "4-1",
+      "sectionId": "science",
+      "title": "发表文章",
+      "body": "团队与合作机构发表相关论文：含 JNNP 2024、J Immunother Cancer 2025、Neuron 2017、Science 2004、Nature 1989 等；均可查 DOI。\n\nANGE-S003 研究：18 例晚期帕金森患者的 12 个月 Ⅰ 期研究（经鼻移植、剂量递增）；提供安全性与初步疗效信号，非疗效定论。\n\n备案与监管进展：两项国家卫健委生物医学新技术临床研究备案（仁济/同济）；5 项研究获评 B 级；外泌体获 FDA DMF Ⅱ型原料药备案（备案号 MF 31537，公司披露）。\n\n研究积淀：2010 年创立至今十六年深耕；建成大规模细胞生产体系，积累真实世界研究数据；与多家顶尖三甲医院建立长期临床研究合作。",
+      "seed": 4000,
+      "anchor": [
+        -44,
+        15,
+        -142
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "5-1",
+      "sectionId": "contact",
+      "title": "关注公众号",
+      "body": "扫码关注安集协康与安库生医微信公众号，获取最新研究与技术动态。",
+      "seed": 5000,
+      "anchor": [
+        35,
+        0,
+        -190
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    },
+    {
+      "id": "5-2",
+      "sectionId": "contact",
+      "title": "合作方向",
+      "body": "面向细胞存储关注者、临床研究合作机构、媒体与投资机构，欢迎通过公众号与我们联系。",
+      "seed": 5137,
+      "anchor": [
+        39,
+        5,
+        -190
+      ],
+      "sourceIds": [
+        "AN3:M4b:任务卡审定文案"
+      ]
+    }
+  ],
+  "texts": {
+    "site.title": "安集协康 · ANGECON",
+    "site.description": "安集协康神经干细胞研发与技术平台",
+    "hero.brand": "安集协康 / ANGECON",
+    "hero.line1": "神经干细胞",
+    "hero.line2": "研发网络",
+    "hero.sections": "公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们",
+    "ui.motion_notice": "检测到系统\"减少动态效果\"，已为您简化动画",
+    "ui.motion_enable": "开启完整动效",
+    "ui.motion_dismiss": "知道了",
+    "ui.loading": "网络组装中",
+    "ui.init": "初始化",
+    "ui.skip_intro": "跳过入场",
+    "ui.scroll_hint": "向下滚动 · 穿行神经之网",
+    "ui.lang_current": "中",
+    "readout.nodes": "节点",
+    "readout.linked": "已连接",
+    "readout.synapse": "突触",
+    "readout.active": "活跃",
+    "readout.signal": "信号活动",
+    "fallback.title": "神经干细胞研发网络",
+    "fallback.body": "上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。",
+    "dialog.publications": "查阅更多见公众号",
+    "dialog.contact": "详情请联系：bd@angecon.com",
+    "footer.slogan": "创造奇迹，造福人类",
+    "footer.company": "上海安集协康生物技术股份有限公司",
+    "footer.address": "上海市浦东新区青黛路588号3号楼",
+    "footer.email": "bd@angecon.com",
+    "footer.tagline": "神经干细胞 · 研究与技术平台",
+    "section.about": "十六年，一条神经之路",
+    "section.technology": "把细胞，做成药",
+    "section.pipeline": "从实验室，到临床",
+    "section.science": "每一个结论，都有出处",
+    "section.contact": "和我们，保持连接",
+    "dialog.qr_title": "关注公众号",
+    "dialog.qr_body": "扫码关注，获取完整内容",
+    "ui.lang_other": "EN",
+    "pipeline.stages0": "药物发现",
+    "pipeline.stages1": "临床前",
+    "pipeline.stages2": "IND 申报",
+    "pipeline.stages3": "Ⅰ 期",
+    "pipeline.stages4": "Ⅱ 期",
+    "pipeline.legend0": "已完成",
+    "pipeline.legend1": "进行中",
+    "pipeline.legend2": "未开展",
+    "pipeline.row0_name": "帕金森病",
+    "pipeline.row0_sub": "ANGE-S003",
+    "pipeline.row0_note": "Ⅰ 期结果 JNNP 2024 发表，经鼻移植剂量递增",
+    "pipeline.row1_name": "脊髓损伤",
+    "pipeline.row1_sub": "程黎明团队",
+    "pipeline.row1_note": "2026.6 完成国家卫健委生物医学新技术临床研究备案",
+    "pipeline.row2_name": "缺血性脑卒中",
+    "pipeline.row2_sub": "仁济医院",
+    "pipeline.row2_note": "管阳太教授团队牵头，获评 B 级",
+    "pipeline.row3_name": "小儿脑瘫",
+    "pipeline.row3_sub": "安医大一附院",
+    "pipeline.row3_note": "合作开展，获评 B 级",
+    "pipeline.row4_name": "早发型帕金森",
+    "pipeline.row4_sub": "外泌体",
+    "pipeline.row4_note": "2025 上海市精神卫生中心牵头获批",
+    "pipeline.row5_name": "阿尔茨海默病",
+    "pipeline.row5_sub": "外泌体",
+    "pipeline.row5_note": "临床前研究阶段",
+    "pipeline.row6_name": "渐冻症",
+    "pipeline.row6_sub": "—",
+    "pipeline.row6_note": "临床前研究阶段",
+    "dialog.qr_angecon": "安集协康",
+    "dialog.qr_anku": "安库生医"
+  }
+}

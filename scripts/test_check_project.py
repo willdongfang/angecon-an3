@@ -58,7 +58,7 @@ class CheckerFaultTests(unittest.TestCase):
         self.assertEqual(report["passed"], report["total"])
 
     def test_invalid_javascript_is_rejected(self):
-        self.mutation("index.html", lambda s: s.replace("const CONTENT_UNITS =", "const CONTENT_UNITS !", 1), "JavaScript syntax")
+        self.mutation("index.html", lambda s: s.replace("const FALLBACK_UNITS =", "const FALLBACK_UNITS !", 1), "JavaScript syntax")
 
     def test_missing_qr_reference_is_rejected(self):
         self.mutation("index.html", lambda s: s.replace("assets/qr-anku.png", "assets/missing.png"), "local resources")

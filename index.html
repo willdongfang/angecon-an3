@@ -106,10 +106,11 @@
     @media(max-width:700px){.info-card.wide{width:calc(100vw - 24px)}}
 </style>
 </head>
+<script src="assets/cms-texts.js"></script>
 <body class="static-network">
   <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
   <aside class="motion-notice" id="motion-notice" aria-label="减少动态效果设置提示" hidden><div class="motion-notice-copy">检测到系统&quot;减少动态效果&quot;，已为您简化动画</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">开启完整动效</button><button id="motion-dismiss" type="button">知道了</button></div></aside>
-  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1>神经干细胞<br>研发网络</h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1><span>神经干细胞</span><br><span>研发网络</span></h1><p>公司介绍 · 技术平台 · 研发管线 · 科学数据 · 关注我们</p></div></div>
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">网络组装中</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">初始化</div></div></div>
   <button id="intro-skip" type="button" hidden>跳过入场</button><div id="unit-layer" aria-label="五区内容胞体"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
@@ -117,7 +118,7 @@
   <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
   <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
   <div class="scroll-cue">向下滚动 · 穿行神经之网</div>
-  <div class="readout"><div><b id="readout-nodes">800</b>节点</div><div><b id="readout-lines">已连接</b>突触</div><div><b id="readout-pulse">活跃</b>信号活动</div></div>
+  <div class="readout"><div><b id="readout-nodes">800</b><span data-text="readout.nodes">节点</span></div><div><b id="readout-lines">0</b><span data-text="readout.linked">已连接</span> <span data-text="readout.synapse">突触</span></div><div><b id="readout-pulse">活跃</b><span data-text="readout.signal">信号活动</span></div></div>
   <main id="top">
     <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span></section>
     <section class="cluster-section" id="technology" data-cluster="1"><span class="cluster-anchor"></span></section>
@@ -129,10 +130,10 @@
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>神经干细胞研发网络</h1><p>上海安集协康生物技术股份有限公司从事细胞研发、生产、存储及服务，专注于人源神经干细胞药物研发与临床转化。</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="关闭信息窗口">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><div id="info-body"></div><p class="info-foot"><button type="button" id="info-publications">查阅更多见公众号</button></p><div id="info-qr" hidden></div></div></article></div>
   <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">创造奇迹，造福人类</p></div>
-  <footer class="footer"><div><div class="brand"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note">上海安集协康生物技术股份有限公司<br>上海市浦东新区青黛路588号3号楼<br>bd@angecon.com</p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
+  <footer class="footer"><div><div class="brand"><img src="assets/logo-cn.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note"><span data-text="footer.company">上海安集协康生物技术股份有限公司</span><br><span data-text="footer.address">上海市浦东新区青黛路588号3号楼</span><br><span data-text="footer.email">bd@angecon.com</span></p></div><div class="footer-mark">神经干细胞 · 研究与技术平台</div></footer>
 
   <script>
-    const CONTENT_UNITS = [
+    const FALLBACK_UNITS = [
   {
     "id": "1-1",
     "sectionId": "about",
@@ -330,7 +331,9 @@
     ]
   }
 ];
+    let CONTENT_UNITS=FALLBACK_UNITS.map(unit=>({...unit}));
     window.CONTENT_UNITS=CONTENT_UNITS;
+    window.__CONTENT_SOURCE__='fallback';
     (()=>{
       document.querySelector('#language-toggle').addEventListener('click',()=>{
         location.href='./en/';
@@ -418,7 +421,7 @@
       function addQR(container){
         for(const [src,name] of [['assets/qr-angecon.jpg','安集协康'],['assets/qr-anku.png','安库生医']]){
           const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
-          img.src=src;img.alt=`${name}微信公众号二维码`;img.width=180;img.height=180;caption.textContent=name;figure.append(img,caption);container.append(figure);
+          img.src=src;img.alt=`${name}微信公众号二维码`;img.width=180;img.height=180;caption.textContent=window.T(src.includes('angecon')?'dialog.qr_angecon':'dialog.qr_anku',name);figure.append(img,caption);container.append(figure);
         }
       }
       const qr=document.querySelector('#info-qr');qr.className='qr-grid';addQR(qr);
@@ -427,7 +430,7 @@
       let trigger=null,scrollPosition=0,priorOverflow='',priorPadding='',contentTimer;
       const content=document.querySelector('#info-content'),publications=document.querySelector('#info-publications');
       const showQR=()=>{
-        document.querySelector('#info-title').textContent='关注公众号';document.querySelector('#info-body').textContent='扫码关注，获取完整内容';
+        document.querySelector('#info-title').textContent=window.T('dialog.qr_title','关注公众号');document.querySelector('#info-body').textContent=window.T('dialog.qr_body','扫码关注，获取完整内容');
         qr.hidden=false;publications.parentElement.hidden=false;
       };
       publications.addEventListener('click',showQR);
@@ -447,7 +450,8 @@
       };
 
       function renderPipeline(){
-        const D = PIPELINE_DATA;
+        const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const D = {stages:PIPELINE_DATA.stages.map((v,i)=>escape(window.T('pipeline.stages'+i,v))),legend:PIPELINE_DATA.legend.map((v,i)=>escape(window.T('pipeline.legend'+i,v))),rows:PIPELINE_DATA.rows.map((row,i)=>({...row,...Object.fromEntries(['name','sub','note'].map(key=>[key,escape(window.T('pipeline.row'+i+'_'+key,row[key]))]))}))};
         let head = '<div class="pg-head"><span></span>';
         for (let i = 0; i < D.stages.length; i++) head += '<span>' + D.stages[i] + '</span>';
         head += '</div>';
@@ -474,7 +478,7 @@
         clearTimeout(contentTimer);content.classList.remove('switching');publications.parentElement.hidden=false;
         document.querySelector('#info-title').textContent=title;
         const bodyEl=document.querySelector('#info-body');
-        if(id==='3-1'){bodyEl.classList.add('pipeline-gantt');bodyEl.innerHTML=renderPipeline();document.querySelector('.info-card').classList.add('wide');}
+        if(id==='3-1'&&body===FALLBACK_UNITS.find(u=>u.id===id)?.body){bodyEl.classList.add('pipeline-gantt');bodyEl.innerHTML=renderPipeline();document.querySelector('.info-card').classList.add('wide');}
         else{bodyEl.classList.remove('pipeline-gantt');bodyEl.textContent=body;}
         if(id==='5-1')showQR();
         const card=document.querySelector('.info-card');card.style.position='';card.style.left='';card.style.top='';
@@ -935,7 +939,7 @@
       }
       float clusterPulse(float cluster){return 1.+${NET_CONFIG.light.stormPulse}*stormEnvelope(cluster);
       }`;
-    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent='活跃';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));if(stats)stats.activeCluster=c;}
+    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent=window.T('readout.active',"活跃");document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',Number(a.dataset.index)===c));if(stats)stats.activeCluster=c;}
     function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
     addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
     function fallback(){unitControl.fail();introDone=true;stats=window.__NET_STATS__;Object.assign(stats,{nodes:0,lines:0,mobile,bloomOn:false,gazeEnabled:false,introDone:true,pulses:0,lightActive:0,lightPaused:true});}
@@ -1138,7 +1142,7 @@
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',Number(a.dataset.index)===c));
         const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
         const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
           // 每区固定内容取景；滚动焦面仍沿五簇路径变化，鼠标只叠加小幅环视。
@@ -1177,6 +1181,7 @@
       }catch(e){fallback()}
     if(motionEnabled){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
     }
+    import('./assets/cms-content.js').then(m=>m.loadContent(CONTENT_UNITS, 'cn', './assets/content/cn.json')).catch(()=>{window.__CONTENT_SOURCE__='fallback'});
   </script>
 </body>
 </html>

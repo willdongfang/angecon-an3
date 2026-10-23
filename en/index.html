@@ -101,12 +101,17 @@
 
     .info-card.wide{width:min(760px,100%)}
     @media(max-width:700px){.info-card.wide{width:calc(100vw - 24px)}}
+    #info-body.news-list{white-space:normal;display:grid;gap:14px}
+    .news-list details{padding:18px;border:1px solid #2de06a44;border-radius:8px;background:#081a20;overflow-wrap:anywhere}
+    .news-list summary{cursor:pointer;list-style:none}.news-list summary::-webkit-details-marker{display:none}.news-list summary::after{content:'Read more +';color:#2de06a;font-size:12px}.news-list details[open] summary::after{content:'Close −'}
+    .news-list time{color:#2de06a;font-size:12px}.news-list h3{margin:8px 0;font-size:19px}.news-list p{margin:8px 0;line-height:1.7}.news-list .news-body{border-top:1px solid #2de06a33;margin-top:14px;padding-top:8px;white-space:pre-line}.news-body img{max-width:100%;max-height:280px;object-fit:contain}.news-body a{color:#2de06a}
 </style>
 </head>
+<script src="../assets/cms-texts.js"></script>
 <body class="static-network">
   <div class="quiet-glow" id="quiet-glow" aria-hidden="true"></div>
   <aside class="motion-notice" id="motion-notice" aria-label="Reduced motion settings notice" hidden><div class="motion-notice-copy">Your system prefers &quot;reduced motion&quot;; animations have been simplified</div><div class="motion-notice-actions"><button class="motion-enable" id="motion-enable" type="button">Enable full animation</button><button id="motion-dismiss" type="button">Got it</button></div></aside>
-  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1>Neural Stem Cell<br>Research Network</h1><p>Company Profile · Technology Platforms · Pipeline · Scientific Data · Contact Us</p></div></div>
+  <div class="scene" aria-hidden="true"><canvas id="network"></canvas><div class="fallback" id="fallback"><div class="brand">安集协康 / ANGECON</div><h1><span>Neural Stem Cell</span><br><span>Research Network</span></h1><p>Company Profile · Technology Platforms · Pipeline · Scientific Data · Contact Us</p></div></div>
   <div class="vignette" aria-hidden="true"></div><div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
   <div class="intro-cover done" id="intro" aria-hidden="true"><div class="intro-box"><div class="intro-title">Assembling the network</div><div class="intro-track"><i id="intro-progress"></i></div><div class="intro-count" id="intro-count">Initializing</div></div></div>
   <button id="intro-skip" type="button" hidden>Skip intro</button><div id="unit-layer" aria-label="Content cell bodies across five sections"></div><svg id="unit-leader" aria-hidden="true"><line id="unit-leader-line" /></svg><div class="progress" id="progress"></div>
@@ -114,7 +119,7 @@
   <div class="language-toast" id="language-toast" role="status" aria-live="polite"></div>
   <aside class="section-float" id="section-float" aria-hidden="true"><div class="section-float-drift" id="section-float-drift"></div></aside>
   <div class="scroll-cue">Scroll down · Explore the neural network</div>
-  <div class="readout"><div><b id="readout-nodes">800</b>Nodes</div><div><b id="readout-lines">Connected</b>Synapses</div><div><b id="readout-pulse">Active</b>Signal activity</div></div>
+  <div class="readout"><div><b id="readout-nodes">800</b><span data-text="readout.nodes">Nodes</span></div><div><b id="readout-lines">0</b><span data-text="readout.linked">Connected</span> <span data-text="readout.synapse">Synapses</span></div><div><b id="readout-pulse">Active</b><span data-text="readout.signal">Signal activity</span></div></div>
   <main id="top">
     <section class="cluster-section" id="company" data-cluster="0"><span class="cluster-anchor"></span></section>
     <section class="cluster-section" id="technology" data-cluster="1"><span class="cluster-anchor"></span></section>
@@ -126,10 +131,10 @@
   <div class="fallback-panel" id="fallback-content"><div class="card"><div class="fallback-head">安集协康 / ANGECON</div><h1>Neural Stem Cell Research Network</h1><p>SHANGHAI ANGECON BIOTECHNOLOGY CO.,LTD engages in cell R&D, production, storage and services, focusing on human neural stem cell drug development and clinical translation.</p><div id="fallback-units"></div></div></div>
   <div class="info-dialog" id="info-dialog" role="dialog" aria-modal="true" aria-labelledby="info-title" aria-describedby="info-body" aria-hidden="true"><article class="info-card"><button class="info-close" id="info-close" type="button" aria-label="Close information window">×</button><div class="info-content" id="info-content"><h2 id="info-title"></h2><div id="info-body"></div><p class="info-foot"><a id="info-publications" href="mailto:bd@angecon.com">For more details, please contact us: bd@angecon.com</a></p></div></article></div>
   <div class="footer-vision" id="footer-vision" aria-hidden="true"><p class="footer-vision-title">Creating Miracles, Benefiting Humanity</p></div>
-  <footer class="footer"><div><div class="brand"><img src="../assets/logo-en.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note">SHANGHAI ANGECON BIOTECHNOLOGY CO.,LTD<br>Building 3, No. 588 Qingdai Road, Pudong New Area, Shanghai, China<br>bd@angecon.com</p></div><div class="footer-mark">Neural Stem Cells · Research and Technology Platform</div></footer>
+  <footer class="footer"><div><div class="brand"><img src="../assets/logo-en.svg" alt="ANGECON 安集协康" width="224" height="80"></div><p class="footer-note"><span data-text="footer.company">SHANGHAI ANGECON BIOTECHNOLOGY CO.,LTD</span><br><span data-text="footer.address">Building 3, No. 588 Qingdai Road, Pudong New Area, Shanghai, China</span><br><span data-text="footer.email">bd@angecon.com</span></p></div><div class="footer-mark">Neural Stem Cells · Research and Technology Platform</div></footer>
 
   <script>
-    const CONTENT_UNITS = [
+    const FALLBACK_UNITS = [
   {
     "id": "1-1",
     "sectionId": "about",
@@ -176,6 +181,21 @@
       -43,
       1,
       1
+    ]
+  },
+  {
+    "id": "1-6",
+    "sectionId": "about",
+    "title": "News",
+    "body": "",
+    "sourceIds": [
+      "AN3:CMS:P4"
+    ],
+    "seed": 3917,
+    "anchor": [
+      -24,
+      3,
+      0
     ]
   },
   {
@@ -299,7 +319,25 @@
     ]
   }
 ];
+    window.NEWS_DATA=[];
+    function renderNewsList(container){
+      container.classList.remove('pipeline-gantt');container.classList.add('news-list');container.replaceChildren();
+      const rows=Array.isArray(window.NEWS_DATA)?window.NEWS_DATA:[];
+      if(!rows.length){const empty=document.createElement('p');empty.textContent='No news yet';container.append(empty);return;}
+      for(const row of rows){
+        const article=document.createElement('details'),head=document.createElement('summary'),date=document.createElement('time'),title=document.createElement('h3'),summary=document.createElement('p'),body=document.createElement('div');
+        date.textContent=/^\d{4}-\d{2}-\d{2}$/.test(row.publishedAt)?row.publishedAt:'';date.dateTime=date.textContent;title.textContent=row.title||'';summary.textContent=row.summary||'';body.className='news-body';
+        head.append(date,title,summary);article.append(head,body);
+        const safeUrl=value=>typeof value==='string'&&!/[\s\\\x00-\x1f]/.test(value)&&(/^(https?:)\/\//i.test(value)||/^\/(?!\/)/.test(value));
+        if(safeUrl(row.coverUrl)){const image=document.createElement('img');image.src=row.coverUrl;image.alt='';image.loading='lazy';body.append(image);}
+        for(const part of String(row.body||'').split(/\n\s*\n/)){const p=document.createElement('p');p.textContent=part;body.append(p);}
+        if(safeUrl(row.linkUrl)){const link=document.createElement('a');link.href=row.linkUrl;link.textContent='Read original article';link.target='_blank';link.rel='noopener noreferrer';body.append(link);}
+        container.append(article);
+      }
+    }
+    let CONTENT_UNITS=FALLBACK_UNITS.map(unit=>({...unit}));
     window.CONTENT_UNITS=CONTENT_UNITS;
+    window.__CONTENT_SOURCE__='fallback';
     (()=>{
       document.querySelector('#language-toggle').addEventListener('click',()=>{
         location.href='../';
@@ -402,7 +440,8 @@
       };
 
       function renderPipeline(){
-        const D = PIPELINE_DATA;
+        const escape = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const D = {stages:PIPELINE_DATA.stages.map((v,i)=>escape(window.T('pipeline.stages'+i,v))),legend:PIPELINE_DATA.legend.map((v,i)=>escape(window.T('pipeline.legend'+i,v))),rows:PIPELINE_DATA.rows.map((row,i)=>({...row,...Object.fromEntries(['name','sub','note'].map(key=>[key,escape(window.T('pipeline.row'+i+'_'+key,row[key]))]))}))};
         let head = '<div class="pg-head"><span></span>';
         for (let i = 0; i < D.stages.length; i++) head += '<span>' + D.stages[i] + '</span>';
         head += '</div>';
@@ -429,7 +468,9 @@
         clearTimeout(contentTimer);content.classList.remove('switching');publications.parentElement.hidden=false;
         document.querySelector('#info-title').textContent=title;
         const bodyElement=document.querySelector('#info-body'),email='bd@angecon.com';
-        if(id==='3-1'){bodyElement.classList.add('pipeline-gantt');bodyElement.innerHTML=renderPipeline();document.querySelector('.info-card').classList.add('wide');}
+        bodyElement.classList.remove('news-list');
+        if(id==='1-6'){renderNewsList(bodyElement);document.querySelector('.info-card').classList.add('wide');}
+        else if(id==='3-1'&&body===FALLBACK_UNITS.find(u=>u.id===id)?.body){bodyElement.classList.add('pipeline-gantt');bodyElement.innerHTML=renderPipeline();document.querySelector('.info-card').classList.add('wide');}
         else{
           bodyElement.classList.remove('pipeline-gantt');
           bodyElement.replaceChildren();
@@ -454,7 +495,7 @@
         trigger?.focus({preventScroll:true});if(scrollY!==scrollPosition)scrollTo({top:scrollPosition,behavior:'instant'});
       };
       close.addEventListener('click',controller.close);dialog.addEventListener('click',e=>{if(e.target===dialog)controller.close()});
-      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){const focusable=[close,...document.querySelectorAll('#info-body a[href="mailto:bd@angecon.com"]')];const index=focusable.indexOf(document.activeElement);e.preventDefault();focusable[(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus({preventScroll:true})}});
+      addEventListener('keydown',e=>{if(!dialog.classList.contains('open'))return;if(e.key==='Escape'){e.preventDefault();controller.close()}else if(e.key==='Tab'){const focusable=[close,...document.querySelectorAll('#info-body a[href], #info-body summary')];const index=focusable.indexOf(document.activeElement);e.preventDefault();focusable[(index+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus({preventScroll:true})}});
       const input=()=>{controller.lastInput=performance.now();controller.idleNode=-1;controller.nextIdle=controller.lastInput+6000;window.__NET_STATS__.idlePulse=null;controller.skipIntro?.()};
       for(const event of ['pointermove','pointerdown','keydown','wheel','touchstart','scroll','focusin'])addEventListener(event,input,{passive:true});
       document.addEventListener('visibilitychange',()=>{input();if(document.hidden)controller.clearHover()});
@@ -896,7 +937,7 @@
       }
       float clusterPulse(float cluster){return 1.+${NET_CONFIG.light.stormPulse}*stormEnvelope(cluster);
       }`;
-    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent='Active';document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));if(stats)stats.activeCluster=c;}
+    function setCluster(c){if(c===activeCluster)return;activeCluster=c;window.__SECTION_FLOAT__.setActive(c);document.querySelector('#readout-pulse').textContent=window.T('readout.active',"Active");document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',Number(a.dataset.index)===c));if(stats)stats.activeCluster=c;}
     function getActive(){const point=innerHeight*.52;let best=0,dist=Infinity;document.querySelectorAll('.cluster-section').forEach((el,i)=>{const d=Math.abs(el.getBoundingClientRect().top+innerHeight*.42-point);if(d<dist){best=i;dist=d}});return best}
     addEventListener('scroll',()=>{const c=getActive();setCluster(c);const max=document.documentElement.scrollHeight-innerHeight;document.querySelector('#progress').style.width=`${Math.max(0,Math.min(1,scrollY/Math.max(1,max)))*100}%`},{passive:true});
     function fallback(){unitControl.fail();introDone=true;stats=window.__NET_STATS__;Object.assign(stats,{nodes:0,lines:0,mobile,bloomOn:false,gazeEnabled:false,introDone:true,pulses:0,lightActive:0,lightPaused:true});}
@@ -1099,7 +1140,7 @@
       document.querySelector('#motion-enable').addEventListener('click',()=>chooseMotion('enable'));
       document.querySelector('#motion-dismiss').addEventListener('click',()=>chooseMotion('dismiss'));
 
-      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',i===c));
+      renderer.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,.05);last=now;const modalOpen=infoDialog.classList.contains('open'),animate=motionEnabled&&!document.hidden&&!modalOpen;if(animate)elapsed+=dt;const panoramaBlend=window.__FOOTER_VIEW__.tick(now);stats.panoramaBlend=panoramaBlend;stats.panoramaActive=window.__FOOTER_VIEW__.active||panoramaBlend>0;const progress=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight);const c=getActive();setCluster(c);stats.activeCluster=c;document.querySelectorAll('.cluster-index a').forEach((a,i)=>a.classList.toggle('active',Number(a.dataset.index)===c));
         const from=centers[c],local=Math.max(0,Math.min(1,(innerHeight*.62-(document.querySelectorAll('.cluster-section')[c].getBoundingClientRect().top+innerHeight*.42))/(innerHeight*1.2)));
         const focus=ease(Math.max(0,Math.min(1,local*1.4)));pmat.uniforms.uActive.value=c;pmat.uniforms.uFocus.value=focus;lmat.uniforms.uActive.value=c;lmat.uniforms.uFocus.value=focus;stats.clusterFocus=c;stats.proximity=focus;if(!modalOpen){
           // 每区固定内容取景；滚动焦面仍沿五簇路径变化，鼠标只叠加小幅环视。
@@ -1138,6 +1179,7 @@
       }catch(e){fallback()}
     if(motionEnabled){document.querySelector('#intro-progress').style.transform='scaleX(0)'}
     }
+    import('../assets/cms-content.js').then(m=>m.loadContent(CONTENT_UNITS, 'en', '../assets/content/en.json')).catch(()=>{window.__CONTENT_SOURCE__='fallback'});
   </script>
 </body>
 </html>
