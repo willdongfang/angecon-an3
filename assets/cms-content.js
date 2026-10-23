@@ -88,17 +88,14 @@ export async function loadContent(original, lang, url) {
     document.querySelectorAll('.section-float-copy').forEach(copy => {
       const list = copy.querySelector('.section-float-units'); list.replaceChildren();
       visible.filter(u => u.sectionId === copy.dataset.sectionId).forEach(unit => {
-        const item = document.createElement('li'); item.textContent = unit.title;
-        if (!original.some(u => u.id === unit.id)) {
-          // Newly added copy is readable through its cluster list without
-          // changing the approved neuron count, seed or anchor layout.
-          item.textContent = '';
-          const button = document.createElement('button');
-          button.type = 'button'; button.textContent = unit.title;
-          button.style.cssText = 'pointer-events:auto;color:inherit;font:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left';
-          button.onclick = () => control.open(unit.title, unit.body, button, unit.id);
-          item.append(button);
-        }
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = unit.title;
+        button.dataset.unitId = unit.id;
+        button.setAttribute('aria-label', '阅读' + unit.title);
+        button.style.cssText = 'pointer-events:auto;color:inherit;font:inherit;background:none;border:0;padding:2px 0;cursor:pointer;text-align:left';
+        button.onclick = () => control.open(unit.title, unit.body, button, unit.id);
+        item.append(button);
         list.append(item);
       });
     });

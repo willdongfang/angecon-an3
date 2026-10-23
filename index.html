@@ -104,6 +104,12 @@
 
     .info-card.wide{width:min(760px,100%)}
     @media(max-width:700px){.info-card.wide{width:calc(100vw - 24px)}}
+
+    /* 版块名称可点击 */
+    .section-float-units li{pointer-events:auto}
+    .section-float-units button{display:inline-block;background:none;border:0;padding:2px 0;color:inherit;font:inherit;line-height:inherit;cursor:pointer;text-align:left;transition:color .18s ease}
+    .section-float-units button:hover,.section-float-units button:focus-visible{color:#5aed8c;-webkit-text-fill-color:#5aed8c;outline:none}
+    .section-float-units button:focus-visible{text-decoration:underline;text-underline-offset:4px}
 </style>
 </head>
 <script src="assets/cms-texts.js"></script>
@@ -392,7 +398,18 @@
         title.className='section-float-name';
         sectionThemes[sectionId].split('，').forEach((part,index)=>{const phrase=document.createElement('span');phrase.textContent=index===0?`${part}，`:part;title.append(phrase);if(index===0)title.append(document.createElement('wbr'))});
         english.className='section-float-en';english.textContent=label;list.className='section-float-units';
-        CONTENT_UNITS.filter(unit=>unit.sectionId===sectionId).forEach(unit=>{const item=document.createElement('li');item.textContent=unit.title;list.append(item)});
+        CONTENT_UNITS.filter(unit=>unit.sectionId===sectionId).forEach(unit=>{
+          const item=document.createElement('li'),link=document.createElement('button');
+          link.type='button';link.textContent=unit.title;link.dataset.unitId=unit.id;
+          link.setAttribute('aria-label','阅读'+unit.title);
+          link.addEventListener('click',()=>{
+            const c=window.__UNIT_CONTROL__;
+            if(!c)return;
+            const cur=(window.CONTENT_UNITS||[]).find(u=>u.id===unit.id)||unit;
+            c.open(cur.title,cur.body,link,cur.id);
+          });
+          item.append(link);list.append(item);
+        });
         copy.append(title,english,list);layer.append(copy);return copy;
       });
       let current=-1;
